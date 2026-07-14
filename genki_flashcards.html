@@ -1,0 +1,605 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+
+.gk-root {
+  --ai: #24406b;
+  --ai-deep: #16294a;
+  --washi: #f6f1e4;
+  --washi-line: #e3d9c0;
+  --hanko: #a83c34;
+  --gold: #c79a3d;
+  --ink: #2a2620;
+  --ink-soft: #6b6455;
+  font-family: 'Noto Sans JP', 'Zen Maru Gothic', sans-serif;
+  color: var(--ink);
+  background: var(--washi);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(36,64,107,0.05), transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(168,60,52,0.06), transparent 45%);
+  border-radius: 18px;
+  padding: 20px;
+  max-width: 640px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.gk-root * { box-sizing: border-box; }
+
+.gk-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--washi-line);
+  padding-bottom: 10px;
+}
+.gk-title {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ai-deep);
+  letter-spacing: 0.02em;
+}
+.gk-title .jp { color: var(--hanko); margin-right: 8px; }
+.gk-sub { font-size: 12px; color: var(--ink-soft); }
+
+.gk-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.gk-chip {
+  border: 1.5px solid var(--ai);
+  color: var(--ai);
+  background: transparent;
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+}
+.gk-chip.active {
+  background: var(--ai);
+  color: var(--washi);
+}
+.gk-chip:hover { transform: translateY(-1px); }
+
+.gk-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.gk-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--washi-line);
+  border-radius: 4px;
+  margin: 0 10px;
+  overflow: hidden;
+}
+.gk-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--hanko));
+  transition: width .3s ease;
+  border-radius: 4px;
+}
+
+.gk-card-wrap {
+  perspective: 1200px;
+  height: 260px;
+  margin-bottom: 16px;
+}
+.gk-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.3,.7,.3,1);
+}
+.gk-card.flipped { transform: rotateY(180deg); }
+.gk-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  border: 1.5px solid var(--washi-line);
+  background: #fffdf8;
+  box-shadow: 0 6px 20px rgba(22,41,74,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+.gk-face.back { transform: rotateY(180deg); }
+.gk-lesson-tag {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ai);
+  border: 1px solid var(--ai);
+  border-radius: 6px;
+  padding: 2px 7px;
+  letter-spacing: 0.03em;
+}
+.gk-category-tag {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.gk-kana {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--ai-deep);
+  line-height: 1.2;
+}
+.gk-kanji {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+.gk-romaji {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+.gk-meaning {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--hanko);
+  line-height: 1.3;
+}
+.gk-hint {
+  font-size: 11px;
+  color: var(--ink-soft);
+  position: absolute;
+  bottom: 12px;
+  opacity: 0.75;
+}
+.gk-speak {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ai);
+  background: #fff;
+  color: var(--ai);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, color .12s ease;
+}
+.gk-speak:hover { transform: scale(1.07); }
+.gk-speak:active { transform: scale(0.94); }
+.gk-speak.playing {
+  background: var(--ai);
+  color: var(--washi);
+}
+
+.gk-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.gk-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .12s ease, opacity .12s ease;
+}
+.gk-btn:active { transform: scale(0.97); }
+.gk-btn-again {
+  background: #fff;
+  border: 1.5px solid var(--hanko);
+  color: var(--hanko);
+}
+.gk-btn-know {
+  background: var(--ai);
+  color: var(--washi);
+}
+.gk-btn-shuffle {
+  background: transparent;
+  border: 1.5px solid var(--ink-soft);
+  color: var(--ink-soft);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.gk-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+.gk-done {
+  text-align: center;
+  padding: 50px 20px;
+}
+.gk-done .gk-kanji-big {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 26px;
+  color: var(--ai-deep);
+  margin-bottom: 8px;
+}
+.gk-restart {
+  margin-top: 16px;
+  background: var(--hanko);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+</style>
+
+<div id="gk-app" class="gk-root"></div>
+
+<script>
+const VOCAB = [
+{l:1, cat:"School", kana:"だいがく", kanji:"大学", romaji:"daigaku", en:"college; university"},
+{l:1, cat:"School", kana:"こうこう", kanji:"高校", romaji:"kookoo", en:"high school"},
+{l:1, cat:"School", kana:"がくせい", kanji:"学生", romaji:"gakusee", en:"student"},
+{l:1, cat:"School", kana:"だいがくせい", kanji:"大学生", romaji:"daigakusee", en:"college student"},
+{l:1, cat:"School", kana:"りゅうがくせい", kanji:"留学生", romaji:"ryuugakusee", en:"international student"},
+{l:1, cat:"School", kana:"せんせい", kanji:"先生", romaji:"sensee", en:"teacher; Professor..."},
+{l:1, cat:"School", kana:"〜ねんせい", kanji:"〜年生", romaji:"...nensee", en:"...year student"},
+{l:1, cat:"School", kana:"いちねんせい", kanji:"一年生", romaji:"ichinensee", en:"first-year student"},
+{l:1, cat:"School", kana:"せんこう", kanji:"専攻", romaji:"senkoo", en:"major"},
+{l:1, cat:"Person", kana:"わたし", kanji:"私", romaji:"watashi", en:"I"},
+{l:1, cat:"Person", kana:"ともだち", kanji:"友達", romaji:"tomodachi", en:"friend"},
+{l:1, cat:"Person", kana:"〜さん", kanji:"", romaji:"...san", en:"Mr./Ms. ..."},
+{l:1, cat:"Person", kana:"〜じん", kanji:"〜人", romaji:"...jin", en:"...people (nationality)"},
+{l:1, cat:"Person", kana:"にほんじん", kanji:"日本人", romaji:"nihonjin", en:"Japanese people"},
+{l:1, cat:"Time", kana:"いま", kanji:"今", romaji:"ima", en:"now"},
+{l:1, cat:"Time", kana:"ごぜん", kanji:"午前", romaji:"gozen", en:"A.M."},
+{l:1, cat:"Time", kana:"ごご", kanji:"午後", romaji:"gogo", en:"P.M."},
+{l:1, cat:"Time", kana:"〜じ", kanji:"〜時", romaji:"...ji", en:"...o'clock"},
+{l:1, cat:"Time", kana:"いちじ", kanji:"一時", romaji:"ichiji", en:"one o'clock"},
+{l:1, cat:"Time", kana:"はん", kanji:"半", romaji:"han", en:"half"},
+{l:1, cat:"Time", kana:"にじはん", kanji:"二時半", romaji:"niji han", en:"half past two"},
+{l:1, cat:"Others", kana:"にほん", kanji:"日本", romaji:"Nihon", en:"Japan"},
+{l:1, cat:"Others", kana:"アメリカ", kanji:"", romaji:"Amerika", en:"U.S.A."},
+{l:1, cat:"Others", kana:"〜ご", kanji:"〜語", romaji:"...go", en:"...language"},
+{l:1, cat:"Others", kana:"にほんご", kanji:"日本語", romaji:"nihongo", en:"Japanese language"},
+{l:1, cat:"Others", kana:"〜さい", kanji:"〜歳", romaji:"...sai", en:"...years old"},
+{l:1, cat:"Others", kana:"でんわ", kanji:"電話", romaji:"denwa", en:"telephone"},
+{l:1, cat:"Others", kana:"〜ばん", kanji:"〜番", romaji:"...ban", en:"number ..."},
+{l:1, cat:"Others", kana:"ばんごう", kanji:"番号", romaji:"bangoo", en:"number"},
+{l:1, cat:"Others", kana:"なまえ", kanji:"名前", romaji:"namae", en:"name"},
+{l:1, cat:"Others", kana:"なん／なに", kanji:"何", romaji:"nan/nani", en:"what"},
+{l:1, cat:"Expressions", kana:"あのう", kanji:"", romaji:"anoo", en:"um..."},
+{l:1, cat:"Expressions", kana:"はい", kanji:"", romaji:"hai", en:"yes"},
+{l:1, cat:"Expressions", kana:"そうです", kanji:"", romaji:"soo desu", en:"That's right."},
+{l:1, cat:"Expressions", kana:"そうですか", kanji:"", romaji:"soo desu ka", en:"I see.; Is that so?"},
+
+{l:2, cat:"Words That Point", kana:"これ", kanji:"", romaji:"kore", en:"this one"},
+{l:2, cat:"Words That Point", kana:"それ", kanji:"", romaji:"sore", en:"that one"},
+{l:2, cat:"Words That Point", kana:"あれ", kanji:"", romaji:"are", en:"that one (over there)"},
+{l:2, cat:"Words That Point", kana:"どれ", kanji:"", romaji:"dore", en:"which one"},
+{l:2, cat:"Words That Point", kana:"この", kanji:"", romaji:"kono", en:"this ..."},
+{l:2, cat:"Words That Point", kana:"その", kanji:"", romaji:"sono", en:"that ..."},
+{l:2, cat:"Words That Point", kana:"あの", kanji:"", romaji:"ano", en:"that ... (over there)"},
+{l:2, cat:"Words That Point", kana:"どの", kanji:"", romaji:"dono", en:"which ..."},
+{l:2, cat:"Words That Point", kana:"ここ", kanji:"", romaji:"koko", en:"here"},
+{l:2, cat:"Words That Point", kana:"そこ", kanji:"", romaji:"soko", en:"there"},
+{l:2, cat:"Words That Point", kana:"あそこ", kanji:"", romaji:"asoko", en:"over there"},
+{l:2, cat:"Words That Point", kana:"どこ", kanji:"", romaji:"doko", en:"where"},
+{l:2, cat:"Words That Point", kana:"だれ", kanji:"", romaji:"dare", en:"who"},
+{l:2, cat:"Food", kana:"おいしい", kanji:"", romaji:"oishii", en:"delicious"},
+{l:2, cat:"Food", kana:"さかな", kanji:"魚", romaji:"sakana", en:"fish"},
+{l:2, cat:"Food", kana:"とんかつ", kanji:"", romaji:"tonkatsu", en:"pork cutlet"},
+{l:2, cat:"Food", kana:"にく", kanji:"肉", romaji:"niku", en:"meat"},
+{l:2, cat:"Food", kana:"メニュー", kanji:"", romaji:"menyuu", en:"menu"},
+{l:2, cat:"Food", kana:"やさい", kanji:"野菜", romaji:"yasai", en:"vegetable"},
+{l:2, cat:"Things", kana:"かさ", kanji:"傘", romaji:"kasa", en:"umbrella"},
+{l:2, cat:"Things", kana:"かばん", kanji:"", romaji:"kaban", en:"bag"},
+{l:2, cat:"Things", kana:"くつ", kanji:"靴", romaji:"kutsu", en:"shoes"},
+{l:2, cat:"Things", kana:"さいふ", kanji:"財布", romaji:"saifu", en:"wallet"},
+{l:2, cat:"Things", kana:"ジーンズ", kanji:"", romaji:"jiinzu", en:"jeans"},
+{l:2, cat:"Things", kana:"じてんしゃ", kanji:"自転車", romaji:"jitensha", en:"bicycle"},
+{l:2, cat:"Things", kana:"しんぶん", kanji:"新聞", romaji:"shinbun", en:"newspaper"},
+{l:2, cat:"Things", kana:"スマホ", kanji:"", romaji:"sumaho", en:"smartphone; mobile"},
+{l:2, cat:"Things", kana:"Tシャツ", kanji:"", romaji:"tiishatsu", en:"T-shirt"},
+{l:2, cat:"Things", kana:"とけい", kanji:"時計", romaji:"tokee", en:"watch; clock"},
+{l:2, cat:"Things", kana:"ノート", kanji:"", romaji:"nooto", en:"notebook"},
+{l:2, cat:"Things", kana:"ペン", kanji:"", romaji:"pen", en:"pen"},
+{l:2, cat:"Things", kana:"ぼうし", kanji:"帽子", romaji:"booshi", en:"hat; cap"},
+{l:2, cat:"Things", kana:"ほん", kanji:"本", romaji:"hon", en:"book"},
+{l:2, cat:"Places", kana:"ぎんこう", kanji:"銀行", romaji:"ginkoo", en:"bank"},
+{l:2, cat:"Places", kana:"コンビニ", kanji:"", romaji:"konbini", en:"convenience store"},
+{l:2, cat:"Places", kana:"トイレ", kanji:"", romaji:"toire", en:"toilet; restroom"},
+{l:2, cat:"Places", kana:"としょかん", kanji:"図書館", romaji:"toshokan", en:"library"},
+{l:2, cat:"Places", kana:"ゆうびんきょく", kanji:"郵便局", romaji:"yuubinkyoku", en:"post office"},
+{l:2, cat:"Countries", kana:"イギリス", kanji:"", romaji:"Igirisu", en:"Britain"},
+{l:2, cat:"Countries", kana:"かんこく", kanji:"韓国", romaji:"Kankoku", en:"Korea"},
+{l:2, cat:"Countries", kana:"ちゅうごく", kanji:"中国", romaji:"Chuugoku", en:"China"},
+{l:2, cat:"Majors", kana:"えいご", kanji:"英語", romaji:"eego", en:"English (language)"},
+{l:2, cat:"Majors", kana:"けいざい", kanji:"経済", romaji:"keezai", en:"economics"},
+{l:2, cat:"Majors", kana:"コンピューター", kanji:"", romaji:"konpyuutaa", en:"computer"},
+{l:2, cat:"Majors", kana:"ビジネス", kanji:"", romaji:"bijinesu", en:"business"},
+{l:2, cat:"Majors", kana:"れきし", kanji:"歴史", romaji:"rekishi", en:"history"},
+{l:2, cat:"Family", kana:"おかあさん", kanji:"お母さん", romaji:"okaasan", en:"mother"},
+{l:2, cat:"Family", kana:"おとうさん", kanji:"お父さん", romaji:"otoosan", en:"father"},
+{l:2, cat:"Money", kana:"いくら", kanji:"", romaji:"ikura", en:"how much"},
+{l:2, cat:"Money", kana:"〜えん", kanji:"〜円", romaji:"...en", en:"...yen"},
+{l:2, cat:"Money", kana:"たかい", kanji:"高い", romaji:"takai", en:"expensive; high"},
+{l:2, cat:"Expressions", kana:"いらっしゃいませ", kanji:"", romaji:"irasshaimase", en:"Welcome (to our store)."},
+{l:2, cat:"Expressions", kana:"（〜を）おねがいします", kanji:"", romaji:"(...o) onegaishimasu", en:"..., please."},
+{l:2, cat:"Expressions", kana:"（〜を）ください", kanji:"", romaji:"(...o) kudasai", en:"Please give me ..."},
+{l:2, cat:"Expressions", kana:"じゃあ", kanji:"", romaji:"jaa", en:"then...; if that's the case..."},
+{l:2, cat:"Expressions", kana:"どうぞ", kanji:"", romaji:"doozo", en:"Please.; Here it is."},
+{l:2, cat:"Expressions", kana:"どうも", kanji:"", romaji:"doomo", en:"Thank you."},
+
+{l:3, cat:"Entertainment", kana:"えいが", kanji:"映画", romaji:"eega", en:"movie"},
+{l:3, cat:"Entertainment", kana:"おんがく", kanji:"音楽", romaji:"ongaku", en:"music"},
+{l:3, cat:"Entertainment", kana:"ざっし", kanji:"雑誌", romaji:"zasshi", en:"magazine"},
+{l:3, cat:"Entertainment", kana:"スポーツ", kanji:"", romaji:"supootsu", en:"sports"},
+{l:3, cat:"Entertainment", kana:"デート", kanji:"", romaji:"deeto", en:"date (romantic)"},
+{l:3, cat:"Entertainment", kana:"テニス", kanji:"", romaji:"tenisu", en:"tennis"},
+{l:3, cat:"Entertainment", kana:"テレビ", kanji:"", romaji:"terebi", en:"TV"},
+{l:3, cat:"Food & Drink", kana:"アイスクリーム", kanji:"", romaji:"aisukuriimu", en:"ice cream"},
+{l:3, cat:"Food & Drink", kana:"ハンバーガー", kanji:"", romaji:"hanbaagaa", en:"hamburger"},
+{l:3, cat:"Food & Drink", kana:"おさけ", kanji:"お酒", romaji:"osake", en:"sake; alcoholic drink"},
+{l:3, cat:"Food & Drink", kana:"おちゃ", kanji:"お茶", romaji:"ocha", en:"green tea"},
+{l:3, cat:"Food & Drink", kana:"コーヒー", kanji:"", romaji:"koohii", en:"coffee"},
+{l:3, cat:"Food & Drink", kana:"みず", kanji:"水", romaji:"mizu", en:"water"},
+{l:3, cat:"Food & Drink", kana:"あさごはん", kanji:"朝ご飯", romaji:"asagohan", en:"breakfast"},
+{l:3, cat:"Food & Drink", kana:"ひるごはん", kanji:"昼ご飯", romaji:"hirugohan", en:"lunch"},
+{l:3, cat:"Food & Drink", kana:"ばんごはん", kanji:"晩ご飯", romaji:"bangohan", en:"dinner"},
+{l:3, cat:"Places", kana:"いえ", kanji:"家", romaji:"ie", en:"home; house"},
+{l:3, cat:"Places", kana:"うち", kanji:"", romaji:"uchi", en:"home; house; my place"},
+{l:3, cat:"Places", kana:"がっこう", kanji:"学校", romaji:"gakkoo", en:"school"},
+{l:3, cat:"Places", kana:"カフェ", kanji:"", romaji:"kafe", en:"cafe"},
+{l:3, cat:"Time", kana:"あした", kanji:"明日", romaji:"ashita", en:"tomorrow"},
+{l:3, cat:"Time", kana:"きょう", kanji:"今日", romaji:"kyoo", en:"today"},
+{l:3, cat:"Time", kana:"あさ", kanji:"朝", romaji:"asa", en:"morning"},
+{l:3, cat:"Time", kana:"こんばん", kanji:"今晩", romaji:"konban", en:"tonight"},
+{l:3, cat:"Time", kana:"まいにち", kanji:"毎日", romaji:"mainichi", en:"every day"},
+{l:3, cat:"Time", kana:"まいばん", kanji:"毎晩", romaji:"maiban", en:"every night"},
+{l:3, cat:"Time", kana:"しゅうまつ", kanji:"週末", romaji:"shuumatsu", en:"weekend"},
+{l:3, cat:"Time", kana:"どようび", kanji:"土曜日", romaji:"doyoobi", en:"Saturday"},
+{l:3, cat:"Time", kana:"にちようび", kanji:"日曜日", romaji:"nichiyoobi", en:"Sunday"},
+{l:3, cat:"Time", kana:"いつ", kanji:"", romaji:"itsu", en:"when"},
+{l:3, cat:"Time", kana:"〜ごろ", kanji:"", romaji:"...goro", en:"at about ..."},
+{l:3, cat:"U-verbs", kana:"いく", kanji:"行く", romaji:"iku", en:"to go"},
+{l:3, cat:"U-verbs", kana:"かえる", kanji:"帰る", romaji:"kaeru", en:"to go back; to return"},
+{l:3, cat:"U-verbs", kana:"きく", kanji:"聞く", romaji:"kiku", en:"to listen; to hear"},
+{l:3, cat:"U-verbs", kana:"のむ", kanji:"飲む", romaji:"nomu", en:"to drink"},
+{l:3, cat:"U-verbs", kana:"はなす", kanji:"話す", romaji:"hanasu", en:"to speak; to talk"},
+{l:3, cat:"U-verbs", kana:"よむ", kanji:"読む", romaji:"yomu", en:"to read"},
+{l:3, cat:"Ru-verbs", kana:"おきる", kanji:"起きる", romaji:"okiru", en:"to get up"},
+{l:3, cat:"Ru-verbs", kana:"たべる", kanji:"食べる", romaji:"taberu", en:"to eat"},
+{l:3, cat:"Ru-verbs", kana:"ねる", kanji:"寝る", romaji:"neru", en:"to sleep; to go to sleep"},
+{l:3, cat:"Ru-verbs", kana:"みる", kanji:"見る", romaji:"miru", en:"to see; to look at; to watch"},
+{l:3, cat:"Irregular Verbs", kana:"くる", kanji:"来る", romaji:"kuru", en:"to come"},
+{l:3, cat:"Irregular Verbs", kana:"する", kanji:"", romaji:"suru", en:"to do"},
+{l:3, cat:"Irregular Verbs", kana:"べんきょうする", kanji:"勉強する", romaji:"benkyoosuru", en:"to study"},
+{l:3, cat:"Adjectives", kana:"いい", kanji:"", romaji:"ii", en:"good"},
+{l:3, cat:"Adjectives", kana:"はやい", kanji:"早い", romaji:"hayai", en:"early"},
+{l:3, cat:"Adverbs", kana:"あまり＋negative", kanji:"", romaji:"amari", en:"not much"},
+{l:3, cat:"Adverbs", kana:"ぜんぜん＋negative", kanji:"全然", romaji:"zenzen", en:"not at all"},
+{l:3, cat:"Adverbs", kana:"たいてい", kanji:"", romaji:"taitei", en:"usually"},
+{l:3, cat:"Adverbs", kana:"ちょっと", kanji:"", romaji:"chotto", en:"a little"},
+{l:3, cat:"Adverbs", kana:"ときどき", kanji:"時々", romaji:"tokidoki", en:"sometimes"},
+{l:3, cat:"Adverbs", kana:"よく", kanji:"", romaji:"yoku", en:"often; much"},
+{l:3, cat:"Expressions", kana:"そうですね", kanji:"", romaji:"soo desu ne", en:"That's right.; Let me see."},
+{l:3, cat:"Expressions", kana:"でも", kanji:"", romaji:"demo", en:"but"},
+{l:3, cat:"Expressions", kana:"どうですか", kanji:"", romaji:"doo desu ka", en:"How about ...?; How is ...?"},
+{l:3, cat:"Expressions", kana:"ええ", kanji:"", romaji:"ee", en:"yes"},
+];
+
+(function(){
+  let activeLessons = new Set([1,2,3]);
+  let deck = [];
+  let idx = 0;
+  let flipped = false;
+  let knownCount = 0;
+  let sessionTotal = 0;
+  let direction = "jp";
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  let jpVoice = null;
+  function loadVoices(){
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    jpVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+  }
+  if('speechSynthesis' in window){
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function speakJapanese(text, btn){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'ja-JP';
+    if(jpVoice) utter.voice = jpVoice;
+    utter.rate = 0.8;
+    if(btn){
+      btn.classList.add('playing');
+      utter.onend = () => btn.classList.remove('playing');
+      utter.onerror = () => btn.classList.remove('playing');
+    }
+    window.speechSynthesis.speak(utter);
+  }
+
+  function buildDeck(){
+    deck = shuffle(VOCAB.filter(v => activeLessons.has(v.l)));
+    idx = 0;
+    flipped = false;
+    knownCount = 0;
+    sessionTotal = deck.length;
+  }
+
+  function toggleLesson(n){
+    if(activeLessons.has(n)){
+      if(activeLessons.size > 1) activeLessons.delete(n);
+    } else {
+      activeLessons.add(n);
+    }
+    buildDeck();
+    render();
+  }
+
+  function flipCard(){
+    flipped = !flipped;
+    render();
+  }
+
+  function nextCard(known){
+    if(known) knownCount++;
+    idx++;
+    flipped = false;
+    render();
+  }
+
+  function restart(){
+    buildDeck();
+    render();
+  }
+
+  function reshuffle(){
+    deck = shuffle(deck.slice(idx));
+    idx = 0;
+    flipped = false;
+    render();
+  }
+
+  function render(){
+    const app = document.getElementById('gk-app');
+    const remaining = deck.length - idx;
+    const progressPct = sessionTotal ? Math.round((idx/sessionTotal)*100) : 0;
+
+    let chipsHtml = [1,2,3].map(n => `
+      <button class="gk-chip ${activeLessons.has(n) ? 'active':''}" data-lesson="${n}">Lesson ${n}</button>
+    `).join('');
+
+    if(idx >= deck.length && deck.length > 0){
+      app.innerHTML = `
+        <div class="gk-header">
+          <div class="gk-title"><span class="jp">単語</span>Genki I &middot; Vocab</div>
+          <div class="gk-sub">Lessons 1&ndash;3</div>
+        </div>
+        <div class="gk-filters">${chipsHtml}</div>
+        <div class="gk-done">
+          <div class="gk-kanji-big">よくできました！</div>
+          <div>You reviewed <strong>${sessionTotal}</strong> cards and knew <strong>${knownCount}</strong> of them.</div>
+          <button class="gk-restart" id="gk-restart-btn">Study again</button>
+        </div>
+      `;
+      document.getElementById('gk-restart-btn').onclick = restart;
+      app.querySelectorAll('.gk-chip').forEach(btn=>{
+        btn.onclick = () => toggleLesson(parseInt(btn.dataset.lesson));
+      });
+      return;
+    }
+
+    if(deck.length === 0){
+      app.innerHTML = `
+        <div class="gk-header">
+          <div class="gk-title"><span class="jp">単語</span>Genki I &middot; Vocab</div>
+        </div>
+        <div class="gk-filters">${chipsHtml}</div>
+        <div class="gk-done">Select at least one lesson to begin.</div>
+      `;
+      app.querySelectorAll('.gk-chip').forEach(btn=>{
+        btn.onclick = () => toggleLesson(parseInt(btn.dataset.lesson));
+      });
+      return;
+    }
+
+    const card = deck[idx];
+    const kanjiLine = card.kanji ? `<div class="gk-kanji">${card.kanji}</div>` : '';
+
+    app.innerHTML = `
+      <div class="gk-header">
+        <div class="gk-title"><span class="jp">単語</span>Genki I &middot; Vocab</div>
+        <div class="gk-sub">Lessons 1&ndash;3</div>
+      </div>
+      <div class="gk-filters">${chipsHtml}</div>
+      <div class="gk-stats">
+        <span>${idx+1} / ${sessionTotal}</span>
+        <div class="gk-progress-bar"><div class="gk-progress-fill" style="width:${progressPct}%"></div></div>
+        <span>${remaining} left</span>
+      </div>
+      <div class="gk-card-wrap">
+        <div class="gk-card ${flipped ? 'flipped':''}" id="gk-card">
+          <div class="gk-face front">
+            <span class="gk-lesson-tag">L${card.l}</span>
+            <span class="gk-category-tag">${card.cat}</span>
+            <div class="gk-kana">${card.kana}</div>
+            ${kanjiLine}
+            <div class="gk-hint">tap to reveal meaning</div>
+            <button class="gk-speak" data-speak="${card.kana.replace(/"/g,'&quot;')}" title="Play pronunciation">🔊</button>
+          </div>
+          <div class="gk-face back">
+            <span class="gk-lesson-tag">L${card.l}</span>
+            <span class="gk-category-tag">${card.cat}</span>
+            <div class="gk-meaning">${card.en}</div>
+            <div class="gk-romaji">${card.romaji}</div>
+            <div class="gk-hint">tap to flip back</div>
+            <button class="gk-speak" data-speak="${card.kana.replace(/"/g,'&quot;')}" title="Play pronunciation">🔊</button>
+          </div>
+        </div>
+      </div>
+      <div class="gk-actions">
+        <button class="gk-btn gk-btn-again" id="gk-again">Still learning</button>
+        <button class="gk-btn gk-btn-know" id="gk-know">I know it ✓</button>
+      </div>
+      <div class="gk-bottom-row">
+        <span style="font-size:11px;color:var(--ink-soft)">${deck.length} cards in this set</span>
+        <button class="gk-btn-shuffle" id="gk-shuffle">🔀 Shuffle remaining</button>
+      </div>
+    `;
+
+    document.getElementById('gk-card').onclick = flipCard;
+    document.getElementById('gk-again').onclick = (e) => { e.stopPropagation(); nextCard(false); };
+    document.getElementById('gk-know').onclick = (e) => { e.stopPropagation(); nextCard(true); };
+    document.getElementById('gk-shuffle').onclick = (e) => { e.stopPropagation(); reshuffle(); };
+    app.querySelectorAll('.gk-speak').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); speakJapanese(btn.dataset.speak, btn); };
+    });
+    app.querySelectorAll('.gk-chip').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); toggleLesson(parseInt(btn.dataset.lesson)); };
+    });
+  }
+
+  buildDeck();
+  render();
+})();
+</script>
