@@ -3,59 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Japanese Study Flashcards</title>
+<title>My Flashcards</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&family=Noto+Sans+JP:wght@400;500&display=swap');
   body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f6f1e4;
-    background-image:
-      radial-gradient(circle at 20% 10%, rgba(36,64,107,0.06), transparent 40%),
-      radial-gradient(circle at 90% 85%, rgba(168,60,52,0.07), transparent 45%);
-    font-family: 'Noto Sans JP', sans-serif;
-    color: #2a2620;
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #f6f1e4; font-family: sans-serif; color: #2a2620;
   }
   .wrap { max-width: 420px; padding: 24px; }
-  h1 {
-    font-family: 'Shippori Mincho', serif;
-    color: #16294a;
-    font-size: 26px;
-    margin-bottom: 4px;
-  }
+  h1 { font-size: 24px; margin-bottom: 4px; color: #16294a; }
   p.sub { color: #6b6455; font-size: 13px; margin-bottom: 28px; }
   a.card {
-    display: block;
-    background: #fffdf8;
-    border: 1.5px solid #e3d9c0;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 14px;
-    text-decoration: none;
-    color: #2a2620;
+    display: block; background: #fffdf8; border: 1.5px solid #e3d9c0; border-radius: 16px;
+    padding: 20px; margin-bottom: 14px; text-decoration: none; color: #2a2620;
     box-shadow: 0 6px 20px rgba(22,41,74,0.08);
-    transition: transform .12s ease;
   }
-  a.card:hover { transform: translateY(-2px); }
-  a.card .jp { color: #a83c34; font-family: 'Shippori Mincho', serif; font-size: 20px; margin-right: 8px; }
   a.card .title { font-weight: 700; font-size: 16px; }
   a.card .desc { color: #6b6455; font-size: 12.5px; margin-top: 4px; }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Japanese Study Flashcards</h1>
+    <h1>My Flashcards</h1>
     <p class="sub">Tap a set to open it.</p>
     <a class="card" href="genki_flashcards.html">
-      <div><span class="jp">単語</span><span class="title">Genki I Vocabulary</span></div>
-      <div class="desc">Lessons 1&ndash;3 &middot; ~120 words &middot; audio pronunciation</div>
+      <div class="title">Genki I Vocabulary</div>
+      <div class="desc">Lessons 1&ndash;3 &middot; ~120 words &middot; audio</div>
     </a>
     <a class="card" href="hiragana_flashcards.html">
-      <div><span class="jp">ひらがな</span><span class="title">Hiragana Drill</span></div>
-      <div class="desc">Basic, voiced, and combo sounds &middot; audio pronunciation</div>
+      <div class="title">Hiragana Drill</div>
+      <div class="desc">Basic, voiced, and combo sounds &middot; audio</div>
+    </a>
+    <a class="card" href="piano_theory_flashcards.html">
+      <div class="title">Piano Theory</div>
+      <div class="desc">Treble &amp; bass clef notes, note values, rests &middot; rhythm audio</div>
     </a>
   </div>
 </body>
