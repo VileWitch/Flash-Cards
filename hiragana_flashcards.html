@@ -1,0 +1,547 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+
+.hg-root {
+  --ai: #24406b;
+  --ai-deep: #16294a;
+  --washi: #f6f1e4;
+  --washi-line: #e3d9c0;
+  --hanko: #a83c34;
+  --gold: #c79a3d;
+  --ink: #2a2620;
+  --ink-soft: #6b6455;
+  font-family: 'Noto Sans JP', 'Zen Maru Gothic', sans-serif;
+  color: var(--ink);
+  background: var(--washi);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(36,64,107,0.05), transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(168,60,52,0.06), transparent 45%);
+  border-radius: 18px;
+  padding: 20px;
+  max-width: 640px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.hg-root * { box-sizing: border-box; }
+
+.hg-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--washi-line);
+  padding-bottom: 10px;
+}
+.hg-title {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ai-deep);
+  letter-spacing: 0.02em;
+}
+.hg-title .jp { color: var(--hanko); margin-right: 8px; }
+.hg-sub { font-size: 12px; color: var(--ink-soft); }
+
+.hg-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.hg-chip {
+  border: 1.5px solid var(--ai);
+  color: var(--ai);
+  background: transparent;
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+}
+.hg-chip.active { background: var(--ai); color: var(--washi); }
+.hg-chip:hover { transform: translateY(-1px); }
+
+.hg-modes {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.hg-mode-btn {
+  flex: 1;
+  border: 1.5px solid var(--hanko);
+  color: var(--hanko);
+  background: #fff;
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.hg-mode-btn.active { background: var(--hanko); color: #fff; }
+
+.hg-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.hg-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--washi-line);
+  border-radius: 4px;
+  margin: 0 10px;
+  overflow: hidden;
+}
+.hg-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--hanko));
+  transition: width .3s ease;
+  border-radius: 4px;
+}
+
+.hg-card-wrap { perspective: 1200px; height: 240px; margin-bottom: 16px; }
+.hg-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.3,.7,.3,1);
+}
+.hg-card.flipped { transform: rotateY(180deg); }
+.hg-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  border: 1.5px solid var(--washi-line);
+  background: #fffdf8;
+  box-shadow: 0 6px 20px rgba(22,41,74,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+.hg-face.back { transform: rotateY(180deg); }
+.hg-row-tag {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ai);
+  border: 1px solid var(--ai);
+  border-radius: 6px;
+  padding: 2px 7px;
+  letter-spacing: 0.03em;
+}
+.hg-group-tag {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.hg-char {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 84px;
+  font-weight: 700;
+  color: var(--ai-deep);
+  line-height: 1;
+}
+.hg-romaji-big {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--hanko);
+}
+.hg-hint {
+  font-size: 11px;
+  color: var(--ink-soft);
+  position: absolute;
+  bottom: 12px;
+  opacity: 0.75;
+}
+.hg-speak {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ai);
+  background: #fff;
+  color: var(--ai);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, color .12s ease;
+}
+.hg-speak:hover { transform: scale(1.07); }
+.hg-speak:active { transform: scale(0.94); }
+.hg-speak.playing { background: var(--ai); color: var(--washi); }
+
+.hg-actions { display: flex; gap: 10px; margin-bottom: 6px; }
+.hg-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .12s ease, opacity .12s ease;
+}
+.hg-btn:active { transform: scale(0.97); }
+.hg-btn-again { background: #fff; border: 1.5px solid var(--hanko); color: var(--hanko); }
+.hg-btn-know { background: var(--ai); color: var(--washi); }
+.hg-btn-shuffle {
+  background: transparent;
+  border: 1.5px solid var(--ink-soft);
+  color: var(--ink-soft);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.hg-bottom-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.hg-done { text-align: center; padding: 50px 20px; }
+.hg-done .hg-big { font-family: 'Shippori Mincho', serif; font-size: 26px; color: var(--ai-deep); margin-bottom: 8px; }
+.hg-restart {
+  margin-top: 16px;
+  background: var(--hanko);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+</style>
+
+<div id="hg-app" class="hg-root"></div>
+
+<script>
+const HIRAGANA = [
+{g:"basic", row:"a-row", char:"あ", romaji:"a"},
+{g:"basic", row:"a-row", char:"い", romaji:"i"},
+{g:"basic", row:"a-row", char:"う", romaji:"u"},
+{g:"basic", row:"a-row", char:"え", romaji:"e"},
+{g:"basic", row:"a-row", char:"お", romaji:"o"},
+{g:"basic", row:"ka-row", char:"か", romaji:"ka"},
+{g:"basic", row:"ka-row", char:"き", romaji:"ki"},
+{g:"basic", row:"ka-row", char:"く", romaji:"ku"},
+{g:"basic", row:"ka-row", char:"け", romaji:"ke"},
+{g:"basic", row:"ka-row", char:"こ", romaji:"ko"},
+{g:"basic", row:"sa-row", char:"さ", romaji:"sa"},
+{g:"basic", row:"sa-row", char:"し", romaji:"shi"},
+{g:"basic", row:"sa-row", char:"す", romaji:"su"},
+{g:"basic", row:"sa-row", char:"せ", romaji:"se"},
+{g:"basic", row:"sa-row", char:"そ", romaji:"so"},
+{g:"basic", row:"ta-row", char:"た", romaji:"ta"},
+{g:"basic", row:"ta-row", char:"ち", romaji:"chi"},
+{g:"basic", row:"ta-row", char:"つ", romaji:"tsu"},
+{g:"basic", row:"ta-row", char:"て", romaji:"te"},
+{g:"basic", row:"ta-row", char:"と", romaji:"to"},
+{g:"basic", row:"na-row", char:"な", romaji:"na"},
+{g:"basic", row:"na-row", char:"に", romaji:"ni"},
+{g:"basic", row:"na-row", char:"ぬ", romaji:"nu"},
+{g:"basic", row:"na-row", char:"ね", romaji:"ne"},
+{g:"basic", row:"na-row", char:"の", romaji:"no"},
+{g:"basic", row:"ha-row", char:"は", romaji:"ha"},
+{g:"basic", row:"ha-row", char:"ひ", romaji:"hi"},
+{g:"basic", row:"ha-row", char:"ふ", romaji:"fu"},
+{g:"basic", row:"ha-row", char:"へ", romaji:"he"},
+{g:"basic", row:"ha-row", char:"ほ", romaji:"ho"},
+{g:"basic", row:"ma-row", char:"ま", romaji:"ma"},
+{g:"basic", row:"ma-row", char:"み", romaji:"mi"},
+{g:"basic", row:"ma-row", char:"む", romaji:"mu"},
+{g:"basic", row:"ma-row", char:"め", romaji:"me"},
+{g:"basic", row:"ma-row", char:"も", romaji:"mo"},
+{g:"basic", row:"ya-row", char:"や", romaji:"ya"},
+{g:"basic", row:"ya-row", char:"ゆ", romaji:"yu"},
+{g:"basic", row:"ya-row", char:"よ", romaji:"yo"},
+{g:"basic", row:"ra-row", char:"ら", romaji:"ra"},
+{g:"basic", row:"ra-row", char:"り", romaji:"ri"},
+{g:"basic", row:"ra-row", char:"る", romaji:"ru"},
+{g:"basic", row:"ra-row", char:"れ", romaji:"re"},
+{g:"basic", row:"ra-row", char:"ろ", romaji:"ro"},
+{g:"basic", row:"wa-row", char:"わ", romaji:"wa"},
+{g:"basic", row:"wa-row", char:"を", romaji:"wo"},
+{g:"basic", row:"n", char:"ん", romaji:"n"},
+
+{g:"voiced", row:"ga-row", char:"が", romaji:"ga"},
+{g:"voiced", row:"ga-row", char:"ぎ", romaji:"gi"},
+{g:"voiced", row:"ga-row", char:"ぐ", romaji:"gu"},
+{g:"voiced", row:"ga-row", char:"げ", romaji:"ge"},
+{g:"voiced", row:"ga-row", char:"ご", romaji:"go"},
+{g:"voiced", row:"za-row", char:"ざ", romaji:"za"},
+{g:"voiced", row:"za-row", char:"じ", romaji:"ji"},
+{g:"voiced", row:"za-row", char:"ず", romaji:"zu"},
+{g:"voiced", row:"za-row", char:"ぜ", romaji:"ze"},
+{g:"voiced", row:"za-row", char:"ぞ", romaji:"zo"},
+{g:"voiced", row:"da-row", char:"だ", romaji:"da"},
+{g:"voiced", row:"da-row", char:"ぢ", romaji:"ji (di)"},
+{g:"voiced", row:"da-row", char:"づ", romaji:"zu (du)"},
+{g:"voiced", row:"da-row", char:"で", romaji:"de"},
+{g:"voiced", row:"da-row", char:"ど", romaji:"do"},
+{g:"voiced", row:"ba-row", char:"ば", romaji:"ba"},
+{g:"voiced", row:"ba-row", char:"び", romaji:"bi"},
+{g:"voiced", row:"ba-row", char:"ぶ", romaji:"bu"},
+{g:"voiced", row:"ba-row", char:"べ", romaji:"be"},
+{g:"voiced", row:"ba-row", char:"ぼ", romaji:"bo"},
+{g:"voiced", row:"pa-row", char:"ぱ", romaji:"pa"},
+{g:"voiced", row:"pa-row", char:"ぴ", romaji:"pi"},
+{g:"voiced", row:"pa-row", char:"ぷ", romaji:"pu"},
+{g:"voiced", row:"pa-row", char:"ぺ", romaji:"pe"},
+{g:"voiced", row:"pa-row", char:"ぽ", romaji:"po"},
+
+{g:"combo", row:"ky-", char:"きゃ", romaji:"kya"},
+{g:"combo", row:"ky-", char:"きゅ", romaji:"kyu"},
+{g:"combo", row:"ky-", char:"きょ", romaji:"kyo"},
+{g:"combo", row:"sh-", char:"しゃ", romaji:"sha"},
+{g:"combo", row:"sh-", char:"しゅ", romaji:"shu"},
+{g:"combo", row:"sh-", char:"しょ", romaji:"sho"},
+{g:"combo", row:"ch-", char:"ちゃ", romaji:"cha"},
+{g:"combo", row:"ch-", char:"ちゅ", romaji:"chu"},
+{g:"combo", row:"ch-", char:"ちょ", romaji:"cho"},
+{g:"combo", row:"ny-", char:"にゃ", romaji:"nya"},
+{g:"combo", row:"ny-", char:"にゅ", romaji:"nyu"},
+{g:"combo", row:"ny-", char:"にょ", romaji:"nyo"},
+{g:"combo", row:"hy-", char:"ひゃ", romaji:"hya"},
+{g:"combo", row:"hy-", char:"ひゅ", romaji:"hyu"},
+{g:"combo", row:"hy-", char:"ひょ", romaji:"hyo"},
+{g:"combo", row:"my-", char:"みゃ", romaji:"mya"},
+{g:"combo", row:"my-", char:"みゅ", romaji:"myu"},
+{g:"combo", row:"my-", char:"みょ", romaji:"myo"},
+{g:"combo", row:"ry-", char:"りゃ", romaji:"rya"},
+{g:"combo", row:"ry-", char:"りゅ", romaji:"ryu"},
+{g:"combo", row:"ry-", char:"りょ", romaji:"ryo"},
+{g:"combo", row:"gy-", char:"ぎゃ", romaji:"gya"},
+{g:"combo", row:"gy-", char:"ぎゅ", romaji:"gyu"},
+{g:"combo", row:"gy-", char:"ぎょ", romaji:"gyo"},
+{g:"combo", row:"j-", char:"じゃ", romaji:"ja"},
+{g:"combo", row:"j-", char:"じゅ", romaji:"ju"},
+{g:"combo", row:"j-", char:"じょ", romaji:"jo"},
+{g:"combo", row:"by-", char:"びゃ", romaji:"bya"},
+{g:"combo", row:"by-", char:"びゅ", romaji:"byu"},
+{g:"combo", row:"by-", char:"びょ", romaji:"byo"},
+{g:"combo", row:"py-", char:"ぴゃ", romaji:"pya"},
+{g:"combo", row:"py-", char:"ぴゅ", romaji:"pyu"},
+{g:"combo", row:"py-", char:"ぴょ", romaji:"pyo"},
+];
+
+const GROUP_LABELS = { basic: "Basic (46)", voiced: "Voiced / Dakuten (25)", combo: "Combos / Yōon (33)" };
+
+(function(){
+  let activeGroups = new Set(["basic"]);
+  let quizMode = "char2romaji";
+  let deck = [];
+  let idx = 0;
+  let flipped = false;
+  let knownCount = 0;
+  let sessionTotal = 0;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  let jpVoice = null;
+  function loadVoices(){
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    jpVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+  }
+  if('speechSynthesis' in window){
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function speakJapanese(text, btn){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'ja-JP';
+    if(jpVoice) utter.voice = jpVoice;
+    utter.rate = 0.75;
+    if(btn){
+      btn.classList.add('playing');
+      utter.onend = () => btn.classList.remove('playing');
+      utter.onerror = () => btn.classList.remove('playing');
+    }
+    window.speechSynthesis.speak(utter);
+  }
+
+  function buildDeck(){
+    deck = shuffle(HIRAGANA.filter(v => activeGroups.has(v.g)));
+    idx = 0;
+    flipped = false;
+    knownCount = 0;
+    sessionTotal = deck.length;
+  }
+
+  function toggleGroup(g){
+    if(activeGroups.has(g)){
+      if(activeGroups.size > 1) activeGroups.delete(g);
+    } else {
+      activeGroups.add(g);
+    }
+    buildDeck();
+    render();
+  }
+
+  function setMode(m){
+    quizMode = m;
+    buildDeck();
+    render();
+  }
+
+  function flipCard(){ flipped = !flipped; render(); }
+
+  function nextCard(known){
+    if(known) knownCount++;
+    idx++;
+    flipped = false;
+    render();
+  }
+
+  function restart(){ buildDeck(); render(); }
+  function reshuffle(){
+    deck = shuffle(deck.slice(idx));
+    idx = 0;
+    flipped = false;
+    render();
+  }
+
+  function render(){
+    const app = document.getElementById('hg-app');
+    const remaining = deck.length - idx;
+    const progressPct = sessionTotal ? Math.round((idx/sessionTotal)*100) : 0;
+
+    let chipsHtml = Object.keys(GROUP_LABELS).map(g => `
+      <button class="hg-chip ${activeGroups.has(g) ? 'active':''}" data-group="${g}">${GROUP_LABELS[g]}</button>
+    `).join('');
+
+    let modesHtml = `
+      <button class="hg-mode-btn ${quizMode==='char2romaji'?'active':''}" data-mode="char2romaji">かな → romaji</button>
+      <button class="hg-mode-btn ${quizMode==='romaji2char'?'active':''}" data-mode="romaji2char">romaji → かな</button>
+    `;
+
+    if(idx >= deck.length && deck.length > 0){
+      app.innerHTML = `
+        <div class="hg-header">
+          <div class="hg-title"><span class="jp">ひらがな</span>Hiragana Drill</div>
+        </div>
+        <div class="hg-filters">${chipsHtml}</div>
+        <div class="hg-modes">${modesHtml}</div>
+        <div class="hg-done">
+          <div class="hg-big">よくできました！</div>
+          <div>You reviewed <strong>${sessionTotal}</strong> characters and knew <strong>${knownCount}</strong> of them.</div>
+          <button class="hg-restart" id="hg-restart-btn">Study again</button>
+        </div>
+      `;
+      document.getElementById('hg-restart-btn').onclick = restart;
+      wireFilterButtons();
+      return;
+    }
+
+    if(deck.length === 0){
+      app.innerHTML = `
+        <div class="hg-header"><div class="hg-title"><span class="jp">ひらがな</span>Hiragana Drill</div></div>
+        <div class="hg-filters">${chipsHtml}</div>
+        <div class="hg-modes">${modesHtml}</div>
+        <div class="hg-done">Select at least one set to begin.</div>
+      `;
+      wireFilterButtons();
+      return;
+    }
+
+    const card = deck[idx];
+    const frontIsChar = quizMode === "char2romaji";
+    const frontBig = frontIsChar
+      ? `<div class="hg-char">${card.char}</div>`
+      : `<div class="hg-romaji-big">${card.romaji}</div>`;
+    const backBig = frontIsChar
+      ? `<div class="hg-romaji-big">${card.romaji}</div>`
+      : `<div class="hg-char">${card.char}</div>`;
+
+    app.innerHTML = `
+      <div class="hg-header">
+        <div class="hg-title"><span class="jp">ひらがな</span>Hiragana Drill</div>
+        <div class="hg-sub">${sessionTotal} cards</div>
+      </div>
+      <div class="hg-filters">${chipsHtml}</div>
+      <div class="hg-modes">${modesHtml}</div>
+      <div class="hg-stats">
+        <span>${idx+1} / ${sessionTotal}</span>
+        <div class="hg-progress-bar"><div class="hg-progress-fill" style="width:${progressPct}%"></div></div>
+        <span>${remaining} left</span>
+      </div>
+      <div class="hg-card-wrap">
+        <div class="hg-card ${flipped ? 'flipped':''}" id="hg-card">
+          <div class="hg-face front">
+            <span class="hg-row-tag">${card.row}</span>
+            <span class="hg-group-tag">${GROUP_LABELS[card.g].split(' (')[0]}</span>
+            ${frontBig}
+            <div class="hg-hint">tap to reveal</div>
+            <button class="hg-speak" data-speak="${card.char}" title="Play pronunciation">🔊</button>
+          </div>
+          <div class="hg-face back">
+            <span class="hg-row-tag">${card.row}</span>
+            <span class="hg-group-tag">${GROUP_LABELS[card.g].split(' (')[0]}</span>
+            ${backBig}
+            <div class="hg-hint">tap to flip back</div>
+            <button class="hg-speak" data-speak="${card.char}" title="Play pronunciation">🔊</button>
+          </div>
+        </div>
+      </div>
+      <div class="hg-actions">
+        <button class="hg-btn hg-btn-again" id="hg-again">Still learning</button>
+        <button class="hg-btn hg-btn-know" id="hg-know">I know it ✓</button>
+      </div>
+      <div class="hg-bottom-row">
+        <span style="font-size:11px;color:var(--ink-soft)">${deck.length} in this set</span>
+        <button class="hg-btn-shuffle" id="hg-shuffle">🔀 Shuffle remaining</button>
+      </div>
+    `;
+
+    document.getElementById('hg-card').onclick = flipCard;
+    document.getElementById('hg-again').onclick = (e) => { e.stopPropagation(); nextCard(false); };
+    document.getElementById('hg-know').onclick = (e) => { e.stopPropagation(); nextCard(true); };
+    document.getElementById('hg-shuffle').onclick = (e) => { e.stopPropagation(); reshuffle(); };
+    app.querySelectorAll('.hg-speak').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); speakJapanese(btn.dataset.speak, btn); };
+    });
+    wireFilterButtons();
+  }
+
+  function wireFilterButtons(){
+    document.querySelectorAll('.hg-chip').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); toggleGroup(btn.dataset.group); };
+    });
+    document.querySelectorAll('.hg-mode-btn').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); setMode(btn.dataset.mode); };
+    });
+  }
+
+  buildDeck();
+  render();
+})();
+</script>
