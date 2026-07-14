@@ -1,0 +1,1487 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+
+.tw-root {
+  --ai: #24406b;
+  --ai-deep: #16294a;
+  --washi: #f6f1e4;
+  --washi-line: #e3d9c0;
+  --hanko: #a83c34;
+  --gold: #c79a3d;
+  --ink: #2a2620;
+  --ink-soft: #6b6455;
+  font-family: 'Noto Sans JP', 'Zen Maru Gothic', sans-serif;
+  color: var(--ink);
+  background: var(--washi);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(36,64,107,0.05), transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(168,60,52,0.06), transparent 45%);
+  border-radius: 18px;
+  padding: 20px;
+  max-width: 640px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.tw-root * { box-sizing: border-box; }
+
+.tw-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--washi-line);
+  padding-bottom: 10px;
+}
+.tw-title {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--ai-deep);
+  letter-spacing: 0.02em;
+}
+.tw-title .jp { color: var(--hanko); margin-right: 8px; }
+.tw-sub { font-size: 12px; color: var(--ink-soft); }
+
+.tw-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.tw-chip {
+  border: 1.5px solid var(--ai);
+  color: var(--ai);
+  background: transparent;
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+}
+.tw-chip.active { background: var(--ai); color: var(--washi); }
+.tw-chip:hover { transform: translateY(-1px); }
+.tw-chip-all {
+  border-color: var(--hanko); color: var(--hanko);
+}
+.tw-chip-all.active { background: var(--hanko); color: #fff; }
+
+.tw-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.tw-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--washi-line);
+  border-radius: 4px;
+  margin: 0 10px;
+  overflow: hidden;
+}
+.tw-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--hanko));
+  transition: width .3s ease;
+  border-radius: 4px;
+}
+
+.tw-card-wrap {
+  perspective: 1200px;
+  height: 260px;
+  margin-bottom: 16px;
+}
+.tw-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.3,.7,.3,1);
+}
+.tw-card.flipped { transform: rotateY(180deg); }
+.tw-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  border: 1.5px solid var(--washi-line);
+  background: #fffdf8;
+  box-shadow: 0 6px 20px rgba(22,41,74,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+.tw-face.back { transform: rotateY(180deg); }
+.tw-cat-tag {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ai);
+  border: 1px solid var(--ai);
+  border-radius: 6px;
+  padding: 2px 7px;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+}
+.tw-jp {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--ai-deep);
+  line-height: 1.25;
+  word-break: break-word;
+}
+.tw-reading {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+.tw-meaning {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--hanko);
+  line-height: 1.35;
+}
+.tw-hint {
+  font-size: 11px;
+  color: var(--ink-soft);
+  position: absolute;
+  bottom: 12px;
+  opacity: 0.75;
+}
+.tw-speak {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ai);
+  background: #fff;
+  color: var(--ai);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, color .12s ease;
+}
+.tw-speak:hover { transform: scale(1.07); }
+.tw-speak:active { transform: scale(0.94); }
+.tw-speak.playing { background: var(--ai); color: var(--washi); }
+
+.tw-actions { display: flex; gap: 10px; margin-bottom: 6px; }
+.tw-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .12s ease, opacity .12s ease;
+}
+.tw-btn:active { transform: scale(0.97); }
+.tw-btn-again { background: #fff; border: 1.5px solid var(--hanko); color: var(--hanko); }
+.tw-btn-know { background: var(--ai); color: var(--washi); }
+.tw-btn-shuffle {
+  background: transparent;
+  border: 1.5px solid var(--ink-soft);
+  color: var(--ink-soft);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.tw-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+.tw-done { text-align: center; padding: 44px 20px; }
+.tw-done .tw-big { font-family: 'Shippori Mincho', serif; font-size: 24px; color: var(--ai-deep); margin-bottom: 8px; }
+.tw-restart {
+  margin-top: 16px;
+  background: var(--hanko);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+</style>
+
+<div id="tw-app" class="tw-root"></div>
+
+<script>
+const WORDS = [
+{cat:"verbs", jp:"する", reading:"suru", en:"to be"},
+{cat:"verbs", jp:"ある", reading:"aru", en:"to have"},
+{cat:"verbs", jp:"持つ", reading:"motsu", en:"to have/hold"},
+{cat:"verbs", jp:"する", reading:"suru", en:"to do/make"},
+{cat:"verbs", jp:"壊す", reading:"kowasu", en:"to break"},
+{cat:"verbs", jp:"覆う", reading:"ōu", en:"to cover"},
+{cat:"verbs", jp:"引きつける", reading:"hikitsukeru", en:"to attract"},
+{cat:"verbs", jp:"休む", reading:"yasumu", en:"to rest"},
+{cat:"verbs", jp:"答える", reading:"kotaeru", en:"to answer"},
+{cat:"verbs", jp:"戦う", reading:"tatakau", en:"to fight"},
+{cat:"verbs", jp:"跳ぶ", reading:"tobu", en:"to jump"},
+{cat:"verbs", jp:"動かす", reading:"ugokasu", en:"to move"},
+{cat:"verbs", jp:"打つ", reading:"utsu", en:"to hit"},
+{cat:"verbs", jp:"濡らす", reading:"nurasu", en:"to wet"},
+{cat:"verbs", jp:"泣く", reading:"naku", en:"to cry"},
+{cat:"verbs", jp:"笑う", reading:"warau", en:"to laugh"},
+{cat:"verbs", jp:"叫ぶ", reading:"sakebu", en:"to shout"},
+{cat:"verbs", jp:"歌う", reading:"utau", en:"to sing"},
+{cat:"verbs", jp:"警告する", reading:"keikoku suru", en:"to warn"},
+{cat:"verbs", jp:"測る", reading:"hakaru", en:"to measure"},
+{cat:"verbs", jp:"量る", reading:"hakaru", en:"to weigh"},
+{cat:"verbs", jp:"愛する", reading:"aisuru", en:"to love"},
+{cat:"verbs", jp:"憎む", reading:"nikumu", en:"to hate"},
+{cat:"verbs", jp:"傷つける", reading:"kizutsukeru", en:"to hurt"},
+{cat:"verbs", jp:"出血する", reading:"shukketsu suru", en:"to bleed"},
+{cat:"verbs", jp:"治す", reading:"naosu", en:"to heal"},
+{cat:"verbs", jp:"汚す", reading:"yogosu", en:"to dirty"},
+{cat:"verbs", jp:"掃除する", reading:"souji suru", en:"to clean"},
+{cat:"verbs", jp:"掴む", reading:"tsukamu", en:"to grab"},
+{cat:"verbs", jp:"離す", reading:"hanasu", en:"to release"},
+{cat:"verbs", jp:"押す", reading:"osu", en:"to push"},
+{cat:"verbs", jp:"投げる", reading:"nageru", en:"to throw"},
+{cat:"verbs", jp:"切る", reading:"kiru", en:"to cut"},
+{cat:"verbs", jp:"縛る", reading:"shibaru", en:"to tie"},
+{cat:"verbs", jp:"解く", reading:"hodoku", en:"to untie"},
+{cat:"verbs", jp:"曲げる", reading:"mageru", en:"to bend/fold"},
+{cat:"verbs", jp:"混ぜる", reading:"mazeru", en:"to mix"},
+{cat:"verbs", jp:"分ける", reading:"wakeru", en:"to divide"},
+{cat:"verbs", jp:"足す", reading:"tasu", en:"to add"},
+{cat:"verbs", jp:"引く", reading:"hiku", en:"to subtract"},
+{cat:"verbs", jp:"掛ける", reading:"kakeru", en:"to multiply"},
+{cat:"verbs", jp:"消す", reading:"kesu", en:"to turn off"},
+{cat:"verbs", jp:"つける", reading:"tsukeru", en:"to turn on"},
+{cat:"verbs", jp:"破壊する", reading:"hakai suru", en:"to destroy"},
+{cat:"verbs", jp:"建てる", reading:"tateru", en:"to build"},
+{cat:"verbs", jp:"置く", reading:"oku", en:"to place"},
+{cat:"verbs", jp:"髪をとかす", reading:"kami o tokasu", en:"to comb"},
+{cat:"verbs", jp:"剃る", reading:"soru", en:"to shave"},
+{cat:"verbs", jp:"入浴する", reading:"nyūyoku suru", en:"to bathe"},
+{cat:"verbs", jp:"疑う", reading:"utagau", en:"to doubt"},
+{cat:"verbs", jp:"忘れる", reading:"wasureru", en:"to forget"},
+{cat:"verbs", jp:"思い出す", reading:"omoidasu", en:"to remember"},
+{cat:"verbs", jp:"集める", reading:"atsumeru", en:"to gather"},
+{cat:"verbs", jp:"分ける", reading:"wakeru", en:"to separate"},
+{cat:"verbs", jp:"送る", reading:"okuru", en:"to send"},
+{cat:"verbs", jp:"拾う", reading:"hirou", en:"to pick up"},
+{cat:"verbs", jp:"待つ", reading:"matsu", en:"to wait"},
+{cat:"verbs", jp:"旅行する", reading:"ryokou suru", en:"to travel"},
+{cat:"verbs", jp:"耐える", reading:"taeru", en:"to endure"},
+{cat:"verbs", jp:"計算する", reading:"keisan suru", en:"to calculate"},
+{cat:"verbs", jp:"貯金する", reading:"chokin suru", en:"to save (money)"},
+{cat:"verbs", jp:"使う", reading:"tsukau", en:"to spend"},
+{cat:"verbs", jp:"充電する", reading:"juuden suru", en:"to charge/load"},
+{cat:"verbs", jp:"ダウンロードする", reading:"daunrōdo suru", en:"to unload/download"},
+{cat:"verbs", jp:"機能する", reading:"kinou suru", en:"to function/work"},
+{cat:"verbs", jp:"紹介する", reading:"shoukai suru", en:"to present"},
+{cat:"verbs", jp:"受け入れる", reading:"ukeireru", en:"to accept"},
+{cat:"verbs", jp:"達成する", reading:"tassei suru", en:"to achieve"},
+{cat:"verbs", jp:"説明する", reading:"setsumei suru", en:"to explain"},
+{cat:"verbs", jp:"尋ねる", reading:"tazuneru", en:"to ask"},
+{cat:"verbs", jp:"弾く", reading:"hiku", en:"to touch/play (an instrument)"},
+{cat:"verbs", jp:"認める", reading:"mitomeru", en:"to recognize"},
+{cat:"verbs", jp:"勉強する", reading:"benkyou suru", en:"to study"},
+{cat:"verbs", jp:"達する", reading:"tassuru", en:"to reach"},
+{cat:"verbs", jp:"生まれる", reading:"umareru", en:"to be born"},
+{cat:"verbs", jp:"指導する", reading:"shidou suru", en:"to direct"},
+{cat:"verbs", jp:"走る", reading:"hashiru", en:"to run"},
+{cat:"verbs", jp:"使う", reading:"tsukau", en:"to use"},
+{cat:"verbs", jp:"払う", reading:"harau", en:"to pay"},
+{cat:"verbs", jp:"助ける", reading:"tasukeru", en:"to help"},
+{cat:"verbs", jp:"好き", reading:"suki", en:"to like"},
+{cat:"verbs", jp:"遊ぶ", reading:"asobu", en:"to play"},
+{cat:"verbs", jp:"聞く", reading:"kiku", en:"to listen"},
+{cat:"verbs", jp:"持ち上げる", reading:"mochiageru", en:"to lift"},
+{cat:"verbs", jp:"試みる", reading:"kokoromiru", en:"to try"},
+{cat:"verbs", jp:"開発する", reading:"kaihatsu suru", en:"to develop"},
+{cat:"verbs", jp:"指摘する", reading:"shiteki suru", en:"to point out"},
+{cat:"verbs", jp:"準備する", reading:"junbi suru", en:"to prepare"},
+{cat:"verbs", jp:"尋ねる", reading:"tazuneru", en:"to ask"},
+{cat:"verbs", jp:"提供する", reading:"teikyou suru", en:"to offer"},
+{cat:"verbs", jp:"発見する", reading:"hakken suru", en:"to discover"},
+{cat:"verbs", jp:"理解する", reading:"rikai suru", en:"to understand"},
+{cat:"verbs", jp:"果たす", reading:"hatasu", en:"to fulfill"},
+{cat:"verbs", jp:"持ち上げる", reading:"mochiageru", en:"to lift"},
+{cat:"verbs", jp:"確立する", reading:"kakuritsu suru", en:"to establish"},
+{cat:"verbs", jp:"参加する", reading:"sanka suru", en:"to participate"},
+{cat:"verbs", jp:"想像する", reading:"souzou suru", en:"to imagine"},
+{cat:"verbs", jp:"得る", reading:"eru", en:"to obtain"},
+{cat:"verbs", jp:"止める", reading:"tomeru", en:"to stop"},
+{cat:"verbs", jp:"選ぶ", reading:"erabu", en:"to choose"},
+{cat:"verbs", jp:"苦しむ", reading:"kurushimu", en:"to suffer"},
+{cat:"verbs", jp:"貸す", reading:"kasu", en:"to lend"},
+{cat:"verbs", jp:"許す", reading:"yurusu", en:"to allow"},
+{cat:"verbs", jp:"宣言する", reading:"sengen suru", en:"to declare"},
+{cat:"verbs", jp:"主張する", reading:"shuchou suru", en:"to affirm"},
+{cat:"verbs", jp:"比較する", reading:"hikaku suru", en:"to compare"},
+{cat:"verbs", jp:"保証する", reading:"hoshou suru", en:"to assure"},
+{cat:"verbs", jp:"支える", reading:"sasaeru", en:"to sustain"},
+{cat:"verbs", jp:"確認する", reading:"kakunin suru", en:"to check"},
+{cat:"verbs", jp:"支援する", reading:"shien suru", en:"to support"},
+{cat:"verbs", jp:"危険を冒す", reading:"kiken o okasu", en:"to risk"},
+{cat:"verbs", jp:"守る", reading:"mamoru", en:"to defend"},
+{cat:"verbs", jp:"保護する", reading:"hogo suru", en:"to protect"},
+{cat:"verbs", jp:"引き起こす", reading:"hikiokosu", en:"to provoke"},
+{cat:"verbs", jp:"隠す", reading:"kakusu", en:"to hide"},
+{cat:"verbs", jp:"減らす", reading:"herasu", en:"to reduce"},
+{cat:"verbs", jp:"告発する", reading:"kokuhatsu suru", en:"to accuse"},
+{cat:"verbs", jp:"解釈する", reading:"kaishaku suru", en:"to interpret"},
+{cat:"verbs", jp:"支配する", reading:"shihai suru", en:"to dominate"},
+{cat:"verbs", jp:"踊る", reading:"odoru", en:"to dance"},
+{cat:"verbs", jp:"料理する", reading:"ryouri suru", en:"to cook"},
+{cat:"verbs", jp:"描く", reading:"kaku", en:"to draw"},
+{cat:"verbs", jp:"夢を見る", reading:"yume o miru", en:"to dream"},
+{cat:"verbs", jp:"直す", reading:"naosu", en:"to fix"},
+{cat:"verbs", jp:"建てる", reading:"tateru", en:"to build"},
+{cat:"verbs", jp:"する", reading:"suru", en:"to do/make"},
+{cat:"verbs", jp:"いる", reading:"iru", en:"to be"},
+{cat:"verbs", jp:"いる", reading:"iru", en:"to be (temporary)"},
+{cat:"verbs", jp:"持つ", reading:"motsu", en:"to have"},
+{cat:"verbs", jp:"できる", reading:"dekiru", en:"to be able to"},
+{cat:"verbs", jp:"言う", reading:"iu", en:"to say"},
+{cat:"verbs", jp:"見る", reading:"miru", en:"to see"},
+{cat:"verbs", jp:"与える", reading:"ataeru", en:"to give"},
+{cat:"verbs", jp:"知る", reading:"shiru", en:"to know"},
+{cat:"verbs", jp:"欲しい", reading:"hoshii", en:"to want/love"},
+{cat:"verbs", jp:"到着する", reading:"tōchaku suru", en:"to arrive"},
+{cat:"verbs", jp:"過ぎる", reading:"sugiru", en:"to pass/happen"},
+{cat:"verbs", jp:"義務", reading:"gimu", en:"to owe/must"},
+{cat:"verbs", jp:"置く", reading:"oku", en:"to put"},
+{cat:"verbs", jp:"見える", reading:"mieru", en:"to seem"},
+{cat:"verbs", jp:"残る", reading:"nokoru", en:"to stay/remain"},
+{cat:"verbs", jp:"信じる", reading:"shinjiru", en:"to believe"},
+{cat:"verbs", jp:"話す", reading:"hanasu", en:"to speak"},
+{cat:"verbs", jp:"運ぶ", reading:"hakobu", en:"to carry/take"},
+{cat:"verbs", jp:"去る", reading:"saru", en:"to leave"},
+{cat:"verbs", jp:"続ける", reading:"tsuzukeru", en:"to follow"},
+{cat:"verbs", jp:"見つける", reading:"mitsukeru", en:"to find"},
+{cat:"verbs", jp:"呼ぶ", reading:"yobu", en:"to call"},
+{cat:"verbs", jp:"来る", reading:"kuru", en:"to come"},
+{cat:"verbs", jp:"考える", reading:"kangaeru", en:"to think"},
+{cat:"verbs", jp:"出発する", reading:"shuppatsu suru", en:"to leave"},
+{cat:"verbs", jp:"戻る", reading:"modoru", en:"to return"},
+{cat:"verbs", jp:"取る", reading:"toru", en:"to take/drink"},
+{cat:"verbs", jp:"知り合う", reading:"shiriauto", en:"to know (someone)"},
+{cat:"verbs", jp:"住む", reading:"sumu", en:"to live"},
+{cat:"verbs", jp:"感じる", reading:"kanjiru", en:"to feel"},
+{cat:"verbs", jp:"試す", reading:"tamesu", en:"to try/treat"},
+{cat:"verbs", jp:"見る", reading:"miru", en:"to look at"},
+{cat:"verbs", jp:"数える", reading:"kazoeru", en:"to count/tell"},
+{cat:"verbs", jp:"始める", reading:"hajimeru", en:"to start"},
+{cat:"verbs", jp:"待つ", reading:"matsu", en:"to wait/hope"},
+{cat:"verbs", jp:"探す", reading:"sagasu", en:"to search/look for"},
+{cat:"verbs", jp:"入る", reading:"hairu", en:"to enter"},
+{cat:"verbs", jp:"働く", reading:"hataraku", en:"to work"},
+{cat:"verbs", jp:"書く", reading:"kaku", en:"to write"},
+{cat:"verbs", jp:"失う", reading:"ushinau", en:"to lose"},
+{cat:"verbs", jp:"生産する", reading:"seisan suru", en:"to produce"},
+{cat:"verbs", jp:"起こる", reading:"okoru", en:"to happen"},
+{cat:"verbs", jp:"理解する", reading:"rikai suru", en:"to understand"},
+{cat:"verbs", jp:"頼む", reading:"tanomu", en:"to ask for"},
+{cat:"verbs", jp:"受け取る", reading:"uketoru", en:"to receive"},
+{cat:"verbs", jp:"思い出す", reading:"omoidasu", en:"to remember"},
+{cat:"verbs", jp:"終わる", reading:"owaru", en:"to finish"},
+{cat:"verbs", jp:"許可する", reading:"kyoka suru", en:"to allow"},
+{cat:"verbs", jp:"現れる", reading:"arawareru", en:"to appear"},
+{cat:"verbs", jp:"手に入れる", reading:"te ni ireru", en:"to get"},
+{cat:"verbs", jp:"始める", reading:"hajimeru", en:"to begin"},
+{cat:"verbs", jp:"役立つ", reading:"yakudatsu", en:"to serve"},
+{cat:"verbs", jp:"取り出す", reading:"toridasu", en:"to take out"},
+{cat:"verbs", jp:"必要とする", reading:"hitsuyō to suru", en:"to need"},
+{cat:"verbs", jp:"読む", reading:"yomu", en:"to read"},
+{cat:"verbs", jp:"落ちる", reading:"ochiru", en:"to fall"},
+{cat:"verbs", jp:"変える", reading:"kaeru", en:"to change"},
+{cat:"verbs", jp:"渡す", reading:"watasu", en:"to deliver"},
+{cat:"verbs", jp:"解決する", reading:"kaiketsu suru", en:"to solve"},
+{cat:"verbs", jp:"混乱させる", reading:"konran saseru", en:"to confuse"},
+{cat:"verbs", jp:"心配する", reading:"shinpai suru", en:"to worry"},
+{cat:"verbs", jp:"祝う", reading:"iwau", en:"to celebrate"},
+{cat:"verbs", jp:"降りる", reading:"oriru", en:"to descend"},
+{cat:"verbs", jp:"感謝する", reading:"kansha suru", en:"to thank"},
+{cat:"verbs", jp:"信頼する", reading:"shinrai suru", en:"to trust"},
+{cat:"verbs", jp:"嘘をつく", reading:"uso o tsuku", en:"to lie"},
+{cat:"verbs", jp:"罪を犯す", reading:"tsumi o okasu", en:"to sin"},
+{cat:"verbs", jp:"調査する", reading:"chōsa suru", en:"to investigate"},
+{cat:"verbs", jp:"逃げる", reading:"nigeru", en:"to flee"},
+{cat:"verbs", jp:"航海する", reading:"kōkai suru", en:"to navigate"},
+{cat:"verbs", jp:"引き寄せる", reading:"hiki yoseru", en:"to attract"},
+{cat:"verbs", jp:"現れる", reading:"arawareru", en:"to appear"},
+{cat:"verbs", jp:"消える", reading:"kieru", en:"to disappear"},
+{cat:"verbs", jp:"当てる", reading:"ateru", en:"to guess"},
+{cat:"verbs", jp:"従う", reading:"shitagau", en:"to obey"},
+{cat:"verbs", jp:"間違える", reading:"machigaeru", en:"to be mistaken"},
+{cat:"verbs", jp:"文句を言う", reading:"monku o iu", en:"to complain"},
+{cat:"verbs", jp:"泳ぐ", reading:"oyogu", en:"to swim"},
+{cat:"verbs", jp:"噛む", reading:"kamu", en:"to chew/bite"},
+{cat:"verbs", jp:"磨く", reading:"migaku", en:"to brush/polish"},
+{cat:"verbs", jp:"沸かす", reading:"wakasu", en:"to boil (water)"},
+{cat:"verbs", jp:"焼く", reading:"yaku", en:"to bake/grill"},
+{cat:"verbs", jp:"煮る", reading:"niru", en:"to boil (food)/stew"},
+{cat:"verbs", jp:"冷やす", reading:"hiyasu", en:"to cool down"},
+{cat:"verbs", jp:"味わう", reading:"ajiwau", en:"to taste/savor"},
+{cat:"verbs", jp:"太る", reading:"futoru", en:"to gain weight"},
+{cat:"verbs", jp:"痩せる", reading:"yaseru", en:"to lose weight"},
+{cat:"verbs", jp:"脱ぐ", reading:"nugu", en:"to undress/take off (clothes)"},
+{cat:"verbs", jp:"履く", reading:"haku", en:"to wear (shoes/pants)"},
+{cat:"verbs", jp:"被る", reading:"kaburu", en:"to wear (a hat)"},
+{cat:"verbs", jp:"通う", reading:"kayou", en:"to commute"},
+{cat:"verbs", jp:"急ぐ", reading:"isogu", en:"to hurry"},
+{cat:"verbs", jp:"混む", reading:"komu", en:"to be crowded"},
+{cat:"verbs", jp:"寄る", reading:"yoru", en:"to stop by"},
+{cat:"verbs", jp:"遅れる", reading:"okureru", en:"to be late"},
+{cat:"verbs", jp:"間に合う", reading:"maniau", en:"to be on time"},
+{cat:"verbs", jp:"並ぶ", reading:"narabu", en:"to line up"},
+{cat:"verbs", jp:"並べる", reading:"naraberu", en:"to set up/arrange"},
+{cat:"verbs", jp:"泊まる", reading:"tomaru", en:"to stay (at a hotel)"},
+{cat:"verbs", jp:"通る", reading:"tōru", en:"to pass through"},
+{cat:"verbs", jp:"曲がる", reading:"magaru", en:"to turn"},
+{cat:"verbs", jp:"登る", reading:"noboru", en:"to climb"},
+{cat:"verbs", jp:"滑る", reading:"suberu", en:"to slide/slip"},
+{cat:"verbs", jp:"座る", reading:"suwaru", en:"to sit"},
+{cat:"verbs", jp:"立つ", reading:"tatsu", en:"to stand"},
+{cat:"verbs", jp:"眠る", reading:"nemuru", en:"to sleep"},
+{cat:"verbs", jp:"祈る", reading:"inoru", en:"to pray"},
+{cat:"verbs", jp:"包む", reading:"tsutsumu", en:"to wrap"},
+{cat:"verbs", jp:"沸く", reading:"waku", en:"to reach a boil"},
+{cat:"verbs", jp:"乾く", reading:"kawaku", en:"to get dry"},
+{cat:"verbs", jp:"乾かす", reading:"kawakasu", en:"to dry (something)"},
+{cat:"verbs", jp:"凍る", reading:"kōru", en:"to freeze"},
+{cat:"verbs", jp:"溶ける", reading:"tokeru", en:"to melt"},
+{cat:"verbs", jp:"光る", reading:"hikaru", en:"to shine"},
+{cat:"verbs", jp:"揺れる", reading:"yureru", en:"to shake/sway"},
+{cat:"verbs", jp:"晴れる", reading:"hareru", en:"to clear up (weather)"},
+{cat:"verbs", jp:"曇る", reading:"kumoru", en:"to become cloudy"},
+{cat:"verbs", jp:"吹く", reading:"fuku", en:"to blow"},
+{cat:"verbs", jp:"咲く", reading:"saku", en:"to bloom"},
+{cat:"verbs", jp:"散る", reading:"chiru", en:"to scatter/fall (petals)"},
+{cat:"verbs", jp:"育てる", reading:"sodateru", en:"to raise/bring up"},
+{cat:"verbs", jp:"飼う", reading:"kau", en:"to keep/own (a pet)"},
+{cat:"verbs", jp:"誘う", reading:"sasou", en:"to invite"},
+{cat:"verbs", jp:"断る", reading:"kotowaru", en:"to refuse"},
+{cat:"verbs", jp:"謝る", reading:"ayamaru", en:"to apologize"},
+{cat:"verbs", jp:"励ます", reading:"hagemasu", en:"to encourage"},
+{cat:"verbs", jp:"驚く", reading:"odoroku", en:"to be surprised"},
+{cat:"verbs", jp:"怒る", reading:"okoru", en:"to get angry"},
+{cat:"verbs", jp:"喜ぶ", reading:"yorokobu", en:"to be glad"},
+{cat:"verbs", jp:"悲しむ", reading:"kanashimu", en:"to grieve"},
+{cat:"verbs", jp:"困る", reading:"komaru", en:"to be in trouble"},
+{cat:"verbs", jp:"迷う", reading:"mayou", en:"to get lost/hesitate"},
+{cat:"verbs", jp:"黙る", reading:"damaru", en:"to be silent"},
+{cat:"verbs", jp:"喋る", reading:"shaberu", en:"to chat"},
+{cat:"verbs", jp:"伝える", reading:"tsutaeru", en:"to convey/tell"},
+{cat:"verbs", jp:"届ける", reading:"todokeru", en:"to deliver"},
+{cat:"verbs", jp:"飾る", reading:"kazaru", en:"to decorate"},
+{cat:"verbs", jp:"片付ける", reading:"katazukeru", en:"to tidy up"},
+{cat:"verbs", jp:"捨てる", reading:"suteru", en:"to throw away"},
+{cat:"verbs", jp:"隠れる", reading:"kakureru", en:"to hide (oneself)"},
+{cat:"verbs", jp:"見せる", reading:"miseru", en:"to show"},
+{cat:"verbs", jp:"比べる", reading:"kuraberu", en:"to compare"},
+{cat:"verbs", jp:"調べる", reading:"shiraberu", en:"to investigate/look up"},
+{cat:"verbs", jp:"増える", reading:"fueru", en:"to increase"},
+{cat:"verbs", jp:"減る", reading:"heru", en:"to decrease"},
+{cat:"verbs", jp:"変わる", reading:"kawaru", en:"to change (intransitive)"},
+{cat:"verbs", jp:"直る", reading:"naoru", en:"to be repaired"},
+{cat:"verbs", jp:"治る", reading:"naoru", en:"to be cured/get well"},
+{cat:"verbs", jp:"残す", reading:"nokosu", en:"to leave (something) behind"},
+{cat:"verbs", jp:"進む", reading:"susumu", en:"to advance/progress"},
+{cat:"verbs", jp:"慣れる", reading:"nareru", en:"to get used to"},
+{cat:"verbs", jp:"飽きる", reading:"akiru", en:"to get tired of"},
+{cat:"verbs", jp:"諦める", reading:"akirameru", en:"to give up"},
+{cat:"verbs", jp:"頑張る", reading:"ganbaru", en:"to do one's best"},
+{cat:"verbs", jp:"生きる", reading:"ikiru", en:"to live"},
+{cat:"verbs", jp:"死ぬ", reading:"shinu", en:"to die"},
+{cat:"verbs", jp:"殺す", reading:"korosu", en:"to kill"},
+{cat:"verbs", jp:"盗む", reading:"nusumu", en:"to steal"},
+{cat:"verbs", jp:"捕まえる", reading:"tsukamaeru", en:"to catch/arrest"},
+{cat:"verbs", jp:"勝つ", reading:"katsu", en:"to win"},
+{cat:"verbs", jp:"負ける", reading:"makeru", en:"to lose (a game)"},
+{cat:"verbs", jp:"噛み付く", reading:"kamitsuku", en:"to snap at/bite into"},
+{cat:"verbs", jp:"叩く", reading:"tataku", en:"to strike/tap"},
+{cat:"verbs", jp:"盗撮する", reading:"tousatsu suru", en:"to take a sneak photo"},
+{cat:"verbs", jp:"繰り返す", reading:"kurikaesu", en:"to repeat"},
+{cat:"verbs", jp:"叫ぶ", reading:"sakebu", en:"to scream"},
+{cat:"verbs", jp:"叫ぶ", reading:"sakebu", en:"to yell"},
+{cat:"verbs", jp:"祈祷する", reading:"kitou suru", en:"to perform a prayer"},
+{cat:"verbs", jp:"感謝する", reading:"kansha suru", en:"to appreciate"},
+{cat:"verbs", jp:"衝突する", reading:"shoutotsu suru", en:"to collide"},
+{cat:"verbs", jp:"爆発する", reading:"bakuhatsu suru", en:"to explode"},
+{cat:"verbs", jp:"呼吸する", reading:"kokyuu suru", en:"to breathe"},
+{cat:"verbs", jp:"感動する", reading:"kandou suru", en:"to be moved/touched"},
+{cat:"verbs", jp:"緊張する", reading:"kinjou suru", en:"to get nervous"},
+{cat:"verbs", jp:"合格する", reading:"goukaku suru", en:"to pass (an exam)"},
+{cat:"verbs", jp:"失敗する", reading:"shippai suru", en:"to fail"},
+{cat:"nouns", jp:"時間", reading:"jikan", en:"time/weather"},
+{cat:"nouns", jp:"年", reading:"nen", en:"year"},
+{cat:"nouns", jp:"日", reading:"hi", en:"day"},
+{cat:"nouns", jp:"年", reading:"nen", en:"year"},
+{cat:"nouns", jp:"日", reading:"hi", en:"day"},
+{cat:"nouns", jp:"回", reading:"kai", en:"time (occurrence)"},
+{cat:"nouns", jp:"人", reading:"hito", en:"person"},
+{cat:"nouns", jp:"男", reading:"otoko", en:"man"},
+{cat:"nouns", jp:"女", reading:"onna", en:"woman"},
+{cat:"nouns", jp:"物", reading:"mono", en:"thing"},
+{cat:"nouns", jp:"場合", reading:"baai", en:"case"},
+{cat:"nouns", jp:"国", reading:"kuni", en:"country"},
+{cat:"nouns", jp:"瞬間", reading:"shunkan", en:"moment"},
+{cat:"nouns", jp:"形", reading:"katachi", en:"form, shape"},
+{cat:"nouns", jp:"天気", reading:"tenki", en:"time, weather"},
+{cat:"nouns", jp:"部分", reading:"bubun", en:"part"},
+{cat:"nouns", jp:"命", reading:"inochi", en:"life"},
+{cat:"nouns", jp:"仕事", reading:"shigoto", en:"work, job"},
+{cat:"nouns", jp:"点", reading:"ten", en:"point"},
+{cat:"nouns", jp:"手", reading:"te", en:"hand"},
+{cat:"nouns", jp:"人々", reading:"hitobito", en:"people"},
+{cat:"nouns", jp:"時間", reading:"jikan", en:"hour"},
+{cat:"nouns", jp:"終わり", reading:"owari", en:"end"},
+{cat:"nouns", jp:"種類", reading:"shurui", en:"type, kind"},
+{cat:"nouns", jp:"例", reading:"rei", en:"example"},
+{cat:"nouns", jp:"側", reading:"kawa", en:"side"},
+{cat:"nouns", jp:"問題", reading:"mondai", en:"problem"},
+{cat:"nouns", jp:"アカウント", reading:"akaunto", en:"account, bill"},
+{cat:"nouns", jp:"子供", reading:"kodomo", en:"child, boy"},
+{cat:"nouns", jp:"子供", reading:"kodomo", en:"child, girl"},
+{cat:"nouns", jp:"事実", reading:"jijitsu", en:"fact"},
+{cat:"nouns", jp:"名前", reading:"namae", en:"name"},
+{cat:"nouns", jp:"友達", reading:"tomodachi", en:"friend (male)"},
+{cat:"nouns", jp:"友達", reading:"tomodachi", en:"friend (female)"},
+{cat:"nouns", jp:"権利", reading:"kenri", en:"right, law"},
+{cat:"nouns", jp:"都市", reading:"toshi", en:"city"},
+{cat:"nouns", jp:"水", reading:"mizu", en:"water"},
+{cat:"nouns", jp:"夜", reading:"yoru", en:"night"},
+{cat:"nouns", jp:"車", reading:"kuruma", en:"car"},
+{cat:"nouns", jp:"通り", reading:"toori", en:"street"},
+{cat:"nouns", jp:"家族", reading:"kazoku", en:"family"},
+{cat:"nouns", jp:"歴史", reading:"rekishi", en:"history, story"},
+{cat:"nouns", jp:"父親", reading:"chichioya", en:"father"},
+{cat:"nouns", jp:"母親", reading:"hahaoya", en:"mother"},
+{cat:"nouns", jp:"兄", reading:"ani", en:"brother"},
+{cat:"nouns", jp:"姉", reading:"ane", en:"sister"},
+{cat:"nouns", jp:"息子", reading:"musuko", en:"son"},
+{cat:"nouns", jp:"娘", reading:"musume", en:"daughter"},
+{cat:"nouns", jp:"お金", reading:"okane", en:"money"},
+{cat:"nouns", jp:"体", reading:"karada", en:"body"},
+{cat:"nouns", jp:"グループ", reading:"guruupu", en:"group"},
+{cat:"nouns", jp:"関係", reading:"kankei", en:"relationship"},
+{cat:"nouns", jp:"力", reading:"chikara", en:"strength, force"},
+{cat:"nouns", jp:"秒", reading:"byou", en:"second"},
+{cat:"nouns", jp:"月", reading:"tsuki", en:"month"},
+{cat:"nouns", jp:"週", reading:"shuu", en:"week"},
+{cat:"nouns", jp:"朝", reading:"asa", en:"morning"},
+{cat:"nouns", jp:"午後", reading:"gogo", en:"afternoon, evening"},
+{cat:"nouns", jp:"田舎", reading:"inaka", en:"field, countryside"},
+{cat:"nouns", jp:"テーブル", reading:"teeburu", en:"table"},
+{cat:"nouns", jp:"ドア", reading:"doa", en:"door"},
+{cat:"nouns", jp:"窓", reading:"mado", en:"window"},
+{cat:"nouns", jp:"椅子", reading:"isu", en:"chair"},
+{cat:"nouns", jp:"肉", reading:"niku", en:"meat"},
+{cat:"nouns", jp:"魚", reading:"sakana", en:"fish"},
+{cat:"nouns", jp:"果物", reading:"kudamono", en:"fruit"},
+{cat:"nouns", jp:"野菜", reading:"yasai", en:"vegetable"},
+{cat:"nouns", jp:"パン", reading:"pan", en:"bread"},
+{cat:"nouns", jp:"砂糖", reading:"satou", en:"sugar"},
+{cat:"nouns", jp:"塩", reading:"shio", en:"salt"},
+{cat:"nouns", jp:"ワイン", reading:"wain", en:"wine"},
+{cat:"nouns", jp:"コーヒー", reading:"koohii", en:"coffee"},
+{cat:"nouns", jp:"お茶", reading:"ocha", en:"tea"},
+{cat:"nouns", jp:"牛乳", reading:"gyuunyuu", en:"milk"},
+{cat:"nouns", jp:"チョコレート", reading:"chokoreeto", en:"chocolate"},
+{cat:"nouns", jp:"音楽", reading:"ongaku", en:"music"},
+{cat:"nouns", jp:"歌", reading:"uta", en:"song"},
+{cat:"nouns", jp:"本", reading:"hon", en:"book"},
+{cat:"nouns", jp:"雑誌", reading:"zasshi", en:"magazine"},
+{cat:"nouns", jp:"新聞", reading:"shinbun", en:"newspaper"},
+{cat:"nouns", jp:"映画", reading:"eiga", en:"movie"},
+{cat:"nouns", jp:"シリーズ", reading:"shiirizu", en:"series"},
+{cat:"nouns", jp:"スポーツ", reading:"supootsu", en:"sport"},
+{cat:"nouns", jp:"ゲーム", reading:"geemu", en:"game"},
+{cat:"nouns", jp:"旅行", reading:"ryokou", en:"trip"},
+{cat:"nouns", jp:"ホテル", reading:"hoteru", en:"hotel"},
+{cat:"nouns", jp:"ベッド", reading:"beddo", en:"bed"},
+{cat:"nouns", jp:"トイレ", reading:"toire", en:"bathroom"},
+{cat:"nouns", jp:"シャワー", reading:"shawaa", en:"shower"},
+{cat:"nouns", jp:"服", reading:"fuku", en:"clothes"},
+{cat:"nouns", jp:"靴", reading:"kutsu", en:"shoe"},
+{cat:"nouns", jp:"帽子", reading:"boushi", en:"hat"},
+{cat:"nouns", jp:"時計", reading:"tokei", en:"watch, clock"},
+{cat:"nouns", jp:"箱", reading:"hako", en:"box"},
+{cat:"nouns", jp:"袋", reading:"fukuro", en:"bag"},
+{cat:"nouns", jp:"電話", reading:"denwa", en:"telephone"},
+{cat:"nouns", jp:"コンピュータ", reading:"konpyuuta", en:"computer"},
+{cat:"nouns", jp:"光", reading:"hikari", en:"light"},
+{cat:"nouns", jp:"影", reading:"kage", en:"shadow"},
+{cat:"nouns", jp:"色", reading:"iro", en:"color"},
+{cat:"nouns", jp:"回", reading:"kai", en:"time/occasion"},
+{cat:"nouns", jp:"学校", reading:"gakkou", en:"school"},
+{cat:"nouns", jp:"先生", reading:"sensei", en:"teacher"},
+{cat:"nouns", jp:"学生", reading:"gakusei", en:"student"},
+{cat:"nouns", jp:"会社", reading:"kaisha", en:"company"},
+{cat:"nouns", jp:"駅", reading:"eki", en:"station"},
+{cat:"nouns", jp:"店", reading:"mise", en:"shop/store"},
+{cat:"nouns", jp:"病院", reading:"byouin", en:"hospital"},
+{cat:"nouns", jp:"空", reading:"sora", en:"sky"},
+{cat:"nouns", jp:"海", reading:"umi", en:"sea/ocean"},
+{cat:"nouns", jp:"山", reading:"yama", en:"mountain"},
+{cat:"nouns", jp:"川", reading:"kawa", en:"river"},
+{cat:"nouns", jp:"森", reading:"mori", en:"forest"},
+{cat:"nouns", jp:"花", reading:"hana", en:"flower"},
+{cat:"nouns", jp:"犬", reading:"inu", en:"dog"},
+{cat:"nouns", jp:"猫", reading:"neko", en:"cat"},
+{cat:"nouns", jp:"鳥", reading:"tori", en:"bird"},
+{cat:"nouns", jp:"太陽", reading:"taiyou", en:"sun"},
+{cat:"nouns", jp:"星", reading:"hoshi", en:"star"},
+{cat:"nouns", jp:"風", reading:"kaze", en:"wind"},
+{cat:"nouns", jp:"雨", reading:"ame", en:"rain"},
+{cat:"nouns", jp:"雪", reading:"yuki", en:"snow"},
+{cat:"nouns", jp:"眼鏡", reading:"megane", en:"glasses"},
+{cat:"nouns", jp:"鞄", reading:"kaban", en:"bag/briefcase"},
+{cat:"nouns", jp:"鍵", reading:"kagi", en:"key"},
+{cat:"nouns", jp:"傘", reading:"kasa", en:"umbrella"},
+{cat:"nouns", jp:"紙", reading:"kami", en:"paper"},
+{cat:"nouns", jp:"手紙", reading:"tegami", en:"letter"},
+{cat:"nouns", jp:"辞書", reading:"jisho", en:"dictionary"},
+{cat:"nouns", jp:"電気", reading:"denki", en:"electricity/light"},
+{cat:"nouns", jp:"火", reading:"hi", en:"fire"},
+{cat:"nouns", jp:"心", reading:"kokoro", en:"heart/mind"},
+{cat:"nouns", jp:"声", reading:"koe", en:"voice"},
+{cat:"nouns", jp:"夢", reading:"yume", en:"dream"},
+{cat:"nouns", jp:"顔", reading:"kao", en:"face"},
+{cat:"nouns", jp:"目", reading:"me", en:"eye"},
+{cat:"nouns", jp:"耳", reading:"mimi", en:"ear"},
+{cat:"nouns", jp:"口", reading:"kuchi", en:"mouth"},
+{cat:"nouns", jp:"鼻", reading:"hana", en:"nose"},
+{cat:"nouns", jp:"足", reading:"ashi", en:"foot/leg"},
+{cat:"nouns", jp:"指", reading:"yubi", en:"finger"},
+{cat:"nouns", jp:"頭", reading:"atama", en:"head"},
+{cat:"nouns", jp:"昨日", reading:"kinou", en:"yesterday"},
+{cat:"nouns", jp:"今日", reading:"kyou", en:"today"},
+{cat:"nouns", jp:"明日", reading:"ashita", en:"tomorrow"},
+{cat:"nouns", jp:"毎日", reading:"mainichi", en:"every day"},
+{cat:"nouns", jp:"世界", reading:"sekai", en:"world"},
+{cat:"nouns", jp:"平和", reading:"heiwa", en:"peace"},
+{cat:"nouns", jp:"秘密", reading:"himitsu", en:"secret"},
+{cat:"nouns", jp:"愛", reading:"ai", en:"love (noun)"},
+{cat:"adjectives", jp:"良い", reading:"yoi", en:"good"},
+{cat:"adjectives", jp:"悪い", reading:"warui", en:"bad"},
+{cat:"adjectives", jp:"大きい", reading:"ookii", en:"big"},
+{cat:"adjectives", jp:"小さい", reading:"chiisai", en:"small"},
+{cat:"adjectives", jp:"高い", reading:"takai", en:"tall"},
+{cat:"adjectives", jp:"低い", reading:"hikui", en:"short"},
+{cat:"adjectives", jp:"長い", reading:"nagai", en:"long"},
+{cat:"adjectives", jp:"短い", reading:"mijikai", en:"short (length)"},
+{cat:"adjectives", jp:"簡単", reading:"kantan", en:"easy"},
+{cat:"adjectives", jp:"難しい", reading:"muzukashii", en:"difficult"},
+{cat:"adjectives", jp:"速い", reading:"hayai", en:"fast"},
+{cat:"adjectives", jp:"遅い", reading:"osoi", en:"slow"},
+{cat:"adjectives", jp:"新しい", reading:"atarashii", en:"new"},
+{cat:"adjectives", jp:"古い", reading:"furui", en:"old"},
+{cat:"adjectives", jp:"高い", reading:"takai", en:"expensive"},
+{cat:"adjectives", jp:"安い", reading:"yasui", en:"cheap"},
+{cat:"adjectives", jp:"強い", reading:"tsuyoi", en:"strong"},
+{cat:"adjectives", jp:"弱い", reading:"yowai", en:"weak"},
+{cat:"adjectives", jp:"幸せ", reading:"shiawase", en:"happy"},
+{cat:"adjectives", jp:"悲しい", reading:"kanashii", en:"sad"},
+{cat:"adjectives", jp:"熱い", reading:"atsui", en:"hot"},
+{cat:"adjectives", jp:"寒い", reading:"samui", en:"cold"},
+{cat:"adjectives", jp:"明るい", reading:"akarui", en:"clear"},
+{cat:"adjectives", jp:"暗い", reading:"kurai", en:"dark"},
+{cat:"adjectives", jp:"硬い", reading:"katai", en:"hard"},
+{cat:"adjectives", jp:"柔らかい", reading:"yawarakai", en:"soft"},
+{cat:"adjectives", jp:"清潔", reading:"seiketsu", en:"clean"},
+{cat:"adjectives", jp:"汚い", reading:"kitanai", en:"dirty"},
+{cat:"adjectives", jp:"満杯", reading:"manpai", en:"full"},
+{cat:"adjectives", jp:"空の", reading:"kara no", en:"empty"},
+{cat:"adjectives", jp:"甘い", reading:"amai", en:"sweet"},
+{cat:"adjectives", jp:"苦い", reading:"nigai", en:"bitter"},
+{cat:"adjectives", jp:"有名", reading:"yuumei", en:"famous"},
+{cat:"adjectives", jp:"未知の", reading:"michi no", en:"unknown"},
+{cat:"adjectives", jp:"裕福", reading:"yuufuku", en:"rich"},
+{cat:"adjectives", jp:"貧しい", reading:"mazushii", en:"poor"},
+{cat:"adjectives", jp:"開いている", reading:"aite iru", en:"open"},
+{cat:"adjectives", jp:"閉じた", reading:"tojita", en:"closed"},
+{cat:"adjectives", jp:"面白い", reading:"omoshiroi", en:"interesting"},
+{cat:"adjectives", jp:"退屈", reading:"taikutsu", en:"boring"},
+{cat:"adjectives", jp:"正直", reading:"shoujiki", en:"honest"},
+{cat:"adjectives", jp:"嘘つき", reading:"usotsuki", en:"liar"},
+{cat:"adjectives", jp:"疲れた", reading:"tsukareta", en:"tired"},
+{cat:"adjectives", jp:"エネルギッシュ", reading:"enerugisshu", en:"energetic"},
+{cat:"adjectives", jp:"親切", reading:"shinsetsu", en:"kind"},
+{cat:"adjectives", jp:"残酷", reading:"zankoku", en:"cruel"},
+{cat:"adjectives", jp:"礼儀正しい", reading:"reigi tadashii", en:"polite"},
+{cat:"adjectives", jp:"無礼", reading:"burei", en:"rude"},
+{cat:"adjectives", jp:"忠実", reading:"chuujitsu", en:"faithful"},
+{cat:"adjectives", jp:"不忠実", reading:"fuchuujitsu", en:"unfaithful"},
+{cat:"adjectives", jp:"公正", reading:"kousei", en:"fair"},
+{cat:"adjectives", jp:"不公正", reading:"fukousei", en:"unfair"},
+{cat:"adjectives", jp:"安全", reading:"anzen", en:"safe"},
+{cat:"adjectives", jp:"危険", reading:"kiken", en:"dangerous"},
+{cat:"adjectives", jp:"必要", reading:"hitsuyou", en:"necessary"},
+{cat:"adjectives", jp:"不必要", reading:"fuhitsuyou", en:"unnecessary"},
+{cat:"adjectives", jp:"忙しい", reading:"isogashii", en:"busy"},
+{cat:"adjectives", jp:"自由", reading:"jiyuu", en:"free"},
+{cat:"adjectives", jp:"責任", reading:"sekinin", en:"responsible"},
+{cat:"adjectives", jp:"無責任", reading:"musekinin", en:"irresponsible"},
+{cat:"adjectives", jp:"異なる", reading:"kotonaru", en:"different"},
+{cat:"adjectives", jp:"同じ", reading:"onaji", en:"same"},
+{cat:"adjectives", jp:"深い", reading:"fukai", en:"deep"},
+{cat:"adjectives", jp:"表面的", reading:"hyōmen-teki", en:"superficial"},
+{cat:"adjectives", jp:"重い", reading:"omoi", en:"heavy"},
+{cat:"adjectives", jp:"軽い", reading:"karui", en:"light"},
+{cat:"adjectives", jp:"真面目", reading:"majime", en:"serious"},
+{cat:"adjectives", jp:"楽しい", reading:"tanoshii", en:"fun"},
+{cat:"adjectives", jp:"健康", reading:"kenkō", en:"healthy"},
+{cat:"adjectives", jp:"病気", reading:"byōki", en:"sick"},
+{cat:"adjectives", jp:"新しい", reading:"atarashii", en:"new"},
+{cat:"adjectives", jp:"古代", reading:"kodai", en:"ancient"},
+{cat:"adjectives", jp:"愚かな", reading:"oroka na", en:"foolish"},
+{cat:"adjectives", jp:"賢い", reading:"kashikoi", en:"wise"},
+{cat:"adjectives", jp:"美味しい", reading:"oishii", en:"delicious"},
+{cat:"adjectives", jp:"無味", reading:"mi aji", en:"tasteless"},
+{cat:"adjectives", jp:"細い", reading:"hosoi", en:"thin"},
+{cat:"adjectives", jp:"太い", reading:"futoi", en:"fat"},
+{cat:"adjectives", jp:"美しい", reading:"utsukushii", en:"beautiful"},
+{cat:"adjectives", jp:"醜い", reading:"minikui", en:"ugly"},
+{cat:"adjectives", jp:"現代的", reading:"gendai-teki", en:"modern"},
+{cat:"adjectives", jp:"伝統的", reading:"dentō-teki", en:"traditional"},
+{cat:"adjectives", jp:"速い", reading:"hayai", en:"quick"},
+{cat:"adjectives", jp:"遅い", reading:"osoi", en:"slowly"},
+{cat:"adjectives", jp:"強い", reading:"tsuyoi", en:"strong"},
+{cat:"adjectives", jp:"弱い", reading:"yowai", en:"weak"},
+{cat:"adjectives", jp:"陽気", reading:"yōki", en:"cheerful"},
+{cat:"adjectives", jp:"真面目", reading:"majime", en:"serious"},
+{cat:"adjectives", jp:"新しい", reading:"atarashii", en:"new"},
+{cat:"adjectives", jp:"古い", reading:"furui", en:"old"},
+{cat:"adjectives", jp:"重い", reading:"omoi", en:"heavy"},
+{cat:"adjectives", jp:"軽い", reading:"karui", en:"light (weight)"},
+{cat:"adjectives", jp:"内気", reading:"uchiki", en:"shy"},
+{cat:"adjectives", jp:"外向き", reading:"gaikōki", en:"extroverted"},
+{cat:"adjectives", jp:"快適", reading:"kaiteki", en:"comfortable"},
+{cat:"adjectives", jp:"不快", reading:"fukai", en:"uncomfortable"},
+{cat:"adjectives", jp:"確かな", reading:"tashika na", en:"certain"},
+{cat:"adjectives", jp:"疑わしい", reading:"utagai ga arimasu", en:"doubtful"},
+{cat:"adjectives", jp:"忍耐強い", reading:"nintaizuyoi", en:"patient"},
+{cat:"adjectives", jp:"せっかち", reading:"sekkachi", en:"impatient"},
+{cat:"adjectives", jp:"広い", reading:"hiroi", en:"wide/spacious"},
+{cat:"adjectives", jp:"狭い", reading:"semai", en:"narrow/cramped"},
+{cat:"adjectives", jp:"太い", reading:"futoi", en:"thick"},
+{cat:"adjectives", jp:"細い", reading:"hosoi", en:"thin/slender"},
+{cat:"adjectives", jp:"近い", reading:"chikai", en:"near/close"},
+{cat:"adjectives", jp:"涼しい", reading:"suzushii", en:"cool (weather)"},
+{cat:"adjectives", jp:"暖かい", reading:"atatakai", en:"warm (weather)"},
+{cat:"adjectives", jp:"温かい", reading:"atatakai", en:"warm (to touch)"},
+{cat:"adjectives", jp:"冷たい", reading:"tsumetai", en:"cold (to touch)"},
+{cat:"adjectives", jp:"辛い", reading:"karai", en:"spicy"},
+{cat:"adjectives", jp:"塩辛い", reading:"shiokarai", en:"salty"},
+{cat:"adjectives", jp:"酸っぱい", reading:"suppai", en:"sour"},
+{cat:"adjectives", jp:"若い", reading:"wakai", en:"young"},
+{cat:"adjectives", jp:"賑やか", reading:"nigiyaka", en:"lively/bustling"},
+{cat:"adjectives", jp:"静か", reading:"shizuka", en:"quiet"},
+{cat:"adjectives", jp:"便利", reading:"benri", en:"convenient"},
+{cat:"adjectives", jp:"不便", reading:"fuben", en:"inconvenient"},
+{cat:"adjectives", jp:"暇", reading:"hima", en:"free (time)/not busy"},
+{cat:"adjectives", jp:"大変", reading:"taihen", en:"tough/difficult situation"},
+{cat:"adjectives", jp:"上手", reading:"jouzu", en:"skillful/good at"},
+{cat:"adjectives", jp:"下手", reading:"heata", en:"unskillful/bad at"},
+{cat:"adjectives", jp:"大切", reading:"taisetsu", en:"important/precious"},
+{cat:"adjectives", jp:"危ない", reading:"abunai", en:"dangerous/risky"},
+{cat:"adjectives", jp:"可愛い", reading:"kawaii", en:"cute"},
+{cat:"adjectives", jp:"怖い", reading:"kowai", en:"scary"},
+{cat:"adjectives", jp:"凄い", reading:"sugoi", en:"amazing/terrific"},
+{cat:"adjectives", jp:"正しい", reading:"tadashii", en:"correct/right"},
+{cat:"adjectives", jp:"珍しい", reading:"mezurashii", en:"rare/unusual"},
+{cat:"adjectives", jp:"恥ずかしい", reading:"hazukashii", en:"embarrassing/shy"},
+{cat:"adjectives", jp:"素晴らしい", reading:"subarashii", en:"wonderful/splendid"},
+{cat:"adjectives", jp:"酷い", reading:"hidoi", en:"terrible/awful"},
+{cat:"adjectives", jp:"宜しい", reading:"yoroshii", en:"good/all right (formal)"},
+{cat:"adjectives", jp:"適当", reading:"tekitou", en:"appropriate/suitable"},
+{cat:"adjectives", jp:"特別", reading:"tokubetsu", en:"special"},
+{cat:"adjectives", jp:"不思議", reading:"fushigi", en:"mysterious/strange"},
+{cat:"adjectives", jp:"残念", reading:"zannen", en:"disappointing/regrettable"},
+{cat:"adjectives", jp:"丁寧", reading:"teinei", en:"polite/courteous"},
+{cat:"adjectives", jp:"複雑", reading:"fukuzatsu", en:"complex/complicated"},
+{cat:"adjectives", jp:"痛い", reading:"itai", en:"painful/it hurts"},
+{cat:"adjectives", jp:"痒い", reading:"kayui", en:"itchy"},
+{cat:"adjectives", jp:"臭い", reading:"kusai", en:"stinky/smelly"},
+{cat:"adjectives", jp:"眩しい", reading:"mabushii", en:"dazzling/too bright"},
+{cat:"adjectives", jp:"眠い", reading:"nemui", en:"sleepy"},
+{cat:"adjectives", jp:"鋭い", reading:"surudoi", en:"sharp"},
+{cat:"adjectives", jp:"鈍い", reading:"nibui", en:"dull/blunt"},
+{cat:"adjectives", jp:"等しい", reading:"hitoshii", en:"equal"},
+{cat:"adjectives", jp:"贅沢", reading:"zeitaku", en:"luxurious/extravagant"},
+{cat:"adjectives", jp:"派手", reading:"hade", en:"showy/flashy"},
+{cat:"adjectives", jp:"地味", reading:"jimi", en:"plain/subdued"},
+{cat:"adverbs", jp:"今", reading:"ima", en:"now"},
+{cat:"adverbs", jp:"いつも", reading:"itsumo", en:"always"},
+{cat:"adverbs", jp:"決して", reading:"kesshite", en:"never"},
+{cat:"adverbs", jp:"遅い", reading:"osoi", en:"late"},
+{cat:"adverbs", jp:"早い", reading:"hayai", en:"early"},
+{cat:"adverbs", jp:"昨日", reading:"kinō", en:"yesterday"},
+{cat:"adverbs", jp:"今日", reading:"kyō", en:"today"},
+{cat:"adverbs", jp:"明日", reading:"ashita", en:"tomorrow"},
+{cat:"adverbs", jp:"もう", reading:"mō", en:"already"},
+{cat:"adverbs", jp:"まだ", reading:"mada", en:"still"},
+{cat:"adverbs", jp:"まだ", reading:"mada", en:"yet"},
+{cat:"adverbs", jp:"前", reading:"mae", en:"before"},
+{cat:"adverbs", jp:"後", reading:"ato", en:"after"},
+{cat:"adverbs", jp:"それから", reading:"sorekara", en:"then"},
+{cat:"adverbs", jp:"だから", reading:"dakara", en:"so"},
+{cat:"adverbs", jp:"すぐ", reading:"sugu", en:"soon"},
+{cat:"adverbs", jp:"〜も", reading:"~mo", en:"neither"},
+{cat:"adverbs", jp:"〜も", reading:"~mo", en:"also"},
+{cat:"adverbs", jp:"このように", reading:"kono yō ni", en:"thus"},
+{cat:"adverbs", jp:"うまく", reading:"umaku", en:"well"},
+{cat:"adverbs", jp:"悪く", reading:"waruku", en:"badly"},
+{cat:"adverbs", jp:"近く", reading:"chikaku", en:"near"},
+{cat:"adverbs", jp:"遠く", reading:"tōku", en:"far"},
+{cat:"adverbs", jp:"たくさん", reading:"takusan", en:"a lot"},
+{cat:"adverbs", jp:"少し", reading:"sukoshi", en:"a little"},
+{cat:"adverbs", jp:"もっと", reading:"motto", en:"more"},
+{cat:"adverbs", jp:"少ない", reading:"sukunai", en:"less"},
+{cat:"adverbs", jp:"あまり", reading:"amari", en:"too much"},
+{cat:"adverbs", jp:"十分", reading:"jūbun", en:"enough"},
+{cat:"adverbs", jp:"おおよそ", reading:"ōyoso", en:"approximately"},
+{cat:"adverbs", jp:"正確に", reading:"seikaku ni", en:"exactly"},
+{cat:"adverbs", jp:"だけ", reading:"dake", en:"only"},
+{cat:"adverbs", jp:"単に", reading:"tan ni", en:"simply"},
+{cat:"adverbs", jp:"明確に", reading:"meikaku ni", en:"clearly"},
+{cat:"adverbs", jp:"速く", reading:"hayaku", en:"quickly"},
+{cat:"adverbs", jp:"遅く", reading:"osoku", en:"slowly"},
+{cat:"adverbs", jp:"おそらく", reading:"osoraku", en:"possibly"},
+{cat:"adverbs", jp:"おそらく", reading:"osoraku", en:"probably"},
+{cat:"adverbs", jp:"確実に", reading:"kakujitsu ni", en:"definitely"},
+{cat:"adverbs", jp:"残念ながら", reading:"zannen nagara", en:"unfortunately"},
+{cat:"adverbs", jp:"幸いに", reading:"saiwai ni", en:"happily"},
+{cat:"adverbs", jp:"悲しく", reading:"kanashiku", en:"sadly"},
+{cat:"adverbs", jp:"自然に", reading:"shizen ni", en:"naturally"},
+{cat:"adverbs", jp:"明らかに", reading:"akiraka ni", en:"obviously"},
+{cat:"adverbs", jp:"確かに", reading:"tashika ni", en:"surely"},
+{cat:"adverbs", jp:"特に", reading:"toku ni", en:"particularly"},
+{cat:"adverbs", jp:"頻繁に", reading:"hinpan ni", en:"frequently"},
+{cat:"adverbs", jp:"毎日", reading:"mainichi", en:"daily"},
+{cat:"adverbs", jp:"毎月", reading:"matsukī", en:"monthly"},
+{cat:"adverbs", jp:"毎年", reading:"mainen", en:"annually"},
+{cat:"adverbs", jp:"完全に", reading:"kanzen ni", en:"completely"},
+{cat:"adverbs", jp:"全く", reading:"mattaku", en:"totally"},
+{cat:"adverbs", jp:"特に", reading:"toku ni", en:"especially"},
+{cat:"adverbs", jp:"特に", reading:"toku ni", en:"particularly"},
+{cat:"adverbs", jp:"通常", reading:"tsūjō", en:"normally"},
+{cat:"adverbs", jp:"一般的に", reading:"ippan-teki ni", en:"generally"},
+{cat:"adverbs", jp:"普段", reading:"fudan", en:"usually"},
+{cat:"adverbs", jp:"主に", reading:"omo ni", en:"mainly"},
+{cat:"adverbs", jp:"幸運にも", reading:"kōun ni mo", en:"fortunately"},
+{cat:"adverbs", jp:"残念ながら", reading:"zannen nagara", en:"unfortunately"},
+{cat:"adverbs", jp:"すぐに", reading:"sugu ni", en:"immediately"},
+{cat:"adverbs", jp:"最終的に", reading:"saishū-teki ni", en:"eventually"},
+{cat:"adverbs", jp:"基本的に", reading:"kihonteki ni", en:"basically"},
+{cat:"adverbs", jp:"正確に", reading:"seikaku ni", en:"exactly"},
+{cat:"adverbs", jp:"相対的に", reading:"sōtaiteki ni", en:"relatively"},
+{cat:"adverbs", jp:"科学的に", reading:"kagakuteki ni", en:"scientifically"},
+{cat:"adverbs", jp:"適切に", reading:"tekisetsu ni", en:"adequately"},
+{cat:"adverbs", jp:"一般的に", reading:"ippanteki ni", en:"commonly"},
+{cat:"adverbs", jp:"同時に", reading:"dōji ni", en:"simultaneously"},
+{cat:"adverbs", jp:"実際に", reading:"jissai ni", en:"even"},
+{cat:"adverbs", jp:"だけ", reading:"dake", en:"only"},
+{cat:"adverbs", jp:"同様に", reading:"dōyō ni", en:"equally"},
+{cat:"adverbs", jp:"速く", reading:"hayaku", en:"quickly"},
+{cat:"adverbs", jp:"遅く", reading:"osoku", en:"slowly"},
+{cat:"adverbs", jp:"常に", reading:"tōni", en:"constantly"},
+{cat:"adverbs", jp:"完全に", reading:"kanzen ni", en:"completely"},
+{cat:"adverbs", jp:"全く", reading:"mattaku", en:"totally"},
+{cat:"adverbs", jp:"本質的に", reading:"honshitsuteki ni", en:"essentially"},
+{cat:"adverbs", jp:"最終的に", reading:"saishū-teki ni", en:"finally"},
+{cat:"adverbs", jp:"実際に", reading:"jissai ni", en:"really"},
+{cat:"adverbs", jp:"幸運にも", reading:"kōun ni mo", en:"fortunately"},
+{cat:"adverbs", jp:"残念ながら", reading:"zannen nagara", en:"unfortunately"},
+{cat:"adverbs", jp:"おそらく", reading:"osoraku", en:"probably"},
+{cat:"adverbs", jp:"確実に", reading:"kakujitsu ni", en:"definitely"},
+{cat:"adverbs", jp:"最終的に", reading:"saishū-teki ni", en:"eventually"},
+{cat:"adverbs", jp:"だけ", reading:"dake", en:"only"},
+{cat:"adverbs", jp:"特に", reading:"toku ni", en:"particularly"},
+{cat:"adverbs", jp:"すぐに", reading:"sugu ni", en:"soon"},
+{cat:"adverbs", jp:"基本的に", reading:"kihonteki ni", en:"basically"},
+{cat:"adverbs", jp:"毎日", reading:"mainichi", en:"daily"},
+{cat:"adverbs", jp:"普段", reading:"fudan", en:"usually"},
+{cat:"adverbs", jp:"一般的に", reading:"ippan-teki ni", en:"generally"},
+{cat:"adverbs", jp:"通常", reading:"tsūjō", en:"normally"},
+{cat:"adverbs", jp:"積極的に", reading:"sekkyokuteki ni", en:"positively"},
+{cat:"adverbs", jp:"消極的に", reading:"shōkyokuteki ni", en:"negatively"},
+{cat:"adverbs", jp:"継続的に", reading:"keizokuteki ni", en:"continuously"},
+{cat:"adverbs", jp:"最終的に", reading:"saishū-teki ni", en:"finally"},
+{cat:"adverbs", jp:"物理的に", reading:"butsuri-teki ni", en:"physically"},
+{cat:"adverbs", jp:"精神的に", reading:"seishin-teki ni", en:"mentally"},
+{cat:"adverbs", jp:"感情的に", reading:"kanjō-teki ni", en:"emotionally"},
+{cat:"adverbs", jp:"創造的に", reading:"sōzō-teki ni", en:"creatively"},
+{cat:"adverbs", jp:"時々", reading:"tokidoki", en:"sometimes"},
+{cat:"adverbs", jp:"たまに", reading:"tamani", en:"occasionally"},
+{cat:"adverbs", jp:"全然", reading:"zenzen", en:"not at all (with negative)"},
+{cat:"adverbs", jp:"多分", reading:"tabun", en:"perhaps/maybe"},
+{cat:"adverbs", jp:"非常に", reading:"hijō ni", en:"extremely/very"},
+{cat:"adverbs", jp:"大変", reading:"taihen", en:"greatly/terribly"},
+{cat:"adverbs", jp:"ほとんど", reading:"hotondo", en:"almost/mostly"},
+{cat:"adverbs", jp:"大抵", reading:"taitei", en:"mostly/usually"},
+{cat:"adverbs", jp:"かなり", reading:"kanari", en:"considerably/quite"},
+{cat:"adverbs", jp:"ずいぶん", reading:"zuibun", en:"extremely/remarkably"},
+{cat:"adverbs", jp:"やっと", reading:"yatto", en:"at last/finally"},
+{cat:"adverbs", jp:"とうとう", reading:"tōtō", en:"finally/in the end"},
+{cat:"adverbs", jp:"結局", reading:"kekkyoku", en:"after all/eventually"},
+{cat:"adverbs", jp:"まず", reading:"mazu", en:"first of all"},
+{cat:"adverbs", jp:"次に", reading:"tsugi ni", en:"next"},
+{cat:"adverbs", jp:"最後に", reading:"saigo ni", en:"lastly"},
+{cat:"adverbs", jp:"絶対", reading:"zettai", en:"absolutely"},
+{cat:"adverbs", jp:"必ず", reading:"kanarazu", en:"without fail/certainly"},
+{cat:"adverbs", jp:"ぜひ", reading:"zehi", en:"by all means/definitely"},
+{cat:"adverbs", jp:"だんだん", reading:"dandan", en:"gradually"},
+{cat:"adverbs", jp:"どんどん", reading:"dondon", en:"rapidly/steadily"},
+{cat:"adverbs", jp:"そろそろ", reading:"sorosoro", en:"slowly/soon (time to go)"},
+{cat:"adverbs", jp:"のんびり", reading:"nonbiri", en:"leisurely/at ease"},
+{cat:"adverbs", jp:"がっかり", reading:"gakkari", en:"disappointedly"},
+{cat:"adverbs", jp:"しっかり", reading:"shikkari", en:"firmly/properly"},
+{cat:"adverbs", jp:"はっきり", reading:"hakkiri", en:"clearly/distinctly"},
+{cat:"adverbs", jp:"すっかり", reading:"sukkari", en:"completely/entirely"},
+{cat:"adverbs", jp:"びっくり", reading:"bikkuri", en:"surprisedly"},
+{cat:"adverbs", jp:"ぴかぴか", reading:"pikapika", en:"sparklingly"},
+{cat:"adverbs", jp:"ぺらぺら", reading:"perapera", en:"fluently"},
+{cat:"adverbs", jp:"もっとも", reading:"mottomo", en:"most/extremely"},
+{cat:"adverbs", jp:"一晩中", reading:"hitobanjū", en:"all night long"},
+{cat:"adverbs", jp:"一日中", reading:"ichinichijū", en:"all day long"},
+{cat:"adverbs", jp:"偶然", reading:"gūzen", en:"by chance/coincidentally"},
+{cat:"adverbs", jp:"わざと", reading:"wazato", en:"on purpose/deliberately"},
+{cat:"adverbs", jp:"急に", reading:"kyū ni", en:"suddenly"},
+{cat:"adverbs", jp:"突然", reading:"totsuzen", en:"abruptly"},
+{cat:"adverbs", jp:"別々に", reading:"betsubetsu ni", en:"separately"},
+{cat:"adverbs", jp:"一緒に", reading:"issho ni", en:"together"},
+{cat:"adverbs", jp:"自由に", reading:"jiyū ni", en:"freely"},
+{cat:"adverbs", jp:"勝手に", reading:"katte ni", en:"arbitrarily/of one's own accord"},
+{cat:"adverbs", jp:"一生懸命", reading:"isshōkenmei", en:"with utmost effort"},
+{cat:"adverbs", jp:"直接", reading:"chokusetsu", en:"directly"},
+{cat:"adverbs", jp:"再び", reading:"futatabi", en:"again/twice"},
+{cat:"adverbs", jp:"二度と", reading:"nidoto", en:"never again (with negative)"},
+{cat:"adverbs", jp:"ちょうど", reading:"chōdo", en:"exactly/just right"},
+{cat:"adverbs", jp:"まるで", reading:"marude", en:"as if/just like"},
+{cat:"adverbs", jp:"もし", reading:"moshi", en:"if"},
+{cat:"adverbs", jp:"いくら", reading:"ikura", en:"however much"},
+{cat:"pronouns", jp:"私", reading:"watashi", en:"I"},
+{cat:"pronouns", jp:"その", reading:"sono", en:"the"},
+{cat:"pronouns", jp:"あなた", reading:"anata", en:"you (informal)"},
+{cat:"pronouns", jp:"彼", reading:"kare", en:"he"},
+{cat:"pronouns", jp:"彼女", reading:"kanojo", en:"she"},
+{cat:"pronouns", jp:"あなた", reading:"anata", en:"you (formal)"},
+{cat:"pronouns", jp:"私たち", reading:"watashitachi", en:"we (masculine)"},
+{cat:"pronouns", jp:"私たち", reading:"watashitachi", en:"we (feminine)"},
+{cat:"pronouns", jp:"あなたたち", reading:"anata-tachi", en:"you all (masculine, informal, used in Spain)"},
+{cat:"pronouns", jp:"あなたたち", reading:"anata-tachi", en:"you all (feminine, informal, used in Spain)"},
+{cat:"pronouns", jp:"彼ら", reading:"karera", en:"they (masculine)"},
+{cat:"pronouns", jp:"彼女たち", reading:"kanojotachi", en:"they (feminine)"},
+{cat:"pronouns", jp:"私を", reading:"watashi o", en:"me"},
+{cat:"pronouns", jp:"あなたを", reading:"anata o", en:"you (informal object)"},
+{cat:"pronouns", jp:"彼を", reading:"kare o", en:"him/it (masculine)"},
+{cat:"pronouns", jp:"彼女を", reading:"kanojo o", en:"her/it (feminine)"},
+{cat:"pronouns", jp:"私たちを", reading:"watashitachi o", en:"us"},
+{cat:"pronouns", jp:"あなたたちを", reading:"anata-tachi o", en:"you all (informal object)"},
+{cat:"pronouns", jp:"彼らを", reading:"karera o", en:"them (masculine)"},
+{cat:"pronouns", jp:"彼女たちを", reading:"kanojotachi o", en:"them (feminine)"},
+{cat:"pronouns", jp:"私の", reading:"watashi no", en:"my"},
+{cat:"pronouns", jp:"あなたの", reading:"anata no", en:"your (informal)"},
+{cat:"pronouns", jp:"彼の", reading:"kare no", en:"his/her/its/their"},
+{cat:"pronouns", jp:"私たちの", reading:"watashitachi no", en:"our (masculine)"},
+{cat:"pronouns", jp:"私たちの", reading:"watashitachi no", en:"our (feminine)"},
+{cat:"pronouns", jp:"あなたたちの", reading:"anata-tachi no", en:"your (informal, masculine, used in Spain)"},
+{cat:"pronouns", jp:"あなたたちの", reading:"anata-tachi no", en:"your (informal, feminine, used in Spain)"},
+{cat:"pronouns", jp:"あなたの", reading:"anata no", en:"your (formal), their"},
+{cat:"pronouns", jp:"私の", reading:"watashi no", en:"mine (masculine)"},
+{cat:"pronouns", jp:"私の", reading:"watashi no", en:"mine (feminine)"},
+{cat:"pronouns", jp:"あなたの", reading:"anata no", en:"yours (informal, masculine)"},
+{cat:"pronouns", jp:"あなたの", reading:"anata no", en:"yours (informal, feminine)"},
+{cat:"pronouns", jp:"彼の", reading:"kare no", en:"his/hers/its/theirs (masculine)"},
+{cat:"pronouns", jp:"彼女の", reading:"kanojo no", en:"his/hers/its/theirs (feminine)"},
+{cat:"pronouns", jp:"私たちの", reading:"watashitachi no", en:"ours (masculine)"},
+{cat:"pronouns", jp:"私たちの", reading:"watashitachi no", en:"ours (feminine)"},
+{cat:"pronouns", jp:"あなたたちの", reading:"anata-tachi no", en:"yours (informal, plural, masculine, used in  Spain)"},
+{cat:"pronouns", jp:"あなたたちの", reading:"anata-tachi no", en:"yours (informal, plural, feminine, used in  Spain)"},
+{cat:"pronouns", jp:"彼ら自身", reading:"karera jishin", en:"themselves (masculine)"},
+{cat:"pronouns", jp:"彼女たち自身", reading:"kanojotachi jishin", en:"themselves (feminine)"},
+{cat:"pronouns", jp:"あれ", reading:"are", en:"that (masculine)"},
+{cat:"pronouns", jp:"あれ", reading:"are", en:"that (feminine)"},
+{cat:"pronouns", jp:"それら", reading:"sorera", en:"those (masculine)"},
+{cat:"pronouns", jp:"それら", reading:"sorera", en:"those (feminine)"},
+{cat:"pronouns", jp:"これ", reading:"kore", en:"this (masculine)"},
+{cat:"pronouns", jp:"これ", reading:"kore", en:"this (feminine)"},
+{cat:"pronouns", jp:"これら", reading:"korera", en:"these (masculine)"},
+{cat:"pronouns", jp:"これら", reading:"korera", en:"these (feminine)"},
+{cat:"pronouns", jp:"それ", reading:"sore", en:"it (neuter)"},
+{cat:"pronouns", jp:"私たち自身", reading:"watashitachi jishin", en:"ourselves (masculine)"},
+{cat:"pronouns", jp:"僕", reading:"boku", en:"I (masculine, casual)"},
+{cat:"pronouns", jp:"俺", reading:"ore", en:"I (masculine, very informal)"},
+{cat:"pronouns", jp:"あたし", reading:"atashi", en:"I (feminine, casual)"},
+{cat:"pronouns", jp:"君", reading:"kimi", en:"you (casual, often to subordinates)"},
+{cat:"pronouns", jp:"お前", reading:"omae", en:"you (very informal/rough)"},
+{cat:"pronouns", jp:"誰", reading:"dare", en:"who"},
+{cat:"pronouns", jp:"何", reading:"nani", en:"what"},
+{cat:"pronouns", jp:"どこ", reading:"doko", en:"where"},
+{cat:"pronouns", jp:"いつ", reading:"itsu", en:"when"},
+{cat:"pronouns", jp:"どちら", reading:"dochira", en:"which (of two) / where (polite)"},
+{cat:"pronouns", jp:"どれ", reading:"dore", en:"which (of three or more)"},
+{cat:"pronouns", jp:"自分", reading:"jibun", en:"oneself / myself"},
+{cat:"pronouns", jp:"誰か", reading:"dareka", en:"someone"},
+{cat:"pronouns", jp:"何か", reading:"nanika", en:"something"},
+{cat:"pronouns", jp:"誰も", reading:"daremo", en:"no one (with negative)"},
+{cat:"pronouns", jp:"何も", reading:"nanimo", en:"nothing (with negative)"},
+{cat:"pronouns", jp:"皆さん", reading:"minasan", en:"everyone (polite)"},
+{cat:"pronouns", jp:"あそこ", reading:"asoko", en:"over there"},
+{cat:"pronouns", jp:"こちら", reading:"kochira", en:"this way / this person (polite)"},
+{cat:"pronouns", jp:"あちら", reading:"achira", en:"that way / that person (polite)"},
+{cat:"prepositions", jp:"の", reading:"no", en:"of/from"},
+{cat:"prepositions", jp:"へ", reading:"e", en:"to"},
+{cat:"prepositions", jp:"で", reading:"de", en:"in/on"},
+{cat:"prepositions", jp:"と", reading:"to", en:"with"},
+{cat:"prepositions", jp:"なしで", reading:"nashide", en:"without"},
+{cat:"prepositions", jp:"ために", reading:"tame ni", en:"for/by"},
+{cat:"prepositions", jp:"ために", reading:"tame ni", en:"for/to"},
+{cat:"prepositions", jp:"について", reading:"ni tsuite", en:"on/about"},
+{cat:"prepositions", jp:"間で", reading:"aida de", en:"between/among"},
+{cat:"prepositions", jp:"へ向かって", reading:"e mukatte", en:"towards"},
+{cat:"prepositions", jp:"間に", reading:"aida ni", en:"during"},
+{cat:"prepositions", jp:"後で", reading:"ato de", en:"after"},
+{cat:"prepositions", jp:"前に", reading:"mae ni", en:"before"},
+{cat:"prepositions", jp:"まで", reading:"made", en:"until"},
+{cat:"prepositions", jp:"下", reading:"shita", en:"under"},
+{cat:"prepositions", jp:"上", reading:"ue", en:"over"},
+{cat:"prepositions", jp:"対して", reading:"taishite", en:"against"},
+{cat:"prepositions", jp:"の周り", reading:"no mawari", en:"around"},
+{cat:"prepositions", jp:"隣に", reading:"tonari ni", en:"next to"},
+{cat:"prepositions", jp:"前に", reading:"mae ni", en:"in front of"},
+{cat:"prepositions", jp:"中に", reading:"naka ni", en:"inside of"},
+{cat:"prepositions", jp:"外に", reading:"soto ni", en:"outside of"},
+{cat:"prepositions", jp:"間で", reading:"aida de", en:"among"},
+{cat:"prepositions", jp:"近くに", reading:"chikaku ni", en:"near"},
+{cat:"prepositions", jp:"遠くに", reading:"tōku ni", en:"far from"},
+{cat:"prepositions", jp:"のように", reading:"no yō ni", en:"like/as"},
+{cat:"prepositions", jp:"によれば", reading:"ni yoreba", en:"according to"},
+{cat:"prepositions", jp:"まで", reading:"made", en:"up to"},
+{cat:"prepositions", jp:"隣に", reading:"tonari ni", en:"next to"},
+{cat:"prepositions", jp:"を通して", reading:"o tōshite", en:"through"},
+{cat:"prepositions", jp:"の中で", reading:"no naka de", en:"in the middle of"},
+{cat:"prepositions", jp:"下に", reading:"shita ni", en:"underneath"},
+{cat:"prepositions", jp:"上に", reading:"ue ni", en:"on top of"},
+{cat:"prepositions", jp:"前に", reading:"mae ni", en:"in front of"},
+{cat:"prepositions", jp:"後ろに", reading:"ushiro ni", en:"behind"},
+{cat:"prepositions", jp:"と一緒に", reading:"to issho ni", en:"together with"},
+{cat:"prepositions", jp:"を通じて", reading:"o tōjite", en:"via"},
+{cat:"prepositions", jp:"によって", reading:"ni yotte", en:"by means of"},
+{cat:"prepositions", jp:"のために", reading:"no tame ni", en:"because of"},
+{cat:"prepositions", jp:"の上に", reading:"no ue ni", en:"above"},
+{cat:"prepositions", jp:"のために", reading:"no tame ni", en:"due to"},
+{cat:"prepositions", jp:"左に", reading:"hidari ni", en:"to the left of"},
+{cat:"prepositions", jp:"右に", reading:"migi ni", en:"to the right of"},
+{cat:"prepositions", jp:"にもかかわらず", reading:"nimo kakawarazu", en:"despite"},
+{cat:"prepositions", jp:"下に", reading:"shita ni", en:"below"},
+{cat:"prepositions", jp:"上に", reading:"ue ni", en:"above"},
+{cat:"prepositions", jp:"と一緒に", reading:"to issho ni", en:"along with"},
+{cat:"prepositions", jp:"に関して", reading:"ni kanshite", en:"regarding"},
+{cat:"prepositions", jp:"について", reading:"ni tsuite", en:"about"},
+{cat:"prepositions", jp:"に関しては", reading:"ni kanshite wa", en:"with regard to"},
+{cat:"prepositions", jp:"に賛成して", reading:"ni sansei shite", en:"in favor of"},
+{cat:"prepositions", jp:"に反対して", reading:"ni hantai shite", en:"against"},
+{cat:"prepositions", jp:"に従って", reading:"ni shitagatte", en:"in accordance with"},
+{cat:"prepositions", jp:"の代わりに", reading:"no kawari ni", en:"instead of"},
+{cat:"prepositions", jp:"周りに", reading:"mawari ni", en:"around"},
+{cat:"prepositions", jp:"前に", reading:"mae ni", en:"ahead of"},
+{cat:"prepositions", jp:"後ろに", reading:"ushiro ni", en:"behind"},
+{cat:"prepositions", jp:"周りに", reading:"mawari ni", en:"around"},
+{cat:"prepositions", jp:"への道中で", reading:"e no dōchū de", en:"on the way to"},
+{cat:"prepositions", jp:"の利益のために", reading:"no rieki no tame ni", en:"for the benefit of"},
+{cat:"prepositions", jp:"から", reading:"kara", en:"from/since"},
+{cat:"prepositions", jp:"より", reading:"yori", en:"than (comparison)"},
+{cat:"prepositions", jp:"まで", reading:"made", en:"as far as"},
+{cat:"prepositions", jp:"までには", reading:"made ni wa", en:"by (at the latest)"},
+{cat:"prepositions", jp:"際", reading:"sai", en:"at the time of/on the occasion of"},
+{cat:"prepositions", jp:"最中に", reading:"saichū ni", en:"in the middle of (an action)"},
+{cat:"prepositions", jp:"向けに", reading:"muke ni", en:"intended for/aimed at"},
+{cat:"prepositions", jp:"以外に", reading:"igai ni", en:"besides/other than"},
+{cat:"prepositions", jp:"代わりに", reading:"kawari ni", en:"in exchange for"},
+{cat:"prepositions", jp:"とともに", reading:"to tomo ni", en:"along with/as (at the same time)"},
+{cat:"prepositions", jp:"に従って", reading:"ni shitagatte", en:"along/following (a path)"},
+{cat:"prepositions", jp:"を通じて", reading:"o tsūjite", en:"throughout (a period)"},
+{cat:"prepositions", jp:"にわたって", reading:"ni watatte", en:"across/extending over"},
+{cat:"prepositions", jp:"沿いに", reading:"zoi ni", en:"along (a river/road)"},
+{cat:"prepositions", jp:"おきに", reading:"oki ni", en:"at intervals of"},
+{cat:"prepositions", jp:"向け", reading:"muke", en:"bound for (transportation)"},
+{cat:"prepositions", jp:"向かいに", reading:"mukai ni", en:"opposite/across from"},
+{cat:"prepositions", jp:"奥に", reading:"oku ni", en:"at the back/deep inside"},
+{cat:"prepositions", jp:"中央に", reading:"chūō ni", en:"in the center of"},
+{cat:"conjunctions", jp:"そして", reading:"soshite", en:"and"},
+{cat:"conjunctions", jp:"または", reading:"mata wa", en:"and (before 'i' sound)"},
+{cat:"conjunctions", jp:"または", reading:"mata wa", en:"or"},
+{cat:"conjunctions", jp:"また", reading:"mata", en:"or (before 'o' sound)"},
+{cat:"conjunctions", jp:"しかし", reading:"shikashi", en:"but"},
+{cat:"conjunctions", jp:"むしろ", reading:"mushiro", en:"but rather"},
+{cat:"conjunctions", jp:"しかしながら", reading:"shikashi nagara", en:"although"},
+{cat:"conjunctions", jp:"なぜなら", reading:"nazenara", en:"because"},
+{cat:"conjunctions", jp:"だから", reading:"dakara", en:"since/then"},
+{cat:"conjunctions", jp:"というのは", reading:"to iu no wa", en:"since"},
+{cat:"conjunctions", jp:"として", reading:"toshite", en:"as"},
+{cat:"conjunctions", jp:"それで", reading:"sore de", en:"so"},
+{cat:"conjunctions", jp:"したがって", reading:"shitagatte", en:"therefore"},
+{cat:"conjunctions", jp:"そのため", reading:"sono tame", en:"for that reason"},
+{cat:"conjunctions", jp:"その時", reading:"sono toki", en:"then"},
+{cat:"conjunctions", jp:"後で", reading:"ato de", en:"then"},
+{cat:"conjunctions", jp:"その間", reading:"sono aida", en:"while"},
+{cat:"conjunctions", jp:"いつ", reading:"itsu", en:"when"},
+{cat:"conjunctions", jp:"もし", reading:"moshi", en:"if"},
+{cat:"conjunctions", jp:"場合は", reading:"baai wa", en:"in case"},
+{cat:"conjunctions", jp:"〜しない限り", reading:"shinai kagiri", en:"unless"},
+{cat:"conjunctions", jp:"にもかかわらず", reading:"nimo kakawarazu", en:"even though"},
+{cat:"conjunctions", jp:"まるで", reading:"marude", en:"as if"},
+{cat:"conjunctions", jp:"ちょうど〜のように", reading:"choudo ~ no you ni", en:"just as"},
+{cat:"conjunctions", jp:"〜だけでなく", reading:"~ dake de naku", en:"as well as"},
+{cat:"conjunctions", jp:"ために", reading:"tame ni", en:"so that"},
+{cat:"conjunctions", jp:"ために〜する", reading:"tame ni ~ suru", en:"in order that"},
+{cat:"conjunctions", jp:"たとえ〜でも", reading:"tatoe ~ demo", en:"even if"},
+{cat:"conjunctions", jp:"〜も", reading:"~ mo", en:"nor"},
+{cat:"conjunctions", jp:"〜かどうか", reading:"~ ka dou ka", en:"whether"},
+{cat:"conjunctions", jp:"さもなければ", reading:"samonakereba", en:"or else"},
+{cat:"conjunctions", jp:"〜かどうか", reading:"~ ka dou ka", en:"whether"},
+{cat:"conjunctions", jp:"〜であれば", reading:"~ de areba", en:"whether"},
+{cat:"conjunctions", jp:"その上", reading:"sono ue", en:"besides"},
+{cat:"conjunctions", jp:"さらに", reading:"sara ni", en:"even more"},
+{cat:"conjunctions", jp:"ただし", reading:"tadashi", en:"not only"},
+{cat:"conjunctions", jp:"しかしまた", reading:"shikashi mata", en:"but also"},
+{cat:"conjunctions", jp:"〜さえ", reading:"~ sae", en:"not even"},
+{cat:"conjunctions", jp:"〜と同じくらい", reading:"~ to onaji kurai", en:"as much as"},
+{cat:"conjunctions", jp:"しかしながら", reading:"shikashi nagara", en:"however"},
+{cat:"conjunctions", jp:"どんなに〜しても", reading:"donna ni ~ shitemo", en:"no matter how much"},
+{cat:"conjunctions", jp:"にもかかわらず", reading:"nimo kakawarazu", en:"despite the fact that"},
+{cat:"conjunctions", jp:"したがって", reading:"shitagatte", en:"thus"},
+{cat:"conjunctions", jp:"その結果", reading:"sono kekka", en:"so that"},
+{cat:"conjunctions", jp:"そのように", reading:"sono you ni", en:"in such a way that"},
+{cat:"conjunctions", jp:"したがって", reading:"shitagatte", en:"therefore"},
+{cat:"conjunctions", jp:"その結果として", reading:"sono kekka to shite", en:"as a consequence"},
+{cat:"conjunctions", jp:"〜から", reading:"~ kara", en:"since"},
+{cat:"conjunctions", jp:"〜のために", reading:"~ no tame ni", en:"due to the fact that"},
+{cat:"conjunctions", jp:"〜という条件で", reading:"~ to iu jouken de", en:"provided that"},
+{cat:"conjunctions", jp:"それに", reading:"sore ni", en:"besides/moreover"},
+{cat:"conjunctions", jp:"それとも", reading:"soretomo", en:"or (used between two questions)"},
+{cat:"conjunctions", jp:"が", reading:"ga", en:"but (at the end of a clause)"},
+{cat:"conjunctions", jp:"けれども", reading:"keredomo", en:"however/but (more formal than 'ga')"},
+{cat:"conjunctions", jp:"すると", reading:"suruto", en:"thereupon/and just then"},
+{cat:"conjunctions", jp:"そこで", reading:"soko de", en:"so/accordingly (to resolve a situation)"},
+{cat:"conjunctions", jp:"あるいは", reading:"aruiwa", en:"or/possibly"},
+{cat:"conjunctions", jp:"すなわち", reading:"sunawachi", en:"namely/in other words"},
+{cat:"conjunctions", jp:"なお", reading:"nao", en:"furthermore/in addition"},
+{cat:"conjunctions", jp:"もっとも", reading:"mottomo", en:"although/though"},
+{cat:"conjunctions", jp:"ところで", reading:"tokoro de", en:"by the way"},
+{cat:"conjunctions", jp:"さて", reading:"sate", en:"well/now (to change the subject)"},
+{cat:"conjunctions", jp:"要するに", reading:"yousuru ni", en:"in short/to sum up"},
+{cat:"conjunctions", jp:"それなのに", reading:"sore na noni", en:"and yet/despite that"},
+{cat:"conjunctions", jp:"それゆえに", reading:"sore yue ni", en:"consequently/therefore"},
+{cat:"conjunctions", jp:"かつ", reading:"katsu", en:"and/as well as (formal)"},
+{cat:"conjunctions", jp:"および", reading:"oyobi", en:"as well as/and (formal)"},
+{cat:"conjunctions", jp:"ならびに", reading:"narabini", en:"as well as/both (very formal)"},
+{cat:"conjunctions", jp:"なぜかというと", reading:"naze ka to iu to", en:"the reason is/because"},
+{cat:"conjunctions", jp:"だとしても", reading:"da to shitemo", en:"even if that were the case"},
+{cat:"phrases", jp:"こんにちは、元気？", reading:"konnichiwa, genki?", en:"hello, how are you?"},
+{cat:"phrases", jp:"おはようございます", reading:"ohayou gozaimasu", en:"good morning"},
+{cat:"phrases", jp:"こんにちは", reading:"konnichiwa", en:"good afternoon"},
+{cat:"phrases", jp:"おやすみなさい", reading:"oyasuminasai", en:"good night"},
+{cat:"phrases", jp:"元気ですか？", reading:"genki desu ka?", en:"how's it going?"},
+{cat:"phrases", jp:"どうしたの？", reading:"doushita no?", en:"what's up?"},
+{cat:"phrases", jp:"はじめまして", reading:"hajimemashite", en:"nice to meet you"},
+{cat:"phrases", jp:"またあとで", reading:"mata ato de", en:"see you later"},
+{cat:"phrases", jp:"また明日", reading:"mata ashita", en:"see you tomorrow"},
+{cat:"phrases", jp:"またね", reading:"mata ne", en:"see you"},
+{cat:"phrases", jp:"さようなら", reading:"sayounara", en:"goodbye"},
+{cat:"phrases", jp:"ありがとう", reading:"arigatou", en:"thank you"},
+{cat:"phrases", jp:"どうもありがとう", reading:"doumo arigatou", en:"thank you very much"},
+{cat:"phrases", jp:"どういたしまして", reading:"dou itashimashite", en:"you're welcome"},
+{cat:"phrases", jp:"お願いします", reading:"onegai shimasu", en:"please"},
+{cat:"phrases", jp:"ごめんなさい", reading:"gomen nasai", en:"I'm sorry"},
+{cat:"phrases", jp:"すみません", reading:"sumimasen", en:"excuse me"},
+{cat:"phrases", jp:"通ります", reading:"toorimasu", en:"excuse me (to pass)"},
+{cat:"phrases", jp:"いくらですか？", reading:"ikura desu ka?", en:"how much does it cost?"},
+{cat:"phrases", jp:"どこですか？", reading:"doko desu ka?", en:"where is it?"},
+{cat:"phrases", jp:"わかりません", reading:"wakarimasen", en:"I don't understand"},
+{cat:"phrases", jp:"手伝ってくれますか？", reading:"tetsudatte kuremasu ka?", en:"can you help me?"},
+{cat:"phrases", jp:"今何時ですか？", reading:"ima nanji desu ka?", en:"what time is it?"},
+{cat:"phrases", jp:"知りません", reading:"shirimasen", en:"I don't know"},
+{cat:"phrases", jp:"おなかがすきました", reading:"onaka ga sukimashita", en:"I'm hungry"},
+{cat:"phrases", jp:"のどがかわきました", reading:"nodo ga kawakimashita", en:"I'm thirsty"},
+{cat:"phrases", jp:"眠いです", reading:"nemui desu", en:"I'm sleepy"},
+{cat:"phrases", jp:"疲れました", reading:"tsukaremashita", en:"I'm tired"},
+{cat:"phrases", jp:"好きです", reading:"suki desu", en:"I like it"},
+{cat:"phrases", jp:"好きじゃないです", reading:"suki janai desu", en:"I don't like it"},
+{cat:"phrases", jp:"何してるの？", reading:"nani shiteru no?", en:"what are you doing?"},
+{cat:"phrases", jp:"家に帰ります", reading:"ie ni kaerimasu", en:"I'm going home"},
+{cat:"phrases", jp:"何て言ったの？", reading:"nante itta no?", en:"what did you say?"},
+{cat:"phrases", jp:"どう言いますか？", reading:"dou iimasu ka?", en:"how do you say?"},
+{cat:"phrases", jp:"大丈夫です", reading:"daijoubu desu", en:"it's okay"},
+{cat:"phrases", jp:"気にしないで", reading:"ki ni shinaide", en:"it doesn't matter"},
+{cat:"phrases", jp:"行こう", reading:"ikou", en:"let's go"},
+{cat:"phrases", jp:"会いたい", reading:"aitai", en:"I miss you"},
+{cat:"phrases", jp:"大好きだよ", reading:"daisuki da yo", en:"I love you"},
+{cat:"phrases", jp:"体に気をつけて", reading:"karada ni ki o tsukete", en:"take care"},
+{cat:"phrases", jp:"おめでとうございます", reading:"omedetou gozaimasu", en:"congratulations"},
+{cat:"phrases", jp:"ようこそ", reading:"youkoso", en:"welcome"},
+{cat:"phrases", jp:"お手伝いしましょうか？", reading:"otetsudai shimashou ka?", en:"can I help you?"},
+{cat:"phrases", jp:"暑いです", reading:"atsui desu", en:"it's hot"},
+{cat:"phrases", jp:"寒いです", reading:"samui desu", en:"it's cold"},
+{cat:"phrases", jp:"お誕生日おめでとう", reading:"otanjoubi omedetou", en:"happy birthday"},
+{cat:"phrases", jp:"幸運を祈ります", reading:"kouun o inorimasu", en:"good luck"},
+{cat:"phrases", jp:"またすぐ会いましょう", reading:"mata sugu aimashou", en:"see you soon"},
+{cat:"phrases", jp:"同感です", reading:"doukan desu", en:"I agree"},
+{cat:"phrases", jp:"確信がありません", reading:"kakushin ga arimasen", en:"I'm not sure"},
+{cat:"phrases", jp:"もちろん", reading:"mochiron", en:"of course"},
+{cat:"phrases", jp:"当然です", reading:"touzen desu", en:"of course"},
+{cat:"phrases", jp:"わかりません", reading:"wakarimasen", en:"no idea"},
+{cat:"phrases", jp:"冗談でしょう", reading:"joudan deshou", en:"it's a joke"},
+{cat:"phrases", jp:"急いでいます", reading:"isoideimasu", en:"I'm in a hurry"},
+{cat:"phrases", jp:"気をつけて", reading:"ki o tsukete", en:"be careful"},
+{cat:"phrases", jp:"忙しいです", reading:"isogashii desu", en:"he/she is busy"},
+{cat:"phrases", jp:"心配しないで", reading:"shinpai shinaide", en:"don't worry"},
+{cat:"phrases", jp:"どうだった？", reading:"dou datta?", en:"how was it?"},
+{cat:"phrases", jp:"どう思いますか？", reading:"dou omoimasu ka?", en:"what do you think?"},
+{cat:"phrases", jp:"もっと教えて", reading:"motto oshiete", en:"tell me more"},
+{cat:"phrases", jp:"ありえない", reading:"arienai", en:"it can't be"},
+{cat:"phrases", jp:"ずっと昔に", reading:"zutto mukashi ni", en:"a long time ago"},
+{cat:"phrases", jp:"また後で会いましょう", reading:"mata ato de aimashou", en:"see you later"},
+{cat:"phrases", jp:"うそでしょう", reading:"uso deshou", en:"you don’t say!"},
+{cat:"phrases", jp:"なんて驚き", reading:"nante odoroki", en:"what a surprise"},
+{cat:"phrases", jp:"見てみましょう", reading:"mite mimashou", en:"we’ll see"},
+{cat:"phrases", jp:"問題ありません", reading:"mondai arimasen", en:"no problem"},
+{cat:"phrases", jp:"気にしません", reading:"ki ni shimasen", en:"I don't mind"},
+{cat:"phrases", jp:"願わくば", reading:"negawakuba", en:"hopefully"},
+{cat:"phrases", jp:"絶対に無理", reading:"zettai ni muri", en:"not a chance"},
+{cat:"phrases", jp:"何か新しいことある？", reading:"nani ka atarashii koto aru?", en:"what's new?"},
+{cat:"phrases", jp:"あなたの好きなように", reading:"anata no sukina you ni", en:"as you wish"},
+{cat:"phrases", jp:"場合による", reading:"baai ni yoru", en:"it depends"},
+{cat:"phrases", jp:"残念ですね", reading:"zannen desu ne", en:"what a shame"},
+{cat:"phrases", jp:"なんて不運", reading:"nante fuun", en:"what a pity"},
+{cat:"phrases", jp:"信じられない", reading:"shinjirarenai", en:"it's incredible"},
+{cat:"phrases", jp:"待ちきれない", reading:"machikirenai", en:"I can't wait"},
+{cat:"phrases", jp:"笑い死にしそう", reading:"warai-jini shisou", en:"I'm dying of laughter"},
+{cat:"phrases", jp:"いいアイデアですね", reading:"ii aidea desu ne", en:"what a good idea"},
+{cat:"phrases", jp:"美味しそう", reading:"oishisou", en:"how delicious"},
+{cat:"phrases", jp:"必要です", reading:"hitsuyou desu", en:"it's necessary"},
+{cat:"phrases", jp:"それが人生さ", reading:"sore ga jinsei sa", en:"that's life"},
+{cat:"phrases", jp:"なんて素敵", reading:"nante suteki", en:"how beautiful"},
+{cat:"phrases", jp:"なんて幸運", reading:"nante kouun", en:"what luck"},
+{cat:"phrases", jp:"なんて不運", reading:"nante fuun", en:"what bad luck"},
+{cat:"phrases", jp:"気が進まない", reading:"ki ga susumanai", en:"I don't feel like it"},
+{cat:"phrases", jp:"もう十分", reading:"mou juubun", en:"enough already"},
+{cat:"phrases", jp:"落ち着いて", reading:"ochitsuite", en:"take it easy"},
+{cat:"phrases", jp:"恥ずかしい！", reading:"hazukashii!", en:"how embarrassing!"},
+{cat:"phrases", jp:"あなたに夢中", reading:"anata ni muchuu", en:"you drive me crazy"},
+{cat:"phrases", jp:"気にならない", reading:"ki ni naranai", en:"it doesn’t bother me"},
+{cat:"phrases", jp:"約束してくれる？", reading:"yakusoku shite kureru?", en:"do you promise me?"},
+{cat:"phrases", jp:"念のために", reading:"nen no tame ni", en:"just in case"},
+{cat:"phrases", jp:"雨が降っています", reading:"ame ga futteimasu", en:"it's raining"},
+{cat:"phrases", jp:"晴れています", reading:"hareteimasu", en:"it's sunny"},
+{cat:"phrases", jp:"見てみましょう", reading:"mite mimashou", en:"let’s see"},
+{cat:"phrases", jp:"質問があります", reading:"shitsumon ga arimasu", en:"I have a question"},
+{cat:"phrases", jp:"退屈だな", reading:"taikutsu da na", en:"how boring"},
+{cat:"phrases", jp:"ワクワクする", reading:"wakuwaku suru", en:"how exciting"},
+];
+
+const CAT_LABELS = {
+  verbs:"Verbs", nouns:"Nouns", adjectives:"Adjectives", adverbs:"Adverbs",
+  pronouns:"Pronouns", prepositions:"Prepositions", conjunctions:"Conjunctions", phrases:"Phrases"
+};
+
+(function(){
+  let activeCats = new Set(Object.keys(CAT_LABELS));
+  let deck = [];
+  let idx = 0;
+  let flipped = false;
+  let knownCount = 0;
+  let sessionTotal = 0;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  let jpVoice = null;
+  function loadVoices(){
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    jpVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+  }
+  if('speechSynthesis' in window){
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function speakJapanese(text, btn){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'ja-JP';
+    if(jpVoice) utter.voice = jpVoice;
+    utter.rate = 0.8;
+    if(btn){
+      btn.classList.add('playing');
+      utter.onend = () => btn.classList.remove('playing');
+      utter.onerror = () => btn.classList.remove('playing');
+    }
+    window.speechSynthesis.speak(utter);
+  }
+
+  function buildDeck(){
+    deck = shuffle(WORDS.filter(v => activeCats.has(v.cat)));
+    idx = 0;
+    flipped = false;
+    knownCount = 0;
+    sessionTotal = deck.length;
+  }
+
+  function toggleCat(c){
+    if(c === '__all__'){
+      activeCats = new Set(Object.keys(CAT_LABELS));
+    } else {
+      if(activeCats.has(c)){ if(activeCats.size>1) activeCats.delete(c); }
+      else activeCats.add(c);
+    }
+    buildDeck();
+    render();
+  }
+
+  function flipCard(){ flipped = !flipped; render(); }
+
+  function nextCard(known){
+    if(known) knownCount++;
+    idx++;
+    flipped = false;
+    render();
+  }
+
+  function restart(){ buildDeck(); render(); }
+  function reshuffle(){
+    deck = shuffle(deck.slice(idx));
+    idx = 0;
+    flipped = false;
+    render();
+  }
+
+  function render(){
+    const app = document.getElementById('tw-app');
+    const remaining = deck.length - idx;
+    const progressPct = sessionTotal ? Math.round((idx/sessionTotal)*100) : 0;
+    const allActive = activeCats.size === Object.keys(CAT_LABELS).length;
+
+    let chipsHtml = `<button class="tw-chip tw-chip-all ${allActive ? 'active':''}" data-cat="__all__">All</button>` +
+      Object.keys(CAT_LABELS).map(c => `
+      <button class="tw-chip ${activeCats.has(c) ? 'active':''}" data-cat="${c}">${CAT_LABELS[c]}</button>
+    `).join('');
+
+    if(idx >= deck.length && deck.length > 0){
+      app.innerHTML = `
+        <div class="tw-header">
+          <div class="tw-title"><span class="jp">単語</span>Top 1,070 Words</div>
+        </div>
+        <div class="tw-filters">${chipsHtml}</div>
+        <div class="tw-done">
+          <div class="tw-big">よくできました！</div>
+          <div>You reviewed <strong>${sessionTotal}</strong> cards and knew <strong>${knownCount}</strong> of them.</div>
+          <button class="tw-restart" id="tw-restart-btn">Study again</button>
+        </div>
+      `;
+      document.getElementById('tw-restart-btn').onclick = restart;
+      wireFilters();
+      return;
+    }
+
+    if(deck.length === 0){
+      app.innerHTML = `
+        <div class="tw-header"><div class="tw-title"><span class="jp">単語</span>Top 1,070 Words</div></div>
+        <div class="tw-filters">${chipsHtml}</div>
+        <div class="tw-done">Select at least one category to begin.</div>
+      `;
+      wireFilters();
+      return;
+    }
+
+    const card = deck[idx];
+
+    app.innerHTML = `
+      <div class="tw-header">
+        <div class="tw-title"><span class="jp">単語</span>Top 1,070 Words</div>
+        <div class="tw-sub">${sessionTotal} cards</div>
+      </div>
+      <div class="tw-filters">${chipsHtml}</div>
+      <div class="tw-stats">
+        <span>${idx+1} / ${sessionTotal}</span>
+        <div class="tw-progress-bar"><div class="tw-progress-fill" style="width:${progressPct}%"></div></div>
+        <span>${remaining} left</span>
+      </div>
+      <div class="tw-card-wrap">
+        <div class="tw-card ${flipped ? 'flipped':''}" id="tw-card">
+          <div class="tw-face front">
+            <span class="tw-cat-tag">${CAT_LABELS[card.cat]}</span>
+            <div class="tw-jp">${card.jp}</div>
+            <div class="tw-reading">${card.reading}</div>
+            <div class="tw-hint">tap to reveal meaning</div>
+            <button class="tw-speak" data-speak="${card.jp.replace(/"/g,'&quot;')}" title="Play pronunciation">🔊</button>
+          </div>
+          <div class="tw-face back">
+            <span class="tw-cat-tag">${CAT_LABELS[card.cat]}</span>
+            <div class="tw-meaning">${card.en}</div>
+            <div class="tw-reading">${card.reading}</div>
+            <div class="tw-hint">tap to flip back</div>
+            <button class="tw-speak" data-speak="${card.jp.replace(/"/g,'&quot;')}" title="Play pronunciation">🔊</button>
+          </div>
+        </div>
+      </div>
+      <div class="tw-actions">
+        <button class="tw-btn tw-btn-again" id="tw-again">Still learning</button>
+        <button class="tw-btn tw-btn-know" id="tw-know">I know it ✓</button>
+      </div>
+      <div class="tw-bottom-row">
+        <span style="font-size:11px;color:var(--ink-soft)">${deck.length} cards in this set</span>
+        <button class="tw-btn-shuffle" id="tw-shuffle">🔀 Shuffle remaining</button>
+      </div>
+    `;
+
+    document.getElementById('tw-card').onclick = flipCard;
+    document.getElementById('tw-again').onclick = (e) => { e.stopPropagation(); nextCard(false); };
+    document.getElementById('tw-know').onclick = (e) => { e.stopPropagation(); nextCard(true); };
+    document.getElementById('tw-shuffle').onclick = (e) => { e.stopPropagation(); reshuffle(); };
+    app.querySelectorAll('.tw-speak').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); speakJapanese(btn.dataset.speak, btn); };
+    });
+    wireFilters();
+  }
+
+  function wireFilters(){
+    document.querySelectorAll('.tw-chip').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); toggleCat(btn.dataset.cat); };
+    });
+  }
+
+  buildDeck();
+  render();
+})();
+</script>
