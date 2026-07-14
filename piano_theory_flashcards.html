@@ -1,0 +1,464 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+.pf-root {
+  --ivory: #faf6ee;
+  --ivory-line: #e8ddc8;
+  --ink: #211d18;
+  --ink-soft: #6f6455;
+  --wood: #6b4226;
+  --brass: #a9843f;
+  --burgundy: #7a2e2e;
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  background: var(--ivory);
+  background-image:
+    radial-gradient(circle at 15% 8%, rgba(107,66,38,0.06), transparent 42%),
+    radial-gradient(circle at 92% 90%, rgba(122,46,46,0.07), transparent 45%);
+  border-radius: 18px;
+  padding: 20px;
+  max-width: 640px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.pf-root * { box-sizing: border-box; }
+
+.pf-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--ivory-line);
+  padding-bottom: 10px;
+}
+.pf-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--wood);
+  letter-spacing: 0.01em;
+}
+.pf-title .note-ico { color: var(--burgundy); margin-right: 8px; }
+.pf-sub { font-size: 12px; color: var(--ink-soft); }
+
+.pf-filters { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.pf-chip {
+  border: 1.5px solid var(--wood);
+  color: var(--wood);
+  background: transparent;
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+}
+.pf-chip.active { background: var(--wood); color: var(--ivory); }
+.pf-chip:hover { transform: translateY(-1px); }
+
+.pf-stats {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--ink-soft); margin-bottom: 8px;
+}
+.pf-progress-bar {
+  flex: 1; height: 6px; background: var(--ivory-line); border-radius: 4px;
+  margin: 0 10px; overflow: hidden;
+}
+.pf-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--brass), var(--burgundy));
+  transition: width .3s ease; border-radius: 4px;
+}
+
+.pf-card-wrap { perspective: 1200px; height: 280px; margin-bottom: 14px; }
+.pf-card {
+  position: relative; width: 100%; height: 100%; cursor: pointer;
+  transform-style: preserve-3d; transition: transform .5s cubic-bezier(.3,.7,.3,1);
+}
+.pf-card.flipped { transform: rotateY(180deg); }
+.pf-face {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: 16px; border: 1.5px solid var(--ivory-line);
+  background: #fffdf8; box-shadow: 0 6px 20px rgba(33,29,24,0.10);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 16px; text-align: center;
+}
+.pf-face.back { transform: rotateY(180deg); }
+.pf-cat-tag {
+  position: absolute; top: 12px; left: 14px; font-size: 10px; font-weight: 700;
+  color: var(--wood); border: 1px solid var(--wood); border-radius: 6px;
+  padding: 2px 7px; letter-spacing: 0.03em;
+}
+.pf-sub-tag {
+  position: absolute; top: 12px; right: 14px; font-size: 10px;
+  color: var(--ink-soft); font-style: italic;
+}
+.pf-staff-svg { width: 100%; max-width: 220px; }
+.pf-glyph { font-size: 90px; line-height: 1; color: var(--ink); }
+.pf-note-name {
+  font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700;
+  color: var(--burgundy); margin-top: 8px;
+}
+.pf-note-sub { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+.pf-count-display {
+  font-size: 22px; font-weight: 700; color: var(--brass); min-height: 30px;
+  letter-spacing: 0.15em; margin-top: 10px;
+}
+.pf-hint { font-size: 11px; color: var(--ink-soft); position: absolute; bottom: 12px; opacity: 0.75; }
+.pf-play-btn {
+  position: absolute; bottom: 12px; right: 14px; width: 36px; height: 36px;
+  border-radius: 50%; border: 1.5px solid var(--wood); background: #fff;
+  color: var(--wood); font-size: 14px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform .12s ease, background .12s ease, color .12s ease;
+}
+.pf-play-btn:hover { transform: scale(1.07); }
+.pf-play-btn.playing { background: var(--wood); color: var(--ivory); }
+
+.pf-actions { display: flex; gap: 10px; margin-bottom: 6px; }
+.pf-btn {
+  flex: 1; padding: 12px; border-radius: 12px; border: none; font-family: inherit;
+  font-weight: 700; font-size: 14px; cursor: pointer; transition: transform .12s ease;
+}
+.pf-btn:active { transform: scale(0.97); }
+.pf-btn-again { background: #fff; border: 1.5px solid var(--burgundy); color: var(--burgundy); }
+.pf-btn-know { background: var(--wood); color: var(--ivory); }
+.pf-btn-shuffle {
+  background: transparent; border: 1.5px solid var(--ink-soft); color: var(--ink-soft);
+  padding: 8px 12px; border-radius: 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+}
+.pf-bottom-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.pf-done { text-align: center; padding: 48px 20px; }
+.pf-done .pf-big { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--wood); margin-bottom: 8px; }
+.pf-restart {
+  margin-top: 16px; background: var(--burgundy); color: #fff; border: none;
+  padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+</style>
+
+<div id="pf-app" class="pf-root"></div>
+
+<script>
+const TREBLE_NOTES = [
+  {note:"C", oct:4, pos:-2, label:"Middle C"},
+  {note:"D", oct:4, pos:-1, label:""},
+  {note:"E", oct:4, pos:0,  label:"bottom line"},
+  {note:"F", oct:4, pos:1,  label:"1st space"},
+  {note:"G", oct:4, pos:2,  label:"2nd line"},
+  {note:"A", oct:4, pos:3,  label:"2nd space"},
+  {note:"B", oct:4, pos:4,  label:"middle line"},
+  {note:"C", oct:5, pos:5,  label:"3rd space"},
+  {note:"D", oct:5, pos:6,  label:"4th line"},
+  {note:"E", oct:5, pos:7,  label:"top space"},
+  {note:"F", oct:5, pos:8,  label:"top line"},
+  {note:"G", oct:5, pos:9,  label:"space above staff"},
+  {note:"A", oct:5, pos:10, label:"ledger line above"},
+];
+const BASS_NOTES = [
+  {note:"E", oct:2, pos:-2, label:"ledger line below"},
+  {note:"F", oct:2, pos:-1, label:"space below staff"},
+  {note:"G", oct:2, pos:0,  label:"bottom line"},
+  {note:"A", oct:2, pos:1,  label:"1st space"},
+  {note:"B", oct:2, pos:2,  label:"2nd line"},
+  {note:"C", oct:3, pos:3,  label:"2nd space"},
+  {note:"D", oct:3, pos:4,  label:"middle line"},
+  {note:"E", oct:3, pos:5,  label:"3rd space"},
+  {note:"F", oct:3, pos:6,  label:"4th line"},
+  {note:"G", oct:3, pos:7,  label:"top space"},
+  {note:"A", oct:3, pos:8,  label:"top line"},
+  {note:"B", oct:3, pos:9,  label:"space above staff"},
+  {note:"C", oct:4, pos:10, label:"Middle C"},
+];
+const NOTE_VALUES = [
+  {type:"whole",     glyph:"𝅝",     beats:4,    label:"Whole Note",     sub:"held for 4 beats"},
+  {type:"half",      glyph:"𝅗𝅥",    beats:2,    label:"Half Note",      sub:"held for 2 beats"},
+  {type:"quarter",   glyph:"𝅘𝅥",    beats:1,    label:"Quarter Note",   sub:"held for 1 beat"},
+  {type:"eighth",    glyph:"𝅘𝅥𝅮",   beats:0.5,  label:"Eighth Note",    sub:"held for 1/2 beat"},
+  {type:"sixteenth", glyph:"𝅘𝅥𝅯",   beats:0.25, label:"Sixteenth Note", sub:"held for 1/4 beat"},
+];
+const RESTS = [
+  {type:"whole",     glyph:"𝄻", beats:4,    label:"Whole Rest",     sub:"4 beats of silence"},
+  {type:"half",      glyph:"𝄼", beats:2,    label:"Half Rest",      sub:"2 beats of silence"},
+  {type:"quarter",   glyph:"𝄽", beats:1,    label:"Quarter Rest",   sub:"1 beat of silence"},
+  {type:"eighth",    glyph:"𝄾", beats:0.5,  label:"Eighth Rest",    sub:"1/2 beat of silence"},
+  {type:"sixteenth", glyph:"𝄿", beats:0.25, label:"Sixteenth Rest", sub:"1/4 beat of silence"},
+];
+const COUNT_LABELS = {
+  4:    [{t:0, l:"1"}],
+  2:    [{t:0, l:"1"}, {t:2, l:"3"}],
+  1:    [{t:0,l:"1"},{t:1,l:"2"},{t:2,l:"3"},{t:3,l:"4"}],
+  0.5:  [{t:0,l:"1"},{t:0.5,l:"&"},{t:1,l:"2"},{t:1.5,l:"&"},{t:2,l:"3"},{t:2.5,l:"&"},{t:3,l:"4"},{t:3.5,l:"&"}],
+  0.25: [{t:0,l:"1"},{t:0.25,l:"e"},{t:0.5,l:"&"},{t:0.75,l:"a"},{t:1,l:"2"},{t:1.25,l:"e"},{t:1.5,l:"&"},{t:1.75,l:"a"},
+         {t:2,l:"3"},{t:2.25,l:"e"},{t:2.5,l:"&"},{t:2.75,l:"a"},{t:3,l:"4"},{t:3.25,l:"e"},{t:3.5,l:"&"},{t:3.75,l:"a"}],
+};
+
+let DECK_ITEMS = [];
+[...TREBLE_NOTES].forEach(n => DECK_ITEMS.push({cat:"treble", kind:"pitch", ...n}));
+[...BASS_NOTES].forEach(n => DECK_ITEMS.push({cat:"bass", kind:"pitch", ...n}));
+[...NOTE_VALUES].forEach(n => DECK_ITEMS.push({cat:"values", kind:"rhythm", silent:false, ...n}));
+[...RESTS].forEach(n => DECK_ITEMS.push({cat:"rests", kind:"rhythm", silent:true, ...n}));
+
+const CAT_LABELS = {treble:"Treble Clef", bass:"Bass Clef", values:"Note Values", rests:"Rests"};
+
+(function(){
+  let activeCats = new Set(["treble","bass","values","rests"]);
+  let deck = [];
+  let idx = 0;
+  let flipped = false;
+  let knownCount = 0;
+  let sessionTotal = 0;
+  let audioCtx = null;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function getAudioCtx(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function noteFreq(letter, octave){
+    const semis = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+    const rel = (octave-4)*12 + (semis[letter]-9);
+    return 440 * Math.pow(2, rel/12);
+  }
+
+  function playPitch(letter, octave, btn){
+    const ctx = getAudioCtx();
+    const freq = noteFreq(letter, octave);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.1);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 1.15);
+    if(btn){
+      btn.classList.add('playing');
+      setTimeout(()=>btn.classList.remove('playing'), 1150);
+    }
+  }
+
+  function playClick(ctx, time, freq, gainVal, dur){
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, time);
+    gain.gain.exponentialRampToValueAtTime(gainVal, time + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(time);
+    osc.stop(time + dur + 0.02);
+  }
+
+  function playRhythm(beats, silent, btn, countEl){
+    const ctx = getAudioCtx();
+    const beatDur = 0.5;
+    const startTime = ctx.currentTime + 0.05;
+    for(let i=0;i<4;i++){
+      playClick(ctx, startTime + i*beatDur, 1200, 0.05, 0.05);
+    }
+    if(!silent){
+      const attacks = Math.round(4/beats);
+      for(let i=0;i<attacks;i++){
+        const t = startTime + i*beats*beatDur;
+        const dur = Math.min(beats*beatDur*0.9, 1.6);
+        playClick(ctx, t, 523.25, 0.22, dur);
+      }
+    }
+    const labels = COUNT_LABELS[beats] || [{t:0,l:"1"}];
+    labels.forEach(item=>{
+      setTimeout(()=>{ if(countEl) countEl.textContent = item.l; }, item.t*beatDur*1000);
+    });
+    const totalMs = 4*beatDur*1000;
+    setTimeout(()=>{ if(countEl) countEl.textContent = ''; }, totalMs + 100);
+    if(btn){
+      btn.classList.add('playing');
+      setTimeout(()=>btn.classList.remove('playing'), totalMs);
+    }
+  }
+
+  function buildDeck(){
+    deck = shuffle(DECK_ITEMS.filter(v => activeCats.has(v.cat)));
+    idx = 0; flipped = false; knownCount = 0; sessionTotal = deck.length;
+  }
+  function toggleCat(c){
+    if(activeCats.has(c)){ if(activeCats.size>1) activeCats.delete(c); }
+    else activeCats.add(c);
+    buildDeck(); render();
+  }
+  function flipCard(){ flipped = !flipped; render(); }
+  function nextCard(known){
+    if(known) knownCount++;
+    idx++; flipped = false; render();
+  }
+  function restart(){ buildDeck(); render(); }
+  function reshuffle(){
+    deck = shuffle(deck.slice(idx)); idx = 0; flipped = false; render();
+  }
+
+  function renderStaffSVG(card){
+    const isTreble = card.cat === "treble";
+    const lineSpacing = 14, stepPx = 7, staffTopY = 22;
+    const staffX1 = 34, staffX2 = 150;
+    const yFor = p => staffTopY + (8-p)*stepPx;
+    let lines = '';
+    for(let i=0;i<5;i++){
+      const y = staffTopY + i*lineSpacing;
+      lines += `<line x1="${staffX1}" y1="${y}" x2="${staffX2}" y2="${y}" stroke="#211d18" stroke-width="1.3"/>`;
+    }
+    const clefChar = isTreble ? '𝄞' : '𝄢';
+    const clefY = isTreble ? staffTopY + 46 : staffTopY + 32;
+    const clefFontSize = isTreble ? 68 : 40;
+    const clefX = isTreble ? 12 : 10;
+    const noteY = yFor(card.pos);
+    const noteX = 108;
+    let ledger = '';
+    if(card.pos <= -2 || card.pos >= 10){
+      if(card.pos % 2 === 0){
+        ledger = `<line x1="${noteX-11}" y1="${noteY}" x2="${noteX+11}" y2="${noteY}" stroke="#211d18" stroke-width="1.3"/>`;
+      }
+    }
+    return `
+      <svg class="pf-staff-svg" viewBox="0 0 170 100">
+        ${lines}
+        <text x="${clefX}" y="${clefY}" font-size="${clefFontSize}" fill="#211d18">${clefChar}</text>
+        ${ledger}
+        <ellipse cx="${noteX}" cy="${noteY}" rx="7" ry="5.2" fill="#7a2e2e" transform="rotate(-18 ${noteX} ${noteY})"/>
+      </svg>
+    `;
+  }
+
+  function render(){
+    const app = document.getElementById('pf-app');
+    const remaining = deck.length - idx;
+    const progressPct = sessionTotal ? Math.round((idx/sessionTotal)*100) : 0;
+
+    let chipsHtml = Object.keys(CAT_LABELS).map(c => `
+      <button class="pf-chip ${activeCats.has(c) ? 'active':''}" data-cat="${c}">${CAT_LABELS[c]}</button>
+    `).join('');
+
+    if(idx >= deck.length && deck.length > 0){
+      app.innerHTML = `
+        <div class="pf-header">
+          <div class="pf-title"><span class="note-ico">♪</span>Piano Theory</div>
+        </div>
+        <div class="pf-filters">${chipsHtml}</div>
+        <div class="pf-done">
+          <div class="pf-big">Well played!</div>
+          <div>You reviewed <strong>${sessionTotal}</strong> cards and knew <strong>${knownCount}</strong> of them.</div>
+          <button class="pf-restart" id="pf-restart-btn">Study again</button>
+        </div>
+      `;
+      document.getElementById('pf-restart-btn').onclick = restart;
+      wireFilters();
+      return;
+    }
+    if(deck.length === 0){
+      app.innerHTML = `
+        <div class="pf-header"><div class="pf-title"><span class="note-ico">♪</span>Piano Theory</div></div>
+        <div class="pf-filters">${chipsHtml}</div>
+        <div class="pf-done">Select at least one set to begin.</div>
+      `;
+      wireFilters();
+      return;
+    }
+
+    const card = deck[idx];
+    let frontInner, backInner, playBtnHtml = '';
+
+    if(card.kind === "pitch"){
+      frontInner = renderStaffSVG(card);
+      backInner = `
+        <div class="pf-note-name">${card.note}${card.oct}</div>
+        <div class="pf-note-sub">${card.label || (card.cat === 'treble' ? 'treble clef' : 'bass clef')}</div>
+      `;
+      playBtnHtml = `<button class="pf-play-btn" id="pf-play" title="Play pitch">🔊</button>`;
+    } else {
+      frontInner = `<div class="pf-glyph">${card.glyph}</div>`;
+      backInner = `
+        <div class="pf-note-name">${card.label}</div>
+        <div class="pf-note-sub">${card.sub}</div>
+        <div class="pf-count-display" id="pf-count"></div>
+      `;
+      playBtnHtml = `<button class="pf-play-btn" id="pf-play" title="Play rhythm">▶</button>`;
+    }
+
+    app.innerHTML = `
+      <div class="pf-header">
+        <div class="pf-title"><span class="note-ico">♪</span>Piano Theory</div>
+        <div class="pf-sub">${sessionTotal} cards</div>
+      </div>
+      <div class="pf-filters">${chipsHtml}</div>
+      <div class="pf-stats">
+        <span>${idx+1} / ${sessionTotal}</span>
+        <div class="pf-progress-bar"><div class="pf-progress-fill" style="width:${progressPct}%"></div></div>
+        <span>${remaining} left</span>
+      </div>
+      <div class="pf-card-wrap">
+        <div class="pf-card ${flipped ? 'flipped':''}" id="pf-card">
+          <div class="pf-face front">
+            <span class="pf-cat-tag">${CAT_LABELS[card.cat]}</span>
+            ${frontInner}
+            <div class="pf-hint">tap to reveal</div>
+            ${card.kind === 'pitch' ? playBtnHtml : ''}
+          </div>
+          <div class="pf-face back">
+            <span class="pf-cat-tag">${CAT_LABELS[card.cat]}</span>
+            ${backInner}
+            <div class="pf-hint">tap to flip back</div>
+            ${card.kind === 'rhythm' ? playBtnHtml : ''}
+          </div>
+        </div>
+      </div>
+      <div class="pf-actions">
+        <button class="pf-btn pf-btn-again" id="pf-again">Still learning</button>
+        <button class="pf-btn pf-btn-know" id="pf-know">I know it ✓</button>
+      </div>
+      <div class="pf-bottom-row">
+        <span style="font-size:11px;color:var(--ink-soft)">${deck.length} in this set</span>
+        <button class="pf-btn-shuffle" id="pf-shuffle">🔀 Shuffle remaining</button>
+      </div>
+    `;
+
+    document.getElementById('pf-card').onclick = flipCard;
+    document.getElementById('pf-again').onclick = (e) => { e.stopPropagation(); nextCard(false); };
+    document.getElementById('pf-know').onclick = (e) => { e.stopPropagation(); nextCard(true); };
+    document.getElementById('pf-shuffle').onclick = (e) => { e.stopPropagation(); reshuffle(); };
+    const playBtn = document.getElementById('pf-play');
+    if(playBtn){
+      playBtn.onclick = (e) => {
+        e.stopPropagation();
+        if(card.kind === 'pitch'){
+          playPitch(card.note, card.oct, playBtn);
+        } else {
+          const countEl = document.getElementById('pf-count');
+          playRhythm(card.beats, card.silent, playBtn, countEl);
+        }
+      };
+    }
+    wireFilters();
+  }
+
+  function wireFilters(){
+    document.querySelectorAll('.pf-chip').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); toggleCat(btn.dataset.cat); };
+    });
+  }
+
+  buildDeck();
+  render();
+})();
+</script>
