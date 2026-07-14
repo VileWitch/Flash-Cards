@@ -1,5 +1,5 @@
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Music&display=swap');
 
 .pf-root {
   --ivory: #faf6ee;
@@ -94,7 +94,8 @@
   color: var(--ink-soft); font-style: italic;
 }
 .pf-staff-svg { width: 100%; max-width: 220px; }
-.pf-glyph { font-size: 90px; line-height: 1; color: var(--ink); }
+.pf-glyph { font-family: 'Noto Music', sans-serif; font-size: 90px; line-height: 1; color: var(--ink); }
+.pf-clef-text { font-family: 'Noto Music', sans-serif; }
 .pf-note-name {
   font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700;
   color: var(--burgundy); margin-top: 8px;
@@ -334,7 +335,7 @@ const CAT_LABELS = {treble:"Treble Clef", bass:"Bass Clef", values:"Note Values"
     return `
       <svg class="pf-staff-svg" viewBox="0 0 170 100">
         ${lines}
-        <text x="${clefX}" y="${clefY}" font-size="${clefFontSize}" fill="#211d18">${clefChar}</text>
+        <text x="${clefX}" y="${clefY}" font-size="${clefFontSize}" fill="#211d18" class="pf-clef-text">${clefChar}</text>
         ${ledger}
         <ellipse cx="${noteX}" cy="${noteY}" rx="7" ry="5.2" fill="#7a2e2e" transform="rotate(-18 ${noteX} ${noteY})"/>
       </svg>
