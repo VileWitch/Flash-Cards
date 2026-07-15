@@ -1,6 +1,14 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Music&display=swap');
 
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #faf6ee;
+}
 .pf-root {
   --ivory: #faf6ee;
   --ivory-line: #e8ddc8;
@@ -16,10 +24,12 @@
     radial-gradient(circle at 15% 8%, rgba(107,66,38,0.06), transparent 42%),
     radial-gradient(circle at 92% 90%, rgba(122,46,46,0.07), transparent 45%);
   border-radius: 18px;
-  padding: 20px;
-  max-width: 640px;
-  margin: 0 auto;
+  padding: 28px;
+  width: 100%;
+  max-width: 760px;
+  margin: 24px auto;
   box-sizing: border-box;
+  font-size: 1.12em;
 }
 .pf-root * { box-sizing: border-box; }
 
@@ -70,7 +80,7 @@
   transition: width .3s ease; border-radius: 4px;
 }
 
-.pf-card-wrap { perspective: 1200px; height: 280px; margin-bottom: 14px; }
+.pf-card-wrap { perspective: 1200px; height: 340px; margin-bottom: 14px; }
 .pf-card {
   position: relative; width: 100%; height: 100%; cursor: pointer;
   transform-style: preserve-3d; transition: transform .5s cubic-bezier(.3,.7,.3,1);
@@ -139,6 +149,7 @@
 <div id="pf-app" class="pf-root"></div>
 
 <script>
+// ---- Data ----
 const TREBLE_NOTES = [
   {note:"C", oct:4, pos:-2, label:"Middle C"},
   {note:"D", oct:4, pos:-1, label:""},
@@ -266,11 +277,13 @@ const CAT_LABELS = {treble:"Treble Clef", bass:"Bass Clef", values:"Note Values"
 
   function playRhythm(beats, silent, btn, countEl){
     const ctx = getAudioCtx();
-    const beatDur = 0.5;
+    const beatDur = 0.5; // 120bpm
     const startTime = ctx.currentTime + 0.05;
+    // background quarter pulse, quiet, all 4 beats
     for(let i=0;i<4;i++){
       playClick(ctx, startTime + i*beatDur, 1200, 0.05, 0.05);
     }
+    // foreground attacks
     if(!silent){
       const attacks = Math.round(4/beats);
       for(let i=0;i<attacks;i++){
@@ -279,6 +292,7 @@ const CAT_LABELS = {treble:"Treble Clef", bass:"Bass Clef", values:"Note Values"
         playClick(ctx, t, 523.25, 0.22, dur);
       }
     }
+    // counting labels
     const labels = COUNT_LABELS[beats] || [{t:0,l:"1"}];
     labels.forEach(item=>{
       setTimeout(()=>{ if(countEl) countEl.textContent = item.l; }, item.t*beatDur*1000);
@@ -328,6 +342,7 @@ const CAT_LABELS = {treble:"Treble Clef", bass:"Bass Clef", values:"Note Values"
     const noteX = 108;
     let ledger = '';
     if(card.pos <= -2 || card.pos >= 10){
+      // only draw ledger at even (line) positions outside staff
       if(card.pos % 2 === 0){
         ledger = `<line x1="${noteX-11}" y1="${noteY}" x2="${noteX+11}" y2="${noteY}" stroke="#211d18" stroke-width="1.3"/>`;
       }
