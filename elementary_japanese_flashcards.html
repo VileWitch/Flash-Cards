@@ -1,0 +1,1321 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f6f1e4;
+}
+.ej-root {
+  --moss: #2f5233;
+  --moss-deep: #1c3320;
+  --washi: #f6f1e4;
+  --washi-line: #e3d9c0;
+  --sakura: #c0577a;
+  --gold: #c79a3d;
+  --ink: #2a2620;
+  --ink-soft: #6b6455;
+  font-family: 'Noto Sans JP', 'Zen Maru Gothic', sans-serif;
+  color: var(--ink);
+  background: var(--washi);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(47,82,51,0.06), transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(192,87,122,0.06), transparent 45%);
+  border-radius: 18px;
+  padding: 28px;
+  width: 100%;
+  max-width: 760px;
+  margin: 24px auto;
+  box-sizing: border-box;
+  font-size: 1.12em;
+}
+.ej-root * { box-sizing: border-box; }
+
+.ej-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--washi-line);
+  padding-bottom: 10px;
+}
+.ej-title {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--moss-deep);
+  letter-spacing: 0.02em;
+}
+.ej-title .jp { color: var(--sakura); margin-right: 8px; }
+.ej-sub { font-size: 12px; color: var(--ink-soft); }
+
+.ej-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.ej-chip {
+  border: 1.5px solid var(--moss);
+  color: var(--moss);
+  background: transparent;
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+}
+.ej-chip.active {
+  background: var(--moss);
+  color: var(--washi);
+}
+.ej-chip:hover { transform: translateY(-1px); }
+
+.ej-lesson-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fffdf8;
+  border: 1.5px solid var(--washi-line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.ej-lesson-img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: var(--washi);
+  flex-shrink: 0;
+}
+.ej-lesson-audio {
+  flex: 1;
+  min-width: 0;
+}
+.ej-lesson-audio-label {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+.ej-lesson-audio audio {
+  width: 100%;
+  height: 32px;
+}
+
+.ej-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.ej-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--washi-line);
+  border-radius: 4px;
+  margin: 0 10px;
+  overflow: hidden;
+}
+.ej-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--sakura));
+  transition: width .3s ease;
+  border-radius: 4px;
+}
+
+.ej-card-wrap {
+  perspective: 1200px;
+  height: 320px;
+  margin-bottom: 16px;
+}
+.ej-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.3,.7,.3,1);
+}
+.ej-card.flipped { transform: rotateY(180deg); }
+.ej-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  border: 1.5px solid var(--washi-line);
+  background: #fffdf8;
+  box-shadow: 0 6px 20px rgba(28,51,32,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+.ej-face.back { transform: rotateY(180deg); }
+.ej-lesson-tag {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--moss);
+  border: 1px solid var(--moss);
+  border-radius: 6px;
+  padding: 2px 7px;
+  letter-spacing: 0.03em;
+}
+.ej-verb-tag {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 10.5px;
+  color: var(--sakura);
+  font-style: italic;
+  border: 1px solid var(--sakura);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+.ej-kana {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--moss-deep);
+  line-height: 1.2;
+}
+.ej-kanji {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+.ej-romaji {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+.ej-meaning {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--sakura);
+  line-height: 1.3;
+}
+.ej-hint {
+  font-size: 11px;
+  color: var(--ink-soft);
+  position: absolute;
+  bottom: 12px;
+  opacity: 0.75;
+}
+
+.ej-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.ej-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .12s ease, opacity .12s ease;
+}
+.ej-btn:active { transform: scale(0.97); }
+.ej-btn-again {
+  background: #fff;
+  border: 1.5px solid var(--sakura);
+  color: var(--sakura);
+}
+.ej-btn-know {
+  background: var(--moss);
+  color: var(--washi);
+}
+.ej-btn-shuffle {
+  background: transparent;
+  border: 1.5px solid var(--ink-soft);
+  color: var(--ink-soft);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ej-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+.ej-done {
+  text-align: center;
+  padding: 50px 20px;
+}
+.ej-done .ej-kanji-big {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 26px;
+  color: var(--moss-deep);
+  margin-bottom: 8px;
+}
+.ej-restart {
+  margin-top: 16px;
+  background: var(--sakura);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+</style>
+
+<div id="ej-app" class="ej-root"></div>
+
+<script>
+const VOCAB = [
+{l:1, kana:'おなまえ', kanji:'', romaji:'onamae', en:'name (respectful)', verb:null},
+{l:1, kana:'がくせい', kanji:'', romaji:'gakusei', en:'student', verb:null},
+{l:1, kana:'ごせんもん', kanji:'', romaji:'gosenmon', en:'major (respectful)', verb:null},
+{l:1, kana:'せんせい', kanji:'', romaji:'sensei', en:'teacher', verb:null},
+{l:1, kana:'せんもん', kanji:'', romaji:'senmon', en:'major', verb:null},
+{l:1, kana:'なまえ', kanji:'', romaji:'namae', en:'name', verb:null},
+{l:1, kana:'にほんご', kanji:'', romaji:'nihongo', en:'Japanese language', verb:null},
+{l:1, kana:'ひらがな', kanji:'', romaji:'hiragana', en:'hiragana', verb:null},
+{l:1, kana:'わたし', kanji:'', romaji:'watashi', en:'I ⁄ me', verb:null},
+{l:2, kana:'～たち', kanji:'', romaji:'~tachi', en:'(plural indicator for people)', verb:null},
+{l:2, kana:'あそこ', kanji:'', romaji:'asoko', en:'place over there', verb:null},
+{l:2, kana:'あなた', kanji:'', romaji:'anata', en:'you', verb:null},
+{l:2, kana:'アパート', kanji:'', romaji:'apaato', en:'apartment', verb:null},
+{l:2, kana:'あれ', kanji:'', romaji:'are', en:'that one, those ones', verb:null},
+{l:2, kana:'いちねんせい', kanji:'', romaji:'ichinensei', en:'1st-year student', verb:null},
+{l:2, kana:'えいご', kanji:'', romaji:'eigo', en:'English', verb:null},
+{l:2, kana:'えんぴつ', kanji:'', romaji:'enpitsu', en:'pencil', verb:null},
+{l:2, kana:'おとこ', kanji:'', romaji:'otoko', en:'male', verb:null},
+{l:2, kana:'おんな', kanji:'', romaji:'onna', en:'female', verb:null},
+{l:2, kana:'かた', kanji:'', romaji:'kata', en:'person (respectful)', verb:null},
+{l:2, kana:'カタカナ', kanji:'', romaji:'katakana', en:'katakana', verb:null},
+{l:2, kana:'クラス', kanji:'', romaji:'kurasu', en:'class', verb:null},
+{l:2, kana:'くるま', kanji:'', romaji:'kuruma', en:'car', verb:null},
+{l:2, kana:'けいざいがく', kanji:'', romaji:'keizaigaku', en:'Economics', verb:null},
+{l:2, kana:'ここ', kanji:'', romaji:'koko', en:'here', verb:null},
+{l:2, kana:'これ', kanji:'', romaji:'kore', en:'this one', verb:null},
+{l:2, kana:'コンピューター', kanji:'', romaji:'konpyuutaa', en:'computer', verb:null},
+{l:2, kana:'サイエンス', kanji:'', romaji:'saiensu', en:'science', verb:null},
+{l:2, kana:'ざっし', kanji:'', romaji:'zasshi', en:'magazine', verb:null},
+{l:2, kana:'さんねんせい', kanji:'', romaji:'sannensei', en:'3rd-year student', verb:null},
+{l:2, kana:'じしょ', kanji:'', romaji:'jisho', en:'dictionary', verb:null},
+{l:2, kana:'しゃしん', kanji:'', romaji:'shashin', en:'photograph', verb:null},
+{l:2, kana:'しんぶん', kanji:'', romaji:'shinbun', en:'newspaper', verb:null},
+{l:2, kana:'そこ', kanji:'', romaji:'soko', en:'there', verb:null},
+{l:2, kana:'それ', kanji:'', romaji:'sore', en:'that one', verb:null},
+{l:2, kana:'だいがく', kanji:'', romaji:'daigaku', en:'college, university', verb:null},
+{l:2, kana:'だいがくいんせい', kanji:'', romaji:'daigakuinsei', en:'graduate student', verb:null},
+{l:2, kana:'だいがくせい', kanji:'', romaji:'daigakusei', en:'undergraduate student', verb:null},
+{l:2, kana:'だれ', kanji:'', romaji:'dare', en:'who', verb:null},
+{l:2, kana:'テキスト', kanji:'', romaji:'tekisuto', en:'textbook', verb:null},
+{l:2, kana:'どこ', kanji:'', romaji:'doko', en:'where', verb:null},
+{l:2, kana:'としょかん', kanji:'', romaji:'toshokan', en:'library', verb:null},
+{l:2, kana:'どなた', kanji:'', romaji:'donata', en:'who (respectful)', verb:null},
+{l:2, kana:'どれ', kanji:'', romaji:'dore', en:'which one', verb:null},
+{l:2, kana:'なん', kanji:'', romaji:'nan', en:'what', verb:null},
+{l:2, kana:'なんねんせい', kanji:'', romaji:'nannensei', en:'what-year student', verb:null},
+{l:2, kana:'にねんせい', kanji:'', romaji:'ninensei', en:'2nd-year student', verb:null},
+{l:2, kana:'ひと', kanji:'', romaji:'hito', en:'person', verb:null},
+{l:2, kana:'ビル', kanji:'', romaji:'biru', en:'building', verb:null},
+{l:2, kana:'ペン', kanji:'', romaji:'pen', en:'pen', verb:null},
+{l:2, kana:'ボールペン', kanji:'', romaji:'boorupen', en:'ballpoint pen', verb:null},
+{l:2, kana:'ほん', kanji:'', romaji:'hon', en:'book', verb:null},
+{l:2, kana:'よねんせい', kanji:'', romaji:'yonensei', en:'4th-year student', verb:null},
+{l:2, kana:'りょう', kanji:'', romaji:'ryou', en:'dormitory', verb:null},
+{l:2, kana:'わたしたち', kanji:'', romaji:'watashitachi', en:'we', verb:null},
+{l:2, kana:'いしかわ', kanji:'', romaji:'ishikawa', en:'Ishikawa', verb:null},
+{l:2, kana:'ウォン', kanji:'', romaji:'uon', en:'Wong', verb:null},
+{l:2, kana:'エイミー', kanji:'', romaji:'eimii', en:'Amy', verb:null},
+{l:2, kana:'エグザミナー', kanji:'', romaji:'eguzaminaa', en:'Examiner', verb:null},
+{l:2, kana:'きょうと', kanji:'', romaji:'kyouto', en:'Kyoto', verb:null},
+{l:2, kana:'サンフランシスコ', kanji:'', romaji:'sanfuranshisuko', en:'San Francisco', verb:null},
+{l:2, kana:'ジミー', kanji:'', romaji:'jimii', en:'Jimmy', verb:null},
+{l:2, kana:'ソン', kanji:'', romaji:'son', en:'Son', verb:null},
+{l:2, kana:'タイムズ', kanji:'', romaji:'taimuzu', en:'Times', verb:null},
+{l:2, kana:'にほん', kanji:'', romaji:'nihon', en:'Japan', verb:null},
+{l:2, kana:'ニューヨーク', kanji:'', romaji:'nyuuyooku', en:'New York', verb:null},
+{l:2, kana:'バークレー', kanji:'', romaji:'baakuree', en:'Berkeley', verb:null},
+{l:2, kana:'ブラウン', kanji:'', romaji:'buraun', en:'Brown', verb:null},
+{l:2, kana:'ミラー', kanji:'', romaji:'miraa', en:'Miller', verb:null},
+{l:3, kana:'あります', kanji:'', romaji:'arimasu', en:'to exist (things)', verb:null},
+{l:3, kana:'いす', kanji:'', romaji:'isu', en:'chair', verb:null},
+{l:3, kana:'いち', kanji:'一', romaji:'ichi', en:'one', verb:null},
+{l:3, kana:'いぬ', kanji:'', romaji:'inu', en:'dog', verb:null},
+{l:3, kana:'いぬごや', kanji:'', romaji:'inugoya', en:'doghouse', verb:null},
+{l:3, kana:'います', kanji:'', romaji:'imasu', en:'to exist (people, animals)', verb:null},
+{l:3, kana:'いらっしゃいます', kanji:'', romaji:'irasshaimasu', en:'to exist (respectful)', verb:null},
+{l:3, kana:'うえ', kanji:'', romaji:'ue', en:'on, above', verb:null},
+{l:3, kana:'うしろ', kanji:'', romaji:'ushiro', en:'back, behind', verb:null},
+{l:3, kana:'うち', kanji:'', romaji:'uchi', en:'house', verb:null},
+{l:3, kana:'おてあらい', kanji:'', romaji:'otearai', en:'toilet, lavatory', verb:null},
+{l:3, kana:'オフィス', kanji:'', romaji:'ofisu', en:'office', verb:null},
+{l:3, kana:'かばん', kanji:'', romaji:'kaban', en:'briefcase', verb:null},
+{l:3, kana:'カメラ', kanji:'', romaji:'kamera', en:'camera', verb:null},
+{l:3, kana:'きゅう', kanji:'九', romaji:'kyuu', en:'nine', verb:null},
+{l:3, kana:'きょうしつ', kanji:'', romaji:'kyoushitsu', en:'classroom', verb:null},
+{l:3, kana:'ぎんこう', kanji:'', romaji:'ginkou', en:'bank', verb:null},
+{l:3, kana:'ご', kanji:'五', romaji:'go', en:'five', verb:null},
+{l:3, kana:'さん', kanji:'三', romaji:'san', en:'three', verb:null},
+{l:3, kana:'し', kanji:'四', romaji:'shi', en:'four', verb:null},
+{l:3, kana:'した', kanji:'', romaji:'shita', en:'beneath, under, below', verb:null},
+{l:3, kana:'しち', kanji:'七', romaji:'shichi', en:'seven', verb:null},
+{l:3, kana:'じゅう', kanji:'十', romaji:'juu', en:'ten', verb:null},
+{l:3, kana:'せん', kanji:'千', romaji:'sen', en:'thousand', verb:null},
+{l:3, kana:'そと', kanji:'', romaji:'soto', en:'outside', verb:null},
+{l:3, kana:'ソファー', kanji:'', romaji:'sofaa', en:'sofa', verb:null},
+{l:3, kana:'だれか', kanji:'', romaji:'dareka', en:'someone', verb:null},
+{l:3, kana:'だれも', kanji:'', romaji:'daremo', en:'anyone', verb:null},
+{l:3, kana:'ちかく', kanji:'', romaji:'chikaku', en:'vicinity', verb:null},
+{l:3, kana:'つくえ', kanji:'', romaji:'tsukue', en:'desk', verb:null},
+{l:3, kana:'テーブル', kanji:'', romaji:'teeburu', en:'table', verb:null},
+{l:3, kana:'てがみ', kanji:'', romaji:'tegami', en:'letter', verb:null},
+{l:3, kana:'とけい', kanji:'', romaji:'tokei', en:'watch, clock', verb:null},
+{l:3, kana:'どこかに', kanji:'', romaji:'dokokani', en:'somewhere', verb:null},
+{l:3, kana:'どこにも', kanji:'', romaji:'dokonimo', en:'anywhere', verb:null},
+{l:3, kana:'どなたか', kanji:'', romaji:'donataka', en:'someone (respectful)', verb:null},
+{l:3, kana:'どなたも', kanji:'', romaji:'donatamo', en:'anyone (respectful)', verb:null},
+{l:3, kana:'となり', kanji:'', romaji:'tonari', en:'next to', verb:null},
+{l:3, kana:'なか', kanji:'', romaji:'naka', en:'inside', verb:null},
+{l:3, kana:'なに', kanji:'', romaji:'nani', en:'what', verb:null},
+{l:3, kana:'なにか', kanji:'', romaji:'nanika', en:'something', verb:null},
+{l:3, kana:'なにも', kanji:'', romaji:'nanimo', en:'anything', verb:null},
+{l:3, kana:'に', kanji:'二', romaji:'ni', en:'two', verb:null},
+{l:3, kana:'ねこ', kanji:'', romaji:'neko', en:'cat', verb:null},
+{l:3, kana:'ノート', kanji:'', romaji:'nooto', en:'notebook', verb:null},
+{l:3, kana:'はち', kanji:'八', romaji:'hachi', en:'eight', verb:null},
+{l:3, kana:'ひゃく', kanji:'百', romaji:'hyaku', en:'hundred', verb:null},
+{l:3, kana:'プログラム', kanji:'', romaji:'puroguramu', en:'program', verb:null},
+{l:3, kana:'ベッド', kanji:'', romaji:'beddo', en:'bed', verb:null},
+{l:3, kana:'へや', kanji:'', romaji:'heya', en:'room', verb:null},
+{l:3, kana:'ほんや', kanji:'', romaji:'honya', en:'bookstore', verb:null},
+{l:3, kana:'まえ', kanji:'', romaji:'mae', en:'front', verb:null},
+{l:3, kana:'ゆうびんきょく', kanji:'', romaji:'yuubinkyoku', en:'post office', verb:null},
+{l:3, kana:'よこ', kanji:'', romaji:'yoko', en:'side', verb:null},
+{l:3, kana:'ラジオ', kanji:'', romaji:'rajio', en:'radio', verb:null},
+{l:3, kana:'ルームメート', kanji:'', romaji:'ruumumeeto', en:'roommate', verb:null},
+{l:3, kana:'ろく', kanji:'六', romaji:'roku', en:'six', verb:null},
+{l:3, kana:'カリフォルニア', kanji:'', romaji:'kariforunia', en:'California', verb:null},
+{l:3, kana:'きむら', kanji:'', romaji:'kimura', en:'Kimura', verb:null},
+{l:3, kana:'シカゴ', kanji:'', romaji:'shikago', en:'Chicago', verb:null},
+{l:3, kana:'ドイル', kanji:'', romaji:'doiru', en:'Doyle', verb:null},
+{l:3, kana:'パク', kanji:'', romaji:'paku', en:'Pak', verb:null},
+{l:3, kana:'ホームズ', kanji:'', romaji:'hoomuzu', en:'Holmes', verb:null},
+{l:3, kana:'やまだ', kanji:'', romaji:'yamada', en:'Yamada', verb:null},
+{l:3, kana:'ヤング', kanji:'', romaji:'yangu', en:'Young', verb:null},
+{l:3, kana:'ヨセミテ', kanji:'', romaji:'yosemite', en:'Yosemite', verb:null},
+{l:3, kana:'リン', kanji:'', romaji:'rin', en:'Lin', verb:null},
+{l:3, kana:'ワトソン', kanji:'', romaji:'watoson', en:'Watson', verb:null},
+{l:4, kana:'Ｘとき', kanji:'Ｘ時', romaji:'Xtoki', en:'X o’clock', verb:null},
+{l:4, kana:'Ｘふん', kanji:'Ｘ分', romaji:'Xfun', en:'X minute(s)', verb:null},
+{l:4, kana:'あいます', kanji:'', romaji:'aimasu', en:'to meet', verb:null},
+{l:4, kana:'あさごはん', kanji:'', romaji:'asagohan', en:'breakfast', verb:null},
+{l:4, kana:'あした', kanji:'', romaji:'ashita', en:'tomorrow', verb:null},
+{l:4, kana:'いきます', kanji:'', romaji:'ikimasu', en:'to go', verb:null},
+{l:4, kana:'いつ', kanji:'', romaji:'itsu', en:'when', verb:null},
+{l:4, kana:'いま', kanji:'', romaji:'ima', en:'now', verb:null},
+{l:4, kana:'うんどう(します)', kanji:'', romaji:'undou(shimasu)', en:'exercise', verb:null},
+{l:4, kana:'えいが', kanji:'', romaji:'eiga', en:'movie', verb:null},
+{l:4, kana:'えき', kanji:'', romaji:'eki', en:'station', verb:null},
+{l:4, kana:'おちゃ', kanji:'', romaji:'ocha', en:'tea', verb:null},
+{l:4, kana:'かいもの(します)', kanji:'', romaji:'kaimono(shimasu)', en:'shopping', verb:null},
+{l:4, kana:'かえります', kanji:'', romaji:'kaerimasu', en:'to go home', verb:null},
+{l:4, kana:'かきます', kanji:'', romaji:'kakimasu', en:'to write', verb:null},
+{l:4, kana:'カフェテリア', kanji:'', romaji:'kafeteria', en:'cafeteria', verb:null},
+{l:4, kana:'かようび', kanji:'火曜日', romaji:'kayoubi', en:'Tuesday', verb:null},
+{l:4, kana:'きます', kanji:'', romaji:'kimasu', en:'to come', verb:null},
+{l:4, kana:'きょう', kanji:'', romaji:'kyou', en:'today', verb:null},
+{l:4, kana:'きんようび', kanji:'金曜日', romaji:'kinyoubi', en:'Friday', verb:null},
+{l:4, kana:'げつようび', kanji:'月曜日', romaji:'getsuyoubi', en:'Monday', verb:null},
+{l:4, kana:'コーヒー', kanji:'', romaji:'koohii', en:'coffee', verb:null},
+{l:4, kana:'コーラ', kanji:'', romaji:'koora', en:'cola', verb:null},
+{l:4, kana:'ごご', kanji:'', romaji:'gogo', en:'PM, afternoon', verb:null},
+{l:4, kana:'ごぜん', kanji:'', romaji:'gozen', en:'AM, morning', verb:null},
+{l:4, kana:'ごはん', kanji:'', romaji:'gohan', en:'cooked rice, meal', verb:null},
+{l:4, kana:'コピー(します)', kanji:'', romaji:'kopii(shimasu)', en:'copy', verb:null},
+{l:4, kana:'じてんしゃ', kanji:'', romaji:'jitensha', en:'bicycle', verb:null},
+{l:4, kana:'します', kanji:'', romaji:'shimasu', en:'to do', verb:null},
+{l:4, kana:'ジム', kanji:'', romaji:'jimu', en:'gymnasium', verb:null},
+{l:4, kana:'しゅうまつ', kanji:'', romaji:'shuumatsu', en:'weekend', verb:null},
+{l:4, kana:'しゅくだい', kanji:'', romaji:'shukudai', en:'homework', verb:null},
+{l:4, kana:'すいようび', kanji:'水曜日', romaji:'suiyoubi', en:'Wednesday', verb:null},
+{l:4, kana:'スーパー', kanji:'', romaji:'suupaa', en:'supermarket', verb:null},
+{l:4, kana:'(お)すし', kanji:'', romaji:'(o)sushi', en:'sushi', verb:null},
+{l:4, kana:'そして', kanji:'', romaji:'soshite', en:'and then', verb:null},
+{l:4, kana:'それから', kanji:'', romaji:'sorekara', en:'after that', verb:null},
+{l:4, kana:'ダウンタウン', kanji:'', romaji:'dauntaun', en:'downtown', verb:null},
+{l:4, kana:'たべます', kanji:'', romaji:'tabemasu', en:'to eat', verb:null},
+{l:4, kana:'テニス', kanji:'', romaji:'tenisu', en:'tennis', verb:null},
+{l:4, kana:'デパート', kanji:'', romaji:'depaato', en:'department store', verb:null},
+{l:4, kana:'でも', kanji:'', romaji:'demo', en:'but', verb:null},
+{l:4, kana:'テレビ', kanji:'', romaji:'terebi', en:'TV', verb:null},
+{l:4, kana:'でんしゃ', kanji:'', romaji:'densha', en:'train', verb:null},
+{l:4, kana:'ともだち', kanji:'', romaji:'tomodachi', en:'friend', verb:null},
+{l:4, kana:'どようび', kanji:'土曜日', romaji:'doyoubi', en:'Saturday', verb:null},
+{l:4, kana:'にちようび', kanji:'日曜日', romaji:'nichiyoubi', en:'Sunday', verb:null},
+{l:4, kana:'にっぽんまち', kanji:'日本まち', romaji:'nihonmachi', en:'Japantown', verb:null},
+{l:4, kana:'のみます', kanji:'', romaji:'nomimasu', en:'to drink', verb:null},
+{l:4, kana:'(お)はし', kanji:'', romaji:'(o)hashi', en:'chopsticks', verb:null},
+{l:4, kana:'バス', kanji:'', romaji:'basu', en:'bus', verb:null},
+{l:4, kana:'はん', kanji:'半', romaji:'han', en:'half', verb:null},
+{l:4, kana:'ばんごはん', kanji:'', romaji:'bangohan', en:'dinner, supper', verb:null},
+{l:4, kana:'ビール', kanji:'', romaji:'biiru', en:'beer', verb:null},
+{l:4, kana:'ひこうき', kanji:'', romaji:'hikouki', en:'airplane', verb:null},
+{l:4, kana:'ひるごはん', kanji:'', romaji:'hirugohan', en:'lunch', verb:null},
+{l:4, kana:'プラン', kanji:'', romaji:'puran', en:'plan', verb:null},
+{l:4, kana:'べんきょう（します）', kanji:'', romaji:'benkyou(shimasu)', en:'study', verb:null},
+{l:4, kana:'まち', kanji:'', romaji:'machi', en:'town, city', verb:null},
+{l:4, kana:'みます', kanji:'', romaji:'mimasu', en:'to see, watch', verb:null},
+{l:4, kana:'もくようび', kanji:'木曜日', romaji:'mokuyoubi', en:'Thursday', verb:null},
+{l:4, kana:'よみます', kanji:'', romaji:'yomimasu', en:'to read', verb:null},
+{l:4, kana:'れい', kanji:'', romaji:'rei', en:'example', verb:null},
+{l:4, kana:'キム', kanji:'', romaji:'kimu', en:'Kim', verb:null},
+{l:4, kana:'ジョーンズ', kanji:'', romaji:'joonzu', en:'Jones', verb:null},
+{l:4, kana:'しんかんせん', kanji:'', romaji:'shinkansen', en:'Japanese bullet train', verb:null},
+{l:4, kana:'ラウール', kanji:'', romaji:'rauuru', en:'Raoul', verb:null},
+{l:5, kana:'あさ', kanji:'', romaji:'asa', en:'morning', verb:null},
+{l:5, kana:'いちがつ', kanji:'一月', romaji:'ichigatsu', en:'January', verb:null},
+{l:5, kana:'おきる', kanji:'', romaji:'okiru', en:'to wake ⁄ get up', verb:'ru-verb'},
+{l:5, kana:'おしえる', kanji:'', romaji:'oshieru', en:'to teach', verb:'ru-verb'},
+{l:5, kana:'かう', kanji:'', romaji:'kau', en:'to buy', verb:'u-verb'},
+{l:5, kana:'きく', kanji:'', romaji:'kiku', en:'to listen, ask', verb:'u-verb'},
+{l:5, kana:'きのう', kanji:'昨日', romaji:'kinou', en:'yesterday', verb:null},
+{l:5, kana:'くがつ', kanji:'九月', romaji:'kugatsu', en:'September', verb:null},
+{l:5, kana:'ごがつ', kanji:'五月', romaji:'gogatsu', en:'May', verb:null},
+{l:5, kana:'こんばん', kanji:'', romaji:'konban', en:'this evening', verb:null},
+{l:5, kana:'(お)さけ', kanji:'', romaji:'(o)sake', en:'alcoholic drink, Japanese sake', verb:null},
+{l:5, kana:'さんがつ', kanji:'三月', romaji:'sangatsu', en:'March', verb:null},
+{l:5, kana:'しがつ', kanji:'四月', romaji:'shigatsu', en:'April', verb:null},
+{l:5, kana:'しちがつ', kanji:'七月', romaji:'shichigatsu', en:'July', verb:null},
+{l:5, kana:'じゅういちがつ', kanji:'十一月', romaji:'juuichigatsu', en:'November', verb:null},
+{l:5, kana:'じゅうがつ', kanji:'十月', romaji:'juugatsu', en:'October', verb:null},
+{l:5, kana:'じゅうにがつ', kanji:'十二月', romaji:'juunigatsu', en:'December', verb:null},
+{l:5, kana:'ジョギング(する)', kanji:'', romaji:'jogingu(suru)', en:'jogging', verb:null},
+{l:5, kana:'すぐ', kanji:'', romaji:'sugu', en:'immediately, soon', verb:null},
+{l:5, kana:'ステーキ', kanji:'', romaji:'suteeki', en:'steak', verb:null},
+{l:5, kana:'せんしゅう', kanji:'', romaji:'senshuu', en:'last week', verb:null},
+{l:5, kana:'たいへん', kanji:'', romaji:'taihen', en:'tough', verb:null},
+{l:5, kana:'たくさん', kanji:'', romaji:'takusan', en:'a lot, many', verb:null},
+{l:5, kana:'チャイナタウン', kanji:'', romaji:'chainataun', en:'Chinatown', verb:null},
+{l:5, kana:'つかれる', kanji:'', romaji:'tsukareru', en:'to get tired', verb:'ru-verb'},
+{l:5, kana:'つくる', kanji:'', romaji:'tsukuru', en:'to make', verb:'u-verb'},
+{l:5, kana:'つもり', kanji:'', romaji:'tsumori', en:'intention', verb:null},
+{l:5, kana:'テスト(する)', kanji:'', romaji:'tesuto(suru)', en:'test, examination', verb:null},
+{l:5, kana:'てんぷら', kanji:'', romaji:'tenpura', en:'tempura', verb:null},
+{l:5, kana:'どうして', kanji:'', romaji:'doushite', en:'why', verb:null},
+{l:5, kana:'とる', kanji:'', romaji:'toru', en:'to take', verb:'u-verb'},
+{l:5, kana:'ドル', kanji:'', romaji:'doru', en:'dollar', verb:null},
+{l:5, kana:'とんかつ', kanji:'', romaji:'tonkatsu', en:'pork cutlet', verb:null},
+{l:5, kana:'にがつ', kanji:'二月', romaji:'nigatsu', en:'February', verb:null},
+{l:5, kana:'にっぽんりょうり', kanji:'日本りょうり', romaji:'nihonryouri', en:'Japanese cuisine', verb:null},
+{l:5, kana:'ねる', kanji:'', romaji:'neru', en:'to go to bed', verb:'ru-verb'},
+{l:5, kana:'はちがつ', kanji:'八月', romaji:'hachigatsu', en:'August', verb:null},
+{l:5, kana:'ばん', kanji:'', romaji:'ban', en:'evening', verb:null},
+{l:5, kana:'ハンバーガー', kanji:'', romaji:'hanbaagaa', en:'hamburger', verb:null},
+{l:5, kana:'ぶんがく', kanji:'', romaji:'bungaku', en:'literature', verb:null},
+{l:5, kana:'まだ', kanji:'', romaji:'mada', en:'(not) yet', verb:null},
+{l:5, kana:'もうすぐ', kanji:'', romaji:'mousugu', en:'soon', verb:null},
+{l:5, kana:'りょうり(する)', kanji:'', romaji:'ryouri(suru)', en:'cuisine, cooking', verb:null},
+{l:5, kana:'レストラン', kanji:'', romaji:'resutoran', en:'restaurant', verb:null},
+{l:5, kana:'ろくがつ', kanji:'六月', romaji:'rokugatsu', en:'June', verb:null},
+{l:5, kana:'ワイン', kanji:'', romaji:'wain', en:'wine', verb:null},
+{l:5, kana:'アメリカ', kanji:'', romaji:'amerika', en:'America', verb:null},
+{l:5, kana:'オークランド', kanji:'', romaji:'ookurando', en:'Oakland', verb:null},
+{l:5, kana:'タホ', kanji:'', romaji:'taho', en:'Tahoe', verb:null},
+{l:5, kana:'チェン', kanji:'', romaji:'chen', en:'Chen', verb:null},
+{l:5, kana:'マクドナルド', kanji:'', romaji:'makudonarudo', en:'McDonald’s', verb:null},
+{l:6, kana:'～ご', kanji:'～語', romaji:'~go', en:'suffix for a language', verb:null},
+{l:6, kana:'～にん', kanji:'～人', romaji:'~nin', en:'suffix for nationality', verb:null},
+{l:6, kana:'あそぶ', kanji:'', romaji:'asobu', en:'to play', verb:'u-verb'},
+{l:6, kana:'あめりかにん', kanji:'アメリカ人', romaji:'amerikanin', en:'American people', verb:null},
+{l:6, kana:'およぐ', kanji:'', romaji:'oyogu', en:'to swim', verb:'u-verb'},
+{l:6, kana:'かえす', kanji:'', romaji:'kaesu', en:'to return something', verb:'u-verb'},
+{l:6, kana:'かさ', kanji:'', romaji:'kasa', en:'umbrella', verb:null},
+{l:6, kana:'かなだにん', kanji:'カナダ人', romaji:'kanadanin', en:'Canadian people', verb:null},
+{l:6, kana:'(お)かね', kanji:'', romaji:'(o)kane', en:'money', verb:null},
+{l:6, kana:'かりる', kanji:'', romaji:'kariru', en:'to borrow', verb:'ru-verb'},
+{l:6, kana:'かんこくご', kanji:'かんこく語', romaji:'kankokugo', en:'Korean language', verb:null},
+{l:6, kana:'かんこくにん', kanji:'かんこく人', romaji:'kankokunin', en:'Korean people', verb:null},
+{l:6, kana:'がんばる', kanji:'', romaji:'ganbaru', en:'to do one’s best', verb:'u-verb'},
+{l:6, kana:'キャンパス', kanji:'', romaji:'kyanpasu', en:'campus', verb:null},
+{l:6, kana:'くつ', kanji:'', romaji:'kutsu', en:'shoes', verb:null},
+{l:6, kana:'こうえん', kanji:'', romaji:'kouen', en:'park', verb:null},
+{l:6, kana:'ゴルフ', kanji:'', romaji:'gorufu', en:'golf', verb:null},
+{l:6, kana:'こんど', kanji:'', romaji:'kondo', en:'next time, this time', verb:null},
+{l:6, kana:'さかな', kanji:'', romaji:'sakana', en:'fish', verb:null},
+{l:6, kana:'(お)さしみ', kanji:'', romaji:'(o)sashimi', en:'raw fish', verb:null},
+{l:6, kana:'ざんねん', kanji:'', romaji:'zannen', en:'regrettable, regret', verb:null},
+{l:6, kana:'しけん', kanji:'', romaji:'shiken', en:'quiz, examination', verb:null},
+{l:6, kana:'しつもん(する)', kanji:'', romaji:'shitsumon(suru)', en:'question', verb:null},
+{l:6, kana:'すうがく', kanji:'', romaji:'suugaku', en:'mathematics', verb:null},
+{l:6, kana:'スキー', kanji:'', romaji:'sukii', en:'ski', verb:null},
+{l:6, kana:'すこし', kanji:'', romaji:'sukoshi', en:'a little', verb:null},
+{l:6, kana:'スパゲティ', kanji:'', romaji:'supagetei', en:'spaghetti', verb:null},
+{l:6, kana:'すぺいんご', kanji:'スペイン語', romaji:'supeingo', en:'Spanish language', verb:null},
+{l:6, kana:'ちゅうかん', kanji:'中間', romaji:'chuukan', en:'midterm', verb:null},
+{l:6, kana:'ちゅうごくご', kanji:'ちゅうごく語', romaji:'chuugokugo', en:'Chinese language', verb:null},
+{l:6, kana:'ちゅうごくにん', kanji:'ちゅうごく人', romaji:'chuugokunin', en:'Chinese people', verb:null},
+{l:6, kana:'つかう', kanji:'', romaji:'tsukau', en:'to use', verb:'u-verb'},
+{l:6, kana:'テープ', kanji:'', romaji:'teepu', en:'tape', verb:null},
+{l:6, kana:'できる', kanji:'', romaji:'dekiru', en:'to be able to', verb:'ru-verb'},
+{l:6, kana:'ですから', kanji:'', romaji:'desukara', en:'therefore, so', verb:null},
+{l:6, kana:'どいつご', kanji:'ドイツ語', romaji:'doitsugo', en:'German language', verb:null},
+{l:6, kana:'どいつにん', kanji:'ドイツ人', romaji:'doitsunin', en:'German people', verb:null},
+{l:6, kana:'なつやすみ', kanji:'', romaji:'natsuyasumi', en:'summer vacation', verb:null},
+{l:6, kana:'にほんじん', kanji:'日本人', romaji:'nihonjin', en:'Japanese people', verb:null},
+{l:6, kana:'パーティー', kanji:'', romaji:'paateii', en:'party', verb:null},
+{l:6, kana:'はな', kanji:'', romaji:'hana', en:'flower', verb:null},
+{l:6, kana:'はなす', kanji:'', romaji:'hanasu', en:'to talk, speak', verb:'u-verb'},
+{l:6, kana:'ピアノ', kanji:'', romaji:'piano', en:'piano', verb:null},
+{l:6, kana:'ひく', kanji:'', romaji:'hiku', en:'to play a musical instrument', verb:'u-verb'},
+{l:6, kana:'ピクニック', kanji:'', romaji:'pikunikku', en:'picnic', verb:null},
+{l:6, kana:'ふくしゅう(する)', kanji:'', romaji:'fukushuu(suru)', en:'review', verb:null},
+{l:6, kana:'ふゆやすみ', kanji:'', romaji:'fuyuyasumi', en:'winter vacation', verb:null},
+{l:6, kana:'ふらんすご', kanji:'フランス語', romaji:'furansugo', en:'French language', verb:null},
+{l:6, kana:'ふらんすにん', kanji:'フランス人', romaji:'furansunin', en:'French people', verb:null},
+{l:6, kana:'また', kanji:'', romaji:'mata', en:'again', verb:null},
+{l:6, kana:'(お)みせ', kanji:'', romaji:'(o)mise', en:'shop, store', verb:null},
+{l:6, kana:'めきしこにん', kanji:'メキシコ人', romaji:'mekishikonin', en:'Mexican people', verb:null},
+{l:6, kana:'もちろん', kanji:'', romaji:'mochiron', en:'of course', verb:null},
+{l:6, kana:'りゅうがくせい', kanji:'留学生', romaji:'ryuugakusei', en:'foreign student', verb:null},
+{l:6, kana:'ろしあご', kanji:'ロシア語', romaji:'roshiago', en:'Russian language', verb:null},
+{l:6, kana:'やまもと', kanji:'山本', romaji:'yamamoto', en:'Yamamoto', verb:null},
+{l:7, kana:'あかるい', kanji:'明るい', romaji:'akarui', en:'bright', verb:'i-adj'},
+{l:7, kana:'あし', kanji:'', romaji:'ashi', en:'foot, leg', verb:null},
+{l:7, kana:'あたま', kanji:'', romaji:'atama', en:'head', verb:null},
+{l:7, kana:'あたらしい', kanji:'新しい', romaji:'atarashii', en:'new', verb:'i-adj'},
+{l:7, kana:'あちら', kanji:'', romaji:'achira', en:'that direction', verb:null},
+{l:7, kana:'あまり', kanji:'', romaji:'amari', en:'(not) much', verb:null},
+{l:7, kana:'いい', kanji:'', romaji:'ii', en:'good', verb:'i-adj'},
+{l:7, kana:'いかが', kanji:'', romaji:'ikaga', en:'how (respectful)', verb:null},
+{l:7, kana:'いじわる', kanji:'', romaji:'ijiwaru', en:'mean', verb:'na-adj'},
+{l:7, kana:'いつも', kanji:'', romaji:'itsumo', en:'always', verb:null},
+{l:7, kana:'うるさい', kanji:'', romaji:'urusai', en:'noisy', verb:'i-adj'},
+{l:7, kana:'おいしい', kanji:'', romaji:'oishii', en:'delicious', verb:'i-adj'},
+{l:7, kana:'おおきい', kanji:'大きい', romaji:'ookii', en:'big, large', verb:'i-adj'},
+{l:7, kana:'おもしろい', kanji:'', romaji:'omoshiroi', en:'interesting', verb:'i-adj'},
+{l:7, kana:'かみ', kanji:'', romaji:'kami', en:'hair', verb:null},
+{l:7, kana:'きたない', kanji:'', romaji:'kitanai', en:'dirty', verb:'i-adj'},
+{l:7, kana:'きれい', kanji:'', romaji:'kirei', en:'clean, beautiful', verb:'na-adj'},
+{l:7, kana:'くち', kanji:'', romaji:'kuchi', en:'mouth', verb:null},
+{l:7, kana:'くらい', kanji:'暗い', romaji:'kurai', en:'dark', verb:'i-adj'},
+{l:7, kana:'ケーキ', kanji:'', romaji:'keeki', en:'cake', verb:null},
+{l:7, kana:'げんき', kanji:'', romaji:'genki', en:'energetic', verb:'na-adj'},
+{l:7, kana:'コース', kanji:'', romaji:'koosu', en:'course', verb:null},
+{l:7, kana:'こちら', kanji:'', romaji:'kochira', en:'this direction', verb:null},
+{l:7, kana:'しずか', kanji:'', romaji:'shizuka', en:'quiet', verb:'na-adj'},
+{l:7, kana:'しつれい', kanji:'', romaji:'shitsurei', en:'rude', verb:'na-adj'},
+{l:7, kana:'しんせつ', kanji:'', romaji:'shinsetsu', en:'kind', verb:'na-adj'},
+{l:7, kana:'せ', kanji:'', romaji:'se', en:'body height', verb:null},
+{l:7, kana:'セール', kanji:'', romaji:'seeru', en:'sale', verb:null},
+{l:7, kana:'せまい', kanji:'', romaji:'semai', en:'narrow, small', verb:'i-adj'},
+{l:7, kana:'ぜんぜん', kanji:'', romaji:'zenzen', en:'(not) at all', verb:null},
+{l:7, kana:'そちら', kanji:'', romaji:'sochira', en:'that direction', verb:null},
+{l:7, kana:'たかい', kanji:'高い', romaji:'takai', en:'expensive, high', verb:'i-adj'},
+{l:7, kana:'ちーさい', kanji:'小さい', romaji:'chiisai', en:'small', verb:'i-adj'},
+{l:7, kana:'ちかい', kanji:'', romaji:'chikai', en:'near', verb:'i-adj'},
+{l:7, kana:'ちょっと', kanji:'', romaji:'chotto', en:'a little', verb:null},
+{l:7, kana:'つまらない', kanji:'', romaji:'tsumaranai', en:'trivial, boring', verb:'i-adj'},
+{l:7, kana:'て', kanji:'', romaji:'te', en:'hand, arm', verb:null},
+{l:7, kana:'デモ', kanji:'', romaji:'demo', en:'demonstration', verb:null},
+{l:7, kana:'どう', kanji:'', romaji:'dou', en:'how', verb:null},
+{l:7, kana:'とおい', kanji:'', romaji:'tooi', en:'far', verb:'i-adj'},
+{l:7, kana:'とても', kanji:'', romaji:'totemo', en:'very', verb:null},
+{l:7, kana:'どんな', kanji:'', romaji:'donna', en:'what kind of', verb:null},
+{l:7, kana:'なが', kanji:'', romaji:'naga', en:'long', verb:null},
+{l:7, kana:'にぎやか', kanji:'', romaji:'nigiyaka', en:'lively', verb:'na-adj'},
+{l:7, kana:'いる', kanji:'入る', romaji:'iru', en:'to enter', verb:'u-verb'},
+{l:7, kana:'はな', kanji:'', romaji:'hana', en:'nose', verb:null},
+{l:7, kana:'ひくい', kanji:'', romaji:'hikui', en:'low, short (height)', verb:'i-adj'},
+{l:7, kana:'ひろい', kanji:'広い', romaji:'hiroi', en:'spacious, wide', verb:'i-adj'},
+{l:7, kana:'ふべん', kanji:'', romaji:'fuben', en:'inconvenient', verb:'na-adj'},
+{l:7, kana:'ふまじめ', kanji:'', romaji:'fumajime', en:'not serious', verb:'na-adj'},
+{l:7, kana:'ふるい', kanji:'古い', romaji:'furui', en:'old', verb:'i-adj'},
+{l:7, kana:'べんり', kanji:'', romaji:'benri', en:'convenient', verb:'na-adj'},
+{l:7, kana:'まじめ', kanji:'', romaji:'majime', en:'serious', verb:'na-adj'},
+{l:7, kana:'まずい', kanji:'', romaji:'mazui', en:'not tasty / yucky', verb:'i-adj'},
+{l:7, kana:'みじかい', kanji:'', romaji:'mijikai', en:'short (length)', verb:'i-adj'},
+{l:7, kana:'みみ', kanji:'', romaji:'mimi', en:'ear', verb:null},
+{l:7, kana:'むずかしい', kanji:'', romaji:'muzukashii', en:'difficult', verb:'i-adj'},
+{l:7, kana:'め', kanji:'目', romaji:'me', en:'eye', verb:null},
+{l:7, kana:'やさしい', kanji:'', romaji:'yasashii', en:'easy, gentle', verb:'i-adj'},
+{l:7, kana:'やすい', kanji:'安い', romaji:'yasui', en:'cheap, inexpensive', verb:'i-adj'},
+{l:7, kana:'ラボ', kanji:'', romaji:'rabo', en:'laboratory', verb:null},
+{l:7, kana:'ウィルソン', kanji:'', romaji:'uiruson', en:'Wilson', verb:null},
+{l:7, kana:'おおさか(おおさか)', kanji:'おおさか(大阪)', romaji:'oosaka(oosaka)', en:'Osaka', verb:null},
+{l:7, kana:'シン', kanji:'', romaji:'shin', en:'Singh', verb:null},
+{l:7, kana:'スミス', kanji:'', romaji:'sumisu', en:'Smith', verb:null},
+{l:7, kana:'とうきょう(とうきょう)', kanji:'とうきょう(東京)', romaji:'toukyou(toukyou)', en:'Tokyo', verb:null},
+{l:7, kana:'まえだ', kanji:'', romaji:'maeda', en:'Maeda', verb:null},
+{l:7, kana:'やました', kanji:'山下', romaji:'yamashita', en:'Yamashita', verb:null},
+{l:7, kana:'ルイス', kanji:'', romaji:'ruisu', en:'Lewis', verb:null},
+{l:8, kana:'Ｘにん', kanji:'Ｘ人', romaji:'Xnin', en:'(counter for people)', verb:null},
+{l:8, kana:'あに', kanji:'兄', romaji:'ani', en:'older brother (plain)', verb:null},
+{l:8, kana:'あね', kanji:'姉', romaji:'ane', en:'older sister (plain)', verb:null},
+{l:8, kana:'あめ', kanji:'', romaji:'ame', en:'rain', verb:null},
+{l:8, kana:'あるく', kanji:'', romaji:'aruku', en:'to walk', verb:'u-verb'},
+{l:8, kana:'いただく', kanji:'', romaji:'itadaku', en:'to receive (respectful)', verb:'u-verb'},
+{l:8, kana:'いもうと', kanji:'妹', romaji:'imouto', en:'younger sister (plain)', verb:null},
+{l:8, kana:'いもうと', kanji:'', romaji:'imouto', en:'younger sister (resp)', verb:null},
+{l:8, kana:'うた', kanji:'', romaji:'uta', en:'song', verb:null},
+{l:8, kana:'うたう', kanji:'', romaji:'utau', en:'to sing', verb:'u-verb'},
+{l:8, kana:'おい', kanji:'', romaji:'oi', en:'nephew (plain)', verb:null},
+{l:8, kana:'おいごさん', kanji:'', romaji:'oigosan', en:'nephew (respectful)', verb:null},
+{l:8, kana:'おかあさん', kanji:'お母さん', romaji:'okaasan', en:'mother (respectful)', verb:null},
+{l:8, kana:'おくさん', kanji:'', romaji:'okusan', en:'wife (respectful)', verb:null},
+{l:8, kana:'おこさん', kanji:'', romaji:'okosan', en:'child (respectful)', verb:null},
+{l:8, kana:'おじ', kanji:'', romaji:'oji', en:'uncle (plain)', verb:null},
+{l:8, kana:'おじいさん', kanji:'', romaji:'ojiisan', en:'grandfather (respect)', verb:null},
+{l:8, kana:'おじさん', kanji:'', romaji:'ojisan', en:'uncle (respectful)', verb:null},
+{l:8, kana:'おとうさん', kanji:'お父さん', romaji:'otousan', en:'father (respectful)', verb:null},
+{l:8, kana:'おとうと', kanji:'', romaji:'otouto', en:'younger brother (plain)', verb:null},
+{l:8, kana:'おとうとさん', kanji:'弟さん', romaji:'otoutosan', en:'younger brother (resp)', verb:null},
+{l:8, kana:'おにいさん', kanji:'お兄さん', romaji:'oniisan', en:'older brother (respect)', verb:null},
+{l:8, kana:'おねえさん', kanji:'お姉さん', romaji:'oneesan', en:'older sister (respect)', verb:null},
+{l:8, kana:'おば', kanji:'', romaji:'oba', en:'aunt (plain)', verb:null},
+{l:8, kana:'おばあさん', kanji:'', romaji:'obaasan', en:'grandmother (respect)', verb:null},
+{l:8, kana:'おばさん', kanji:'', romaji:'obasan', en:'aunt (respectful)', verb:null},
+{l:8, kana:'おまごさん', kanji:'', romaji:'omagosan', en:'grandchild (respect)', verb:null},
+{l:8, kana:'かす', kanji:'', romaji:'kasu', en:'to lend', verb:'u-verb'},
+{l:8, kana:'かぞく', kanji:'', romaji:'kazoku', en:'family (plain)', verb:null},
+{l:8, kana:'かない', kanji:'', romaji:'kanai', en:'wife (plain)', verb:null},
+{l:8, kana:'きょうだい', kanji:'兄弟', romaji:'kyoudai', en:'siblings (plain)', verb:null},
+{l:8, kana:'きょねん', kanji:'', romaji:'kyonen', en:'last year', verb:null},
+{l:8, kana:'けっこう', kanji:'', romaji:'kekkou', en:'fine, nice, wonderful', verb:null},
+{l:8, kana:'こうこう', kanji:'高校', romaji:'koukou', en:'high school', verb:null},
+{l:8, kana:'こうこうせい', kanji:'高校生', romaji:'koukousei', en:'high school student', verb:null},
+{l:8, kana:'ごかぞく', kanji:'', romaji:'gokazoku', en:'family (respectful)', verb:null},
+{l:8, kana:'ごきょうだい', kanji:'ご兄弟', romaji:'gokyoudai', en:'siblings (respectful)', verb:null},
+{l:8, kana:'ごしゅじん', kanji:'', romaji:'goshujin', en:'husband (respectful)', verb:null},
+{l:8, kana:'ことし', kanji:'', romaji:'kotoshi', en:'this year', verb:null},
+{l:8, kana:'こども', kanji:'', romaji:'kodomo', en:'child (plain)', verb:null},
+{l:8, kana:'ごりょうしん', kanji:'', romaji:'goryoushin', en:'parents (respectful)', verb:null},
+{l:8, kana:'しごと(する)', kanji:'', romaji:'shigoto(suru)', en:'job', verb:null},
+{l:8, kana:'しぬ', kanji:'', romaji:'shinu', en:'to die', verb:'u-verb'},
+{l:8, kana:'ジュース', kanji:'', romaji:'juusu', en:'juice', verb:null},
+{l:8, kana:'しゅじん', kanji:'', romaji:'shujin', en:'husband (plain)', verb:null},
+{l:8, kana:'そふ', kanji:'', romaji:'sofu', en:'grandfather (plain)', verb:null},
+{l:8, kana:'そぼ', kanji:'', romaji:'sobo', en:'grandmother (plain)', verb:null},
+{l:8, kana:'タクシー', kanji:'', romaji:'takushii', en:'taxi', verb:null},
+{l:8, kana:'ちち', kanji:'父', romaji:'chichi', en:'father (plain)', verb:null},
+{l:8, kana:'ところで', kanji:'', romaji:'tokorode', en:'by the way', verb:null},
+{l:8, kana:'(しゃしんを)とる', kanji:'', romaji:'(shashinwo)toru', en:'to take (a picture)', verb:'u-verb'},
+{l:8, kana:'なんにん', kanji:'何人', romaji:'nannin', en:'how many people', verb:null},
+{l:8, kana:'はは', kanji:'母', romaji:'haha', en:'mother (plain)', verb:null},
+{l:8, kana:'はやい', kanji:'早い', romaji:'hayai', en:'early', verb:'i-adj'},
+{l:8, kana:'ひとり', kanji:'一人', romaji:'hitori', en:'one person', verb:null},
+{l:8, kana:'ふたり', kanji:'二人', romaji:'futari', en:'two persons', verb:null},
+{l:8, kana:'ふゆ', kanji:'', romaji:'fuyu', en:'winter', verb:null},
+{l:8, kana:'ふる', kanji:'', romaji:'furu', en:'to fall (weather)', verb:'u-verb'},
+{l:8, kana:'まご', kanji:'', romaji:'mago', en:'grandchild (plain)', verb:null},
+{l:8, kana:'まだ', kanji:'', romaji:'mada', en:'still', verb:null},
+{l:8, kana:'まつ', kanji:'', romaji:'matsu', en:'to wait', verb:'u-verb'},
+{l:8, kana:'めい', kanji:'', romaji:'mei', en:'niece (plain)', verb:null},
+{l:8, kana:'めいごさん', kanji:'', romaji:'meigosan', en:'niece (respectful)', verb:null},
+{l:8, kana:'もつ', kanji:'', romaji:'motsu', en:'to have, hold', verb:'u-verb'},
+{l:8, kana:'よぶ', kanji:'', romaji:'yobu', en:'to call, summon', verb:'u-verb'},
+{l:8, kana:'りょうしん', kanji:'', romaji:'ryoushin', en:'parents (plain)', verb:null},
+{l:8, kana:'ふるかわ', kanji:'古川', romaji:'furukawa', en:'Furukawa', verb:null},
+{l:8, kana:'やすかわ', kanji:'', romaji:'yasukawa', en:'Yasukawa', verb:null},
+{l:8, kana:'よこはま（よこはま）', kanji:'よこはま（横浜）', romaji:'yokohama(yokohama)', en:'Yokohama', verb:null},
+{l:9, kana:'Ｘえん', kanji:'Ｘ円', romaji:'Xen', en:'X yen', verb:null},
+{l:9, kana:'Ｘかがつ', kanji:'Ｘか月', romaji:'Xkagatsu', en:'X month(s)', verb:null},
+{l:9, kana:'Ｘこ', kanji:'', romaji:'Xko', en:'X unit(s) (general)', verb:null},
+{l:9, kana:'Ｘさつ', kanji:'', romaji:'Xsatsu', en:'X volume(s) of books', verb:null},
+{l:9, kana:'Ｘじかん', kanji:'Ｘ時間', romaji:'Xjikan', en:'X hour(s)', verb:null},
+{l:9, kana:'Ｘセント', kanji:'', romaji:'Xsento', en:'X cent(s)', verb:null},
+{l:9, kana:'Ｘだい', kanji:'', romaji:'Xdai', en:'X machine(s)', verb:null},
+{l:9, kana:'Ｘドル', kanji:'', romaji:'Xdoru', en:'X dollar(s)', verb:null},
+{l:9, kana:'Ｘねん', kanji:'Ｘ年', romaji:'Xnen', en:'X year(s)', verb:null},
+{l:9, kana:'Ｘはい', kanji:'', romaji:'Xhai', en:'X cup(s), bowl(s), glass(es)', verb:null},
+{l:9, kana:'Ｘほん', kanji:'Ｘ本', romaji:'Xhon', en:'X long, cylindrical thing(s)', verb:null},
+{l:9, kana:'Ｘまい', kanji:'', romaji:'Xmai', en:'X flat thing(s)', verb:null},
+{l:9, kana:'Ｅメール', kanji:'', romaji:'Emeeru', en:'email', verb:null},
+{l:9, kana:'Ｔシャツ', kanji:'', romaji:'Tshatsu', en:'T-shirt', verb:null},
+{l:9, kana:'イタリアりょうり', kanji:'', romaji:'itariaryouri', en:'Italian cuisine', verb:null},
+{l:9, kana:'いちばん', kanji:'一番', romaji:'ichiban', en:'first, best, number one', verb:null},
+{l:9, kana:'いつつ', kanji:'五つ', romaji:'itsutsu', en:'5 things', verb:null},
+{l:9, kana:'ウィスキー', kanji:'', romaji:'uisukii', en:'whiskey', verb:null},
+{l:9, kana:'ウェイター', kanji:'', romaji:'ueitaa', en:'waiter', verb:null},
+{l:9, kana:'え', kanji:'', romaji:'e', en:'picture, drawing', verb:null},
+{l:9, kana:'オーダー(する)', kanji:'', romaji:'oodaa(suru)', en:'order', verb:null},
+{l:9, kana:'おかんじょう', kanji:'', romaji:'okanjou', en:'check (at a restaurant)', verb:null},
+{l:9, kana:'おなか', kanji:'', romaji:'onaka', en:'stomach', verb:null},
+{l:9, kana:'おねがい(する)', kanji:'', romaji:'onegai(suru)', en:'request', verb:null},
+{l:9, kana:'オレンジ', kanji:'', romaji:'orenji', en:'orange', verb:null},
+{l:9, kana:'おんがく', kanji:'', romaji:'ongaku', en:'music', verb:null},
+{l:9, kana:'かく', kanji:'', romaji:'kaku', en:'to draw', verb:'u-verb'},
+{l:9, kana:'カレーライス', kanji:'', romaji:'kareeraisu', en:'curry rice', verb:null},
+{l:9, kana:'かわいい', kanji:'', romaji:'kawaii', en:'cute', verb:'i-adj'},
+{l:9, kana:'かんたん', kanji:'', romaji:'kantan', en:'easy', verb:'na-adj'},
+{l:9, kana:'ギター', kanji:'', romaji:'gitaa', en:'guitar', verb:null},
+{l:9, kana:'きょうかしょ', kanji:'', romaji:'kyoukasho', en:'textbook', verb:null},
+{l:9, kana:'きらい', kanji:'', romaji:'kirai', en:'dislike', verb:'na-adj'},
+{l:9, kana:'くだもの', kanji:'', romaji:'kudamono', en:'fruit', verb:null},
+{l:9, kana:'クラシック', kanji:'', romaji:'kurashikku', en:'classical music', verb:null},
+{l:9, kana:'クラスメート', kanji:'', romaji:'kurasumeeto', en:'classmate', verb:null},
+{l:9, kana:'ここのつ', kanji:'九つ', romaji:'kokonotsu', en:'9 things', verb:null},
+{l:9, kana:'ジャズ', kanji:'', romaji:'jazu', en:'jazz', verb:null},
+{l:9, kana:'じょうず', kanji:'上手', romaji:'jouzu', en:'good at', verb:'na-adj'},
+{l:9, kana:'すき', kanji:'好き', romaji:'suki', en:'like', verb:'na-adj'},
+{l:9, kana:'すきやき', kanji:'', romaji:'sukiyaki', en:'sukiyaki', verb:null},
+{l:9, kana:'すく', kanji:'', romaji:'suku', en:'to become empty', verb:'u-verb'},
+{l:9, kana:'スポーツ', kanji:'', romaji:'supootsu', en:'sport', verb:null},
+{l:9, kana:'そうじ(する)', kanji:'', romaji:'souji(suru)', en:'cleaning', verb:null},
+{l:9, kana:'たのしい', kanji:'', romaji:'tanoshii', en:'enjoyable, pleasant', verb:'i-adj'},
+{l:9, kana:'たべもの', kanji:'食べもの', romaji:'tabemono', en:'food', verb:null},
+{l:9, kana:'ちず', kanji:'', romaji:'chizu', en:'map', verb:null},
+{l:9, kana:'ちゅうかりょうり', kanji:'', romaji:'chuukaryouri', en:'Chinese cuisine', verb:null},
+{l:9, kana:'デザート', kanji:'', romaji:'dezaato', en:'dessert', verb:null},
+{l:9, kana:'どうぞ', kanji:'', romaji:'douzo', en:'please', verb:null},
+{l:9, kana:'じゅう', kanji:'十', romaji:'juu', en:'10 things', verb:null},
+{l:9, kana:'とくい', kanji:'', romaji:'tokui', en:'good at', verb:'na-adj'},
+{l:9, kana:'なさる', kanji:'', romaji:'nasaru', en:'to do (respectful)', verb:'u-verb'},
+{l:9, kana:'ななつ', kanji:'七つ', romaji:'nanatsu', en:'7 things', verb:null},
+{l:9, kana:'のみもの', kanji:'飲みもの', romaji:'nomimono', en:'drinks', verb:null},
+{l:9, kana:'バスケットボール', kanji:'', romaji:'basukettobooru', en:'basketball', verb:null},
+{l:9, kana:'はなし', kanji:'話', romaji:'hanashi', en:'talk, story', verb:null},
+{l:9, kana:'はやい', kanji:'', romaji:'hayai', en:'fast', verb:'i-adj'},
+{l:9, kana:'ハンサム', kanji:'', romaji:'hansamu', en:'handsome', verb:'na-adj'},
+{l:9, kana:'ハンドアウト', kanji:'', romaji:'handoauto', en:'handout', verb:null},
+{l:9, kana:'ひとつ', kanji:'一つ', romaji:'hitotsu', en:'1 thing', verb:null},
+{l:9, kana:'ふたつ', kanji:'二つ', romaji:'futatsu', en:'2 things', verb:null},
+{l:9, kana:'へた', kanji:'下手', romaji:'heta', en:'bad at', verb:'na-adj'},
+{l:9, kana:'ほう', kanji:'方', romaji:'hou', en:'direction, side, way', verb:null},
+{l:9, kana:'マグカップ', kanji:'', romaji:'magukappu', en:'mug', verb:null},
+{l:9, kana:'みっつ', kanji:'三つ', romaji:'mittsu', en:'3 things', verb:null},
+{l:9, kana:'むつ', kanji:'六つ', romaji:'mutsu', en:'6 things', verb:null},
+{l:9, kana:'やつ', kanji:'八つ', romaji:'yatsu', en:'8 things', verb:null},
+{l:9, kana:'よつ', kanji:'四つ', romaji:'yotsu', en:'4 things', verb:null},
+{l:9, kana:'りんご', kanji:'', romaji:'ringo', en:'apple', verb:null},
+{l:9, kana:'れんしゅう(する)', kanji:'', romaji:'renshuu(suru)', en:'practice', verb:null},
+{l:9, kana:'ロック', kanji:'', romaji:'rokku', en:'rock', verb:null},
+{l:9, kana:'イギリス', kanji:'', romaji:'igirisu', en:'England', verb:null},
+{l:9, kana:'ちゅうごく', kanji:'中国', romaji:'chuugoku', en:'China', verb:null},
+{l:9, kana:'ボストン', kanji:'', romaji:'bosuton', en:'Boston', verb:null},
+{l:9, kana:'ロサンゼルス（ロス）', kanji:'', romaji:'rosanzerusu(rosu)', en:'Los Angeles', verb:null},
+{l:10, kana:'ひらく', kanji:'開く', romaji:'hiraku', en:'to open', verb:'irregular'},
+{l:10, kana:'いくら', kanji:'', romaji:'ikura', en:'how much', verb:null},
+{l:10, kana:'いそがしい', kanji:'', romaji:'isogashii', en:'busy', verb:'i-adj'},
+{l:10, kana:'イヤリング', kanji:'', romaji:'iyaringu', en:'earrings', verb:null},
+{l:10, kana:'インタビュー(する)', kanji:'', romaji:'intabyuu(suru)', en:'interview', verb:null},
+{l:10, kana:'おおい', kanji:'多い', romaji:'ooi', en:'many, plenty', verb:'i-adj'},
+{l:10, kana:'おくる', kanji:'', romaji:'okuru', en:'to send', verb:'transitive'},
+{l:10, kana:'オフィスアワー', kanji:'', romaji:'ofisuawaa', en:'office hours', verb:null},
+{l:10, kana:'かかる', kanji:'', romaji:'kakaru', en:'to take (time, expense)', verb:'irregular'},
+{l:10, kana:'かける', kanji:'', romaji:'kakeru', en:'to wear (glasses)', verb:'transitive'},
+{l:10, kana:'がっこう', kanji:'学校', romaji:'gakkou', en:'school', verb:null},
+{l:10, kana:'かぶる', kanji:'', romaji:'kaburu', en:'to wear (hat, cap)', verb:'transitive'},
+{l:10, kana:'かんじ', kanji:'漢字', romaji:'kanji', en:'Chinese characters', verb:null},
+{l:10, kana:'きえる', kanji:'', romaji:'kieru', en:'to turn off', verb:'irregular'},
+{l:10, kana:'きる', kanji:'', romaji:'kiru', en:'to wear (dress, shirt, suit)', verb:'transitive'},
+{l:10, kana:'サングラス', kanji:'', romaji:'sangurasu', en:'sunglasses', verb:null},
+{l:10, kana:'ジーンズ', kanji:'', romaji:'jiinzu', en:'jeans', verb:null},
+{l:10, kana:'じかん', kanji:'時間', romaji:'jikan', en:'time', verb:null},
+{l:10, kana:'しまる', kanji:'閉まる', romaji:'shimaru', en:'to close', verb:'irregular'},
+{l:10, kana:'ショートパンツ', kanji:'', romaji:'shootopantsu', en:'shorts', verb:null},
+{l:10, kana:'しる', kanji:'知る', romaji:'shiru', en:'to get to know', verb:'transitive'},
+{l:10, kana:'スーツ', kanji:'', romaji:'suutsu', en:'suit', verb:null},
+{l:10, kana:'スカート', kanji:'', romaji:'sukaato', en:'skirt', verb:null},
+{l:10, kana:'スニーカー', kanji:'', romaji:'suniikaa', en:'sneakers', verb:null},
+{l:10, kana:'ズボン', kanji:'', romaji:'zubon', en:'trousers, pants', verb:null},
+{l:10, kana:'す', kanji:'', romaji:'su', en:'to start living somewhere', verb:null},
+{l:10, kana:'する', kanji:'', romaji:'suru', en:'to wear (accessory)', verb:'transitive'},
+{l:10, kana:'すもう', kanji:'', romaji:'sumou', en:'Sumo wrestling', verb:null},
+{l:10, kana:'すわる', kanji:'', romaji:'suwaru', en:'to sit down', verb:'irregular'},
+{l:10, kana:'セーター', kanji:'', romaji:'seetaa', en:'sweater', verb:null},
+{l:10, kana:'ソックス', kanji:'', romaji:'sokkusu', en:'socks', verb:null},
+{l:10, kana:'たつ', kanji:'', romaji:'tatsu', en:'to stand up', verb:'irregular'},
+{l:10, kana:'つく', kanji:'', romaji:'tsuku', en:'to turn on', verb:'irregular'},
+{l:10, kana:'でんき', kanji:'', romaji:'denki', en:'electricity, electric light', verb:null},
+{l:10, kana:'でんわ(する)', kanji:'', romaji:'denwa(suru)', en:'telephone', verb:null},
+{l:10, kana:'ドア', kanji:'', romaji:'doa', en:'door', verb:null},
+{l:10, kana:'トレーナー', kanji:'', romaji:'toreenaa', en:'sweatshirt', verb:null},
+{l:10, kana:'ネクタイ', kanji:'', romaji:'nekutai', en:'necktie', verb:null},
+{l:10, kana:'ネックレス', kanji:'', romaji:'nekkuresu', en:'necklace', verb:null},
+{l:10, kana:'パートナー', kanji:'', romaji:'paatonaa', en:'partner', verb:null},
+{l:10, kana:'ハイヒール', kanji:'', romaji:'haihiiru', en:'high heeled shoes', verb:null},
+{l:10, kana:'はく', kanji:'', romaji:'haku', en:'to wear (shoes, socks, trousers )', verb:'transitive'},
+{l:10, kana:'はじめて', kanji:'', romaji:'hajimete', en:'for the first time', verb:null},
+{l:10, kana:'はじめる', kanji:'', romaji:'hajimeru', en:'to start', verb:'transitive'},
+{l:10, kana:'ひよう', kanji:'', romaji:'hiyou', en:'expense', verb:null},
+{l:10, kana:'ブラウス', kanji:'', romaji:'burausu', en:'blouse', verb:null},
+{l:10, kana:'プレゼント(する)', kanji:'', romaji:'purezento(suru)', en:'present', verb:null},
+{l:10, kana:'ぼうし', kanji:'', romaji:'boushi', en:'hat, cap', verb:null},
+{l:10, kana:'ほか', kanji:'', romaji:'hoka', en:'other', verb:null},
+{l:10, kana:'まど', kanji:'', romaji:'mado', en:'window', verb:null},
+{l:10, kana:'めがね', kanji:'', romaji:'megane', en:'glasses', verb:null},
+{l:10, kana:'ゆびわ', kanji:'', romaji:'yubiwa', en:'ring', verb:null},
+{l:10, kana:'よく', kanji:'', romaji:'yoku', en:'well', verb:null},
+{l:10, kana:'ワイシャツ', kanji:'', romaji:'waishatsu', en:'dress shirt', verb:null},
+{l:10, kana:'わかる', kanji:'分かる', romaji:'wakaru', en:'to understand', verb:'transitive'},
+{l:10, kana:'ワンピース', kanji:'', romaji:'wanpiisu', en:'dress', verb:null},
+{l:10, kana:'ジャック', kanji:'', romaji:'jakku', en:'Jack', verb:null},
+{l:10, kana:'しんおおさか', kanji:'', romaji:'shin\'oosaka', en:'Shin-Osaka', verb:null},
+{l:10, kana:'ひがしあじあ', kanji:'東アジア', romaji:'higashiajia', en:'East Asia', verb:null},
+{l:10, kana:'ホノルル', kanji:'', romaji:'honoruru', en:'Honolulu', verb:null},
+{l:10, kana:'なかやま', kanji:'中山', romaji:'nakayama', en:'Nakayama', verb:null},
+{l:10, kana:'なごや(なごや)', kanji:'なごや(名古屋)', romaji:'nagoya(nagoya)', en:'Nagoya', verb:null},
+{l:10, kana:'ヌエン', kanji:'', romaji:'nuen', en:'Nguyen', verb:null},
+{l:10, kana:'はかた(はかた)', kanji:'はかた(博多)', romaji:'hakata(hakata)', en:'Hakata', verb:null},
+{l:10, kana:'ひろしま(ひろしま)', kanji:'ひろしま(広島)', romaji:'hiroshima(hiroshima)', en:'Hiroshima', verb:null},
+{l:10, kana:'ヨーロッパ', kanji:'', romaji:'yooroppa', en:'Europe', verb:null},
+{l:11, kana:'あつい', kanji:'', romaji:'atsui', en:'hot', verb:'i-adj'},
+{l:11, kana:'あまい', kanji:'', romaji:'amai', en:'sweet', verb:'i-adj'},
+{l:11, kana:'いう', kanji:'', romaji:'iu', en:'to say, speak, talk', verb:'irregular'},
+{l:11, kana:'うんてん(する)', kanji:'', romaji:'unten(suru)', en:'to drive', verb:null},
+{l:11, kana:'えいぶんがく', kanji:'英文学', romaji:'eibungaku', en:'English literature', verb:null},
+{l:11, kana:'エッセー', kanji:'', romaji:'essee', en:'essay', verb:null},
+{l:11, kana:'だいどおり', kanji:'大どおり', romaji:'daidoori', en:'boulevard', verb:null},
+{l:11, kana:'おかし', kanji:'', romaji:'okashi', en:'snack', verb:null},
+{l:11, kana:'おそい', kanji:'', romaji:'osoi', en:'slow, late', verb:'i-adj'},
+{l:11, kana:'がいこく', kanji:'', romaji:'gaikoku', en:'foreign country', verb:null},
+{l:11, kana:'がくぶ', kanji:'学部', romaji:'gakubu', en:'academic department', verb:null},
+{l:11, kana:'かたい', kanji:'', romaji:'katai', en:'tough, hard', verb:'i-adj'},
+{l:11, kana:'かみ', kanji:'紙', romaji:'kami', en:'paper', verb:null},
+{l:11, kana:'かんがえる', kanji:'', romaji:'kangaeru', en:'to think', verb:'transitive'},
+{l:11, kana:'クッキー', kanji:'', romaji:'kukkii', en:'cookie', verb:null},
+{l:11, kana:'クラブ', kanji:'', romaji:'kurabu', en:'club', verb:null},
+{l:11, kana:'しょうづつみ', kanji:'小づつみ', romaji:'shouzutsumi', en:'parcel', verb:null},
+{l:11, kana:'サービス(する)', kanji:'', romaji:'saabisu(suru)', en:'service', verb:null},
+{l:11, kana:'さむい', kanji:'', romaji:'samui', en:'cold', verb:'i-adj'},
+{l:11, kana:'しょうせつ', kanji:'', romaji:'shousetsu', en:'novel', verb:null},
+{l:11, kana:'(お)す', kanji:'', romaji:'(o)su', en:'vinegar', verb:null},
+{l:11, kana:'すごい', kanji:'', romaji:'sugoi', en:'terrific', verb:'i-adj'},
+{l:11, kana:'すずしい', kanji:'', romaji:'suzushii', en:'cool', verb:'i-adj'},
+{l:11, kana:'ステレオ', kanji:'', romaji:'sutereo', en:'stereo (set)', verb:null},
+{l:11, kana:'せいぶつがく', kanji:'せいぶつ学', romaji:'seibutsugaku', en:'biology', verb:null},
+{l:11, kana:'せんしゅ', kanji:'', romaji:'senshu', en:'sports player', verb:null},
+{l:11, kana:'そこ', kanji:'', romaji:'soko', en:'bottom', verb:null},
+{l:11, kana:'だめ', kanji:'', romaji:'dame', en:'no good', verb:'na-adj'},
+{l:11, kana:'ダンス(する)', kanji:'', romaji:'dansu(suru)', en:'dance', verb:null},
+{l:11, kana:'ち', kanji:'', romaji:'chi', en:'blood', verb:null},
+{l:11, kana:'チーム', kanji:'', romaji:'chiimu', en:'team', verb:null},
+{l:11, kana:'ちえ', kanji:'', romaji:'chie', en:'intelligence, wisdom', verb:null},
+{l:11, kana:'ちから', kanji:'', romaji:'chikara', en:'power', verb:null},
+{l:11, kana:'つえ', kanji:'', romaji:'tsue', en:'cane', verb:null},
+{l:11, kana:'がつ', kanji:'月', romaji:'gatsu', en:'moon', verb:null},
+{l:11, kana:'できる', kanji:'', romaji:'dekiru', en:'to be able to do ~', verb:'irregular'},
+{l:11, kana:'とおり', kanji:'', romaji:'toori', en:'street', verb:null},
+{l:11, kana:'ときどき', kanji:'時々', romaji:'tokidoki', en:'sometimes', verb:null},
+{l:11, kana:'にく', kanji:'', romaji:'niku', en:'meat', verb:null},
+{l:11, kana:'にっけい', kanji:'', romaji:'nikkei', en:'of Japanese ancestry', verb:null},
+{l:11, kana:'はこ', kanji:'', romaji:'hako', en:'box', verb:null},
+{l:11, kana:'ピザ', kanji:'', romaji:'piza', en:'pizza', verb:null},
+{l:11, kana:'ビデオ', kanji:'', romaji:'bideo', en:'video', verb:null},
+{l:11, kana:'ひとびと', kanji:'人々', romaji:'hitobito', en:'people', verb:null},
+{l:11, kana:'ふね', kanji:'', romaji:'fune', en:'boat, ship', verb:null},
+{l:11, kana:'ブルース', kanji:'', romaji:'buruusu', en:'blues', verb:null},
+{l:11, kana:'ほんばこ', kanji:'本ばこ', romaji:'honbako', en:'bookshelf', verb:null},
+{l:11, kana:'まいあさ', kanji:'', romaji:'maiasa', en:'every morning', verb:null},
+{l:11, kana:'まいにち', kanji:'', romaji:'mainichi', en:'everyday', verb:null},
+{l:11, kana:'まいばん', kanji:'', romaji:'maiban', en:'every evening', verb:null},
+{l:11, kana:'もらう', kanji:'', romaji:'morau', en:'to receive', verb:'transitive'},
+{l:11, kana:'やわらかい', kanji:'', romaji:'yawarakai', en:'soft', verb:'i-adj'},
+{l:11, kana:'らいしゅう', kanji:'', romaji:'raishuu', en:'next week', verb:null},
+{l:11, kana:'わるい', kanji:'', romaji:'warui', en:'bad', verb:'i-adj'},
+{l:11, kana:'アームストロング', kanji:'', romaji:'aamusutorongu', en:'Armstrong', verb:null},
+{l:11, kana:'アラスカ', kanji:'', romaji:'arasuka', en:'Alaska', verb:null},
+{l:11, kana:'エルビス', kanji:'', romaji:'erubisu', en:'Elvis', verb:null},
+{l:11, kana:'コロンブス', kanji:'', romaji:'koronbusu', en:'Columbus', verb:null},
+{l:11, kana:'シェークスピア', kanji:'', romaji:'shieekusupia', en:'Shakespeare', verb:null},
+{l:11, kana:'ジャパン', kanji:'', romaji:'japan', en:'Japan', verb:null},
+{l:11, kana:'ジョン', kanji:'', romaji:'jon', en:'John', verb:null},
+{l:11, kana:'タイ', kanji:'', romaji:'tai', en:'Thailand', verb:null},
+{l:11, kana:'ディズニー', kanji:'', romaji:'dizunii', en:'Disney', verb:null},
+{l:11, kana:'デトロイト', kanji:'', romaji:'detoroito', en:'Detroit', verb:null},
+{l:11, kana:'なら（なら）', kanji:'なら（奈良）', romaji:'nara(nara)', en:'Nara', verb:null},
+{l:11, kana:'ニール', kanji:'', romaji:'niiru', en:'Neil', verb:null},
+{l:11, kana:'ハムレット', kanji:'', romaji:'hamuretto', en:'Hamlet', verb:null},
+{l:11, kana:'ハワイ', kanji:'', romaji:'hawai', en:'Hawaii', verb:null},
+{l:11, kana:'ひがしやま', kanji:'東山', romaji:'higashiyama', en:'Higashiyama', verb:null},
+{l:11, kana:'プレスリー', kanji:'', romaji:'puresurii', en:'Presley', verb:null},
+{l:11, kana:'ペレス', kanji:'', romaji:'peresu', en:'Perez', verb:null},
+{l:11, kana:'ミッキーマウス', kanji:'', romaji:'mikkiimausu', en:'Mickey Mouse', verb:null},
+{l:11, kana:'らいときょうだい', kanji:'ライト兄弟', romaji:'raitokyoudai', en:'Wright Brothers', verb:null},
+{l:11, kana:'リンカーン', kanji:'', romaji:'rinkaan', en:'Lincoln', verb:null},
+{l:11, kana:'レノン', kanji:'', romaji:'renon', en:'Lennon', verb:null},
+{l:12, kana:'ＣＤプレーヤー', kanji:'', romaji:'CDpureeyaa', en:'CD player', verb:null},
+{l:12, kana:'あき', kanji:'', romaji:'aki', en:'autumn', verb:null},
+{l:12, kana:'いたい', kanji:'', romaji:'itai', en:'painful', verb:'i-adj'},
+{l:12, kana:'いみ', kanji:'', romaji:'imi', en:'meaning', verb:null},
+{l:12, kana:'いろいろ', kanji:'', romaji:'iroiro', en:'various, many kinds of', verb:'na-adj'},
+{l:12, kana:'うなぎ', kanji:'', romaji:'unagi', en:'eel', verb:null},
+{l:12, kana:'おつり', kanji:'', romaji:'otsuri', en:'change', verb:null},
+{l:12, kana:'おぼえる', kanji:'', romaji:'oboeru', en:'to memorize', verb:'transitive'},
+{l:12, kana:'カラオケ', kanji:'', romaji:'karaoke', en:'karaoke', verb:null},
+{l:12, kana:'ぎゅうにく', kanji:'', romaji:'gyuuniku', en:'beef', verb:null},
+{l:12, kana:'けさ', kanji:'今朝', romaji:'kesa', en:'this morning', verb:null},
+{l:12, kana:'このあいだ', kanji:'', romaji:'konoaida', en:'some time ago, the other day', verb:null},
+{l:12, kana:'こむぎこ', kanji:'', romaji:'komugiko', en:'wheat flour', verb:null},
+{l:12, kana:'(お)こめ', kanji:'(お)米', romaji:'(o)kome', en:'(uncooked) rice', verb:null},
+{l:12, kana:'こんしゅう', kanji:'', romaji:'konshuu', en:'this week', verb:null},
+{l:12, kana:'さけ', kanji:'', romaji:'sake', en:'salmon', verb:null},
+{l:12, kana:'(お)さとう', kanji:'', romaji:'(o)satou', en:'sugar', verb:null},
+{l:12, kana:'しお', kanji:'', romaji:'shio', en:'salt', verb:null},
+{l:12, kana:'じゃがいも', kanji:'', romaji:'jagaimo', en:'potato', verb:null},
+{l:12, kana:'じゅぎょう', kanji:'', romaji:'jugyou', en:'class', verb:null},
+{l:12, kana:'しょうゆ', kanji:'', romaji:'shouyu', en:'soy sauce', verb:null},
+{l:12, kana:'スピーチコンテスト', kanji:'', romaji:'supiichikontesuto', en:'speech contest', verb:null},
+{l:12, kana:'せんたく(する)', kanji:'', romaji:'sentaku(suru)', en:'laundry', verb:null},
+{l:12, kana:'ぜんぶ', kanji:'全部', romaji:'zenbu', en:'all', verb:null},
+{l:12, kana:'ダイエット(する)', kanji:'', romaji:'daietto(suru)', en:'diet', verb:null},
+{l:12, kana:'だいじょうぶ', kanji:'', romaji:'daijoubu', en:'alright, okay', verb:'na-adj'},
+{l:12, kana:'だいすき', kanji:'大好き', romaji:'daisuki', en:'to like very much', verb:'na-adj'},
+{l:12, kana:'たまご', kanji:'', romaji:'tamago', en:'egg', verb:null},
+{l:12, kana:'たまねぎ', kanji:'', romaji:'tamanegi', en:'onion', verb:null},
+{l:12, kana:'たんじょうにち', kanji:'たんじょう日', romaji:'tanjounichi', en:'birthday', verb:null},
+{l:12, kana:'チョコレート', kanji:'', romaji:'chokoreeto', en:'chocolate', verb:null},
+{l:12, kana:'でる', kanji:'', romaji:'deru', en:'to attend, enter (a contest)', verb:'irregular'},
+{l:12, kana:'てんいん', kanji:'店員', romaji:'ten\'in', en:'store clerk', verb:null},
+{l:12, kana:'でんしレンジ', kanji:'', romaji:'denshirenji', en:'microwave oven', verb:null},
+{l:12, kana:'とうふ', kanji:'', romaji:'toufu', en:'tofu', verb:null},
+{l:12, kana:'とりにく', kanji:'', romaji:'toriniku', en:'chicken', verb:null},
+{l:12, kana:'なぜ', kanji:'', romaji:'naze', en:'why', verb:null},
+{l:12, kana:'ならう', kanji:'', romaji:'narau', en:'to learn', verb:'transitive'},
+{l:12, kana:'にわ', kanji:'', romaji:'niwa', en:'garden', verb:null},
+{l:12, kana:'にんじん', kanji:'', romaji:'ninjin', en:'carrot', verb:null},
+{l:12, kana:'ねぎ', kanji:'', romaji:'negi', en:'green onion', verb:null},
+{l:12, kana:'ねぼうする', kanji:'', romaji:'nebousuru', en:'to oversleep', verb:'irregular'},
+{l:12, kana:'のり', kanji:'', romaji:'nori', en:'laver (type of seaweed)', verb:null},
+{l:12, kana:'のりまき', kanji:'', romaji:'norimaki', en:'seaweed wrapped sushi', verb:null},
+{l:12, kana:'ばしょ', kanji:'', romaji:'basho', en:'Location, place', verb:null},
+{l:12, kana:'バター', kanji:'', romaji:'bataa', en:'butter', verb:null},
+{l:12, kana:'パン', kanji:'', romaji:'pan', en:'bread', verb:null},
+{l:12, kana:'ひま', kanji:'', romaji:'hima', en:'leisure, not busy', verb:'na-adj'},
+{l:12, kana:'ほしい', kanji:'', romaji:'hoshii', en:'want, desire', verb:null},
+{l:12, kana:'ほしがる', kanji:'', romaji:'hoshigaru', en:'to show signs of desire', verb:'transitive'},
+{l:12, kana:'ポップコーン', kanji:'', romaji:'poppukoon', en:'popcorn', verb:null},
+{l:12, kana:'みず', kanji:'水', romaji:'mizu', en:'water', verb:null},
+{l:12, kana:'みなさん', kanji:'', romaji:'minasan', en:'everyone (respectful)', verb:null},
+{l:12, kana:'やさい', kanji:'', romaji:'yasai', en:'vegetable', verb:null},
+{l:12, kana:'ようかん', kanji:'', romaji:'youkan', en:'sweet jellied adzuki bean paste', verb:null},
+{l:12, kana:'よぶ', kanji:'', romaji:'yobu', en:'to invite', verb:'transitive'},
+{l:12, kana:'よみもの', kanji:'読み物', romaji:'yomimono', en:'readings', verb:null},
+{l:12, kana:'らいねん', kanji:'来年', romaji:'rainen', en:'next year', verb:null},
+{l:12, kana:'ラップトップ', kanji:'', romaji:'rapputoppu', en:'laptop', verb:null},
+{l:12, kana:'りゅうがく(する)', kanji:'留学(する)', romaji:'ryuugaku(suru)', en:'studying abroad', verb:null},
+{l:12, kana:'れいぞうこ', kanji:'', romaji:'reizouko', en:'refrigerator', verb:null},
+{l:12, kana:'レジ', kanji:'', romaji:'reji', en:'cash register', verb:null},
+{l:12, kana:'アフリカ', kanji:'', romaji:'afurika', en:'Africa', verb:null},
+{l:12, kana:'ふじさん(ふじさん)', kanji:'ふじさん(富士山)', romaji:'fujisan(fujisan)', en:'Mt. Fuji', verb:null},
+{l:13, kana:'～さま', kanji:'', romaji:'~sama', en:'suffix for an honored person', verb:null},
+{l:13, kana:'あさって', kanji:'', romaji:'asatte', en:'day after tomorrow', verb:null},
+{l:13, kana:'(シャワーを)あびる', kanji:'', romaji:'(shawaawo)abiru', en:'to take (a shower)', verb:null},
+{l:13, kana:'うける', kanji:'', romaji:'ukeru', en:'to take (an exam)', verb:'transitive'},
+{l:13, kana:'うれしい', kanji:'', romaji:'ureshii', en:'happy, pleased', verb:'i-adj'},
+{l:13, kana:'おととい', kanji:'', romaji:'ototoi', en:'day before yesterday', verb:null},
+{l:13, kana:'おととし', kanji:'', romaji:'ototoshi', en:'year before last', verb:null},
+{l:13, kana:'おどる', kanji:'', romaji:'odoru', en:'to dance', verb:'irregular'},
+{l:13, kana:'かきかた', kanji:'書き方', romaji:'kakikata', en:'way of writing', verb:null},
+{l:13, kana:'きっぷ', kanji:'', romaji:'kippu', en:'ticket', verb:null},
+{l:13, kana:'くうこう', kanji:'', romaji:'kuukou', en:'airport', verb:null},
+{l:13, kana:'こんげつ', kanji:'今月', romaji:'kongetsu', en:'this month', verb:null},
+{l:13, kana:'さくら', kanji:'', romaji:'sakura', en:'cherry blossom, tree', verb:null},
+{l:13, kana:'さびしい', kanji:'', romaji:'sabishii', en:'lonely', verb:'i-adj'},
+{l:13, kana:'さらいげつ', kanji:'さ来月', romaji:'saraigetsu', en:'month after next', verb:null},
+{l:13, kana:'さらいしゅう', kanji:'さ来週', romaji:'saraishuu', en:'week after next', verb:null},
+{l:13, kana:'さらいねん', kanji:'さ来年', romaji:'sarainen', en:'year after next', verb:null},
+{l:13, kana:'さんぽ(する)', kanji:'', romaji:'sanpo(suru)', en:'stroll', verb:null},
+{l:13, kana:'じつは', kanji:'', romaji:'jitsuha', en:'as a matter of fact', verb:null},
+{l:13, kana:'シャワー', kanji:'', romaji:'shawaa', en:'shower', verb:null},
+{l:13, kana:'しょうがっこう', kanji:'小学校', romaji:'shougakkou', en:'elementary school', verb:null},
+{l:13, kana:'じんじゃ', kanji:'', romaji:'jinja', en:'Shinto shrine', verb:null},
+{l:13, kana:'スーツケース', kanji:'', romaji:'suutsukeesu', en:'suitcase', verb:null},
+{l:13, kana:'せんげつ', kanji:'先月', romaji:'sengetsu', en:'last month', verb:null},
+{l:13, kana:'せんせんげつ', kanji:'先々月', romaji:'sensengetsu', en:'month before last', verb:null},
+{l:13, kana:'せんせんしゅう', kanji:'先々週', romaji:'sensenshuu', en:'week before last', verb:null},
+{l:13, kana:'そつぎょう(する)', kanji:'', romaji:'sotsugyou(suru)', en:'graduation', verb:null},
+{l:13, kana:'たすける', kanji:'', romaji:'tasukeru', en:'to help', verb:'transitive'},
+{l:13, kana:'ちゅうがっこう', kanji:'中学校', romaji:'chuugakkou', en:'middle school', verb:null},
+{l:13, kana:'つかいほう', kanji:'つかい方', romaji:'tsukaihou', en:'usage, way to use', verb:null},
+{l:13, kana:'つくりかた', kanji:'作り方', romaji:'tsukurikata', en:'way of making', verb:null},
+{l:13, kana:'(お)てら', kanji:'', romaji:'(o)tera', en:'Buddhist temple', verb:null},
+{l:13, kana:'(お)てんき', kanji:'', romaji:'(o)tenki', en:'weather', verb:null},
+{l:13, kana:'とき', kanji:'時', romaji:'toki', en:'when', verb:null},
+{l:13, kana:'なつ', kanji:'夏', romaji:'natsu', en:'summer', verb:null},
+{l:13, kana:'のる', kanji:'', romaji:'noru', en:'to ride', verb:'irregular'},
+{l:13, kana:'はしる', kanji:'', romaji:'hashiru', en:'to run', verb:'irregular'},
+{l:13, kana:'はたらく', kanji:'', romaji:'hataraku', en:'to work', verb:'irregular'},
+{l:13, kana:'はる', kanji:'春', romaji:'haru', en:'spring', verb:null},
+{l:13, kana:'はるやすみ', kanji:'春休み', romaji:'haruyasumi', en:'spring vacation', verb:null},
+{l:13, kana:'びょうき', kanji:'', romaji:'byouki', en:'illness', verb:null},
+{l:13, kana:'ひるね(する)', kanji:'', romaji:'hirune(suru)', en:'nap', verb:null},
+{l:13, kana:'プリンター', kanji:'', romaji:'purintaa', en:'printer', verb:null},
+{l:13, kana:'ぶん', kanji:'文', romaji:'bun', en:'sentence', verb:null},
+{l:13, kana:'ぶんぽう', kanji:'', romaji:'bunpou', en:'grammar', verb:null},
+{l:13, kana:'へんじ(する)', kanji:'返事(する)', romaji:'henji(suru)', en:'reply', verb:null},
+{l:13, kana:'ホームステイ(する)', kanji:'', romaji:'hoomusutei(suru)', en:'homestay', verb:null},
+{l:13, kana:'ホストファミリー', kanji:'', romaji:'hosutofamirii', en:'host family', verb:null},
+{l:13, kana:'マイル', kanji:'', romaji:'mairu', en:'mile', verb:null},
+{l:13, kana:'(お)まつり', kanji:'', romaji:'(o)matsuri', en:'festival', verb:null},
+{l:13, kana:'(お)みやげ', kanji:'', romaji:'(o)miyage', en:'gift', verb:null},
+{l:13, kana:'みんな', kanji:'', romaji:'minna', en:'everyone (plain)', verb:null},
+{l:13, kana:'ゆき', kanji:'', romaji:'yuki', en:'snow', verb:null},
+{l:13, kana:'ゆきだるま', kanji:'', romaji:'yukidaruma', en:'snowman', verb:null},
+{l:13, kana:'よみかた', kanji:'読み方', romaji:'yomikata', en:'way of reading', verb:null},
+{l:13, kana:'よろこぶ', kanji:'', romaji:'yorokobu', en:'to be happy, pleased', verb:'irregular'},
+{l:13, kana:'らいげつ', kanji:'来月', romaji:'raigetsu', en:'next month', verb:null},
+{l:13, kana:'りょこう(する)', kanji:'', romaji:'ryokou(suru)', en:'trip, travel', verb:null},
+{l:13, kana:'あきはばら(あきはばら)', kanji:'あきはばら(秋葉原)', romaji:'akihabara(akihabara)', en:'Akihabara', verb:null},
+{l:13, kana:'あきやま', kanji:'秋山', romaji:'akiyama', en:'Akiyama', verb:null},
+{l:13, kana:'あさくさ(あさくさ)', kanji:'あさくさ(浅草)', romaji:'asakusa(asakusa)', en:'Asakusa', verb:null},
+{l:13, kana:'タンゴ', kanji:'', romaji:'tango', en:'Tango', verb:null},
+{l:13, kana:'ビートルズ', kanji:'', romaji:'biitoruzu', en:'The Beatles', verb:null},
+{l:14, kana:'Ｘさい', kanji:'', romaji:'Xsai', en:'X years old', verb:null},
+{l:14, kana:'Ｘしゅうかん', kanji:'Ｘ週間', romaji:'Xshuukan', en:'X week(s)', verb:null},
+{l:14, kana:'あげる', kanji:'', romaji:'ageru', en:'to give', verb:'transitive'},
+{l:14, kana:'あらう', kanji:'', romaji:'arau', en:'to wash', verb:'transitive'},
+{l:14, kana:'オートバイ', kanji:'', romaji:'ootobai', en:'motorcycle', verb:null},
+{l:14, kana:'おくりもの', kanji:'おくり物', romaji:'okurimono', en:'a present', verb:null},
+{l:14, kana:'おくれる', kanji:'', romaji:'okureru', en:'to be late', verb:'irregular'},
+{l:14, kana:'おもい', kanji:'', romaji:'omoi', en:'heavy', verb:'i-adj'},
+{l:14, kana:'かいしゃ', kanji:'', romaji:'kaisha', en:'company', verb:null},
+{l:14, kana:'かぜ', kanji:'', romaji:'kaze', en:'(to catch) a cold', verb:null},
+{l:14, kana:'かるい', kanji:'', romaji:'karui', en:'light (weight)', verb:'i-adj'},
+{l:14, kana:'くに', kanji:'国', romaji:'kuni', en:'country', verb:null},
+{l:14, kana:'グループ', kanji:'', romaji:'guruupu', en:'group', verb:null},
+{l:14, kana:'けす', kanji:'', romaji:'kesu', en:'to turn off', verb:'transitive'},
+{l:14, kana:'けっこんしき', kanji:'', romaji:'kekkonshiki', en:'wedding ceremony', verb:null},
+{l:14, kana:'けんどう', kanji:'', romaji:'kendou', en:'kendo', verb:null},
+{l:14, kana:'さいきん', kanji:'', romaji:'saikin', en:'recently', verb:null},
+{l:14, kana:'さがす', kanji:'', romaji:'sagasu', en:'to search for', verb:'transitive'},
+{l:14, kana:'(お)さら', kanji:'', romaji:'(o)sara', en:'dish', verb:null},
+{l:14, kana:'しゅうかん', kanji:'', romaji:'shuukan', en:'custom', verb:null},
+{l:14, kana:'しょうかい(する)', kanji:'', romaji:'shoukai(suru)', en:'introduction', verb:null},
+{l:14, kana:'(お)しょうがつ', kanji:'', romaji:'(o)shougatsu', en:'New Year’s Day', verb:null},
+{l:14, kana:'しらべる', kanji:'', romaji:'shiraberu', en:'to check', verb:'transitive'},
+{l:14, kana:'せいきょう', kanji:'', romaji:'seikyou', en:'co-op', verb:null},
+{l:14, kana:'せいせき', kanji:'', romaji:'seiseki', en:'grade', verb:null},
+{l:14, kana:'ぜひ', kanji:'', romaji:'zehi', en:'by all means', verb:null},
+{l:14, kana:'(お)そうしき', kanji:'', romaji:'(o)soushiki', en:'funeral ceremony', verb:null},
+{l:14, kana:'たんご', kanji:'', romaji:'tango', en:'vocabulary, word', verb:null},
+{l:14, kana:'つける', kanji:'', romaji:'tsukeru', en:'to turn on', verb:'transitive'},
+{l:14, kana:'できるだけ', kanji:'', romaji:'dekirudake', en:'as much as possible', verb:null},
+{l:14, kana:'てん', kanji:'', romaji:'ten', en:'points, score', verb:null},
+{l:14, kana:'とまる', kanji:'', romaji:'tomaru', en:'to stay', verb:'irregular'},
+{l:14, kana:'ぬぐ', kanji:'', romaji:'nugu', en:'to take off (clothes / shoes)', verb:'transitive'},
+{l:14, kana:'ねむい', kanji:'', romaji:'nemui', en:'sleepy', verb:null},
+{l:14, kana:'ねむる', kanji:'', romaji:'nemuru', en:'to sleep', verb:'irregular'},
+{l:14, kana:'はこぶ', kanji:'', romaji:'hakobu', en:'to carry', verb:'transitive'},
+{l:14, kana:'パスポート', kanji:'', romaji:'pasupooto', en:'passport', verb:null},
+{l:14, kana:'ヒーター', kanji:'', romaji:'hiitaa', en:'heater', verb:null},
+{l:14, kana:'(かぜを)ひく', kanji:'', romaji:'(kazewo)hiku', en:'to catch (a cold)', verb:'transitive'},
+{l:14, kana:'ひょうばん', kanji:'', romaji:'hyouban', en:'reputation', verb:null},
+{l:14, kana:'ふとる', kanji:'', romaji:'futoru', en:'to become fat', verb:'irregular'},
+{l:14, kana:'フラッシュカード', kanji:'', romaji:'furasshukaado', en:'flash card', verb:null},
+{l:14, kana:'(お)ふろ', kanji:'', romaji:'(o)furo', en:'bath', verb:null},
+{l:14, kana:'(お)べんとう', kanji:'', romaji:'(o)bentou', en:'box lunch', verb:null},
+{l:14, kana:'まいしゅう', kanji:'毎週', romaji:'maishuu', en:'every week', verb:null},
+{l:14, kana:'(お)もち', kanji:'', romaji:'(o)mochi', en:'rice cake', verb:null},
+{l:14, kana:'モニター', kanji:'', romaji:'monitaa', en:'monitor', verb:null},
+{l:14, kana:'やすみ', kanji:'休み', romaji:'yasumi', en:'day off', verb:null},
+{l:14, kana:'やすむ', kanji:'休む', romaji:'yasumu', en:'to rest, take a day off', verb:'irregular'},
+{l:14, kana:'やめる', kanji:'', romaji:'yameru', en:'to quit', verb:'transitive'},
+{l:14, kana:'やる', kanji:'', romaji:'yaru', en:'to do, try', verb:'transitive'},
+{l:14, kana:'ゆうべ', kanji:'', romaji:'yuube', en:'last night', verb:null},
+{l:14, kana:'ゆうめい', kanji:'有名', romaji:'yuumei', en:'famous', verb:'na-adj'},
+{l:14, kana:'よしゅう(する)', kanji:'', romaji:'yoshuu(suru)', en:'preparatory study', verb:null},
+{l:14, kana:'らく', kanji:'', romaji:'raku', en:'easy, simple,', verb:null},
+{l:14, kana:'らく', kanji:'楽', romaji:'raku', en:'comfort-able, relaxed', verb:'na-adj'},
+{l:14, kana:'ディズニーランド', kanji:'', romaji:'dizuniirando', en:'Disneyland', verb:null},
+{l:14, kana:'なつめ', kanji:'夏目', romaji:'natsume', en:'Natsume', verb:null},];
+
+const LESSON_AUDIO = {};
+const LESSON_IMG = {};
+for (let i = 1; i <= 14; i++) {
+  LESSON_AUDIO[i] = `ej_audio/Vocab${i}.mp3`;
+}
+for (let i = 1; i <= 14; i++) {
+  if (i === 13) continue; // no illustration available for lesson 13
+  LESSON_IMG[i] = `ej_images/lesson${i}.png`;
+}
+
+(function(){
+  let activeLessons = new Set(Array.from({length:14}, (_,i)=>i+1));
+  let deck = [];
+  let idx = 0;
+  let flipped = false;
+  let knownCount = 0;
+  let sessionTotal = 0;
+  let currentLessonShown = null;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function buildDeck(){
+    deck = shuffle(VOCAB.filter(v => activeLessons.has(v.l)));
+    idx = 0;
+    flipped = false;
+    knownCount = 0;
+    sessionTotal = deck.length;
+  }
+
+  function toggleLesson(n){
+    if(activeLessons.has(n)){
+      if(activeLessons.size > 1) activeLessons.delete(n);
+    } else {
+      activeLessons.add(n);
+    }
+    buildDeck();
+    render();
+  }
+
+  function flipCard(){
+    flipped = !flipped;
+    render();
+  }
+
+  function nextCard(known){
+    if(known) knownCount++;
+    idx++;
+    flipped = false;
+    render();
+  }
+
+  function restart(){
+    buildDeck();
+    render();
+  }
+
+  function reshuffle(){
+    deck = shuffle(deck.slice(idx));
+    idx = 0;
+    flipped = false;
+    render();
+  }
+
+  function render(){
+    const app = document.getElementById('ej-app');
+    const remaining = deck.length - idx;
+    const progressPct = sessionTotal ? Math.round((idx/sessionTotal)*100) : 0;
+
+    let chipsHtml = Array.from({length:14}, (_,i)=>i+1).map(n => `
+      <button class="ej-chip ${activeLessons.has(n) ? 'active':''}" data-lesson="${n}">L${n}</button>
+    `).join('');
+
+    if(idx >= deck.length && deck.length > 0){
+      app.innerHTML = `
+        <div class="ej-header">
+          <div class="ej-title"><span class="jp">初級</span>Elementary Japanese</div>
+          <div class="ej-sub">Listening Materials Vol. I</div>
+        </div>
+        <div class="ej-filters">${chipsHtml}</div>
+        <div class="ej-done">
+          <div class="ej-kanji-big">よくできました！</div>
+          <div>You reviewed <strong>${sessionTotal}</strong> cards and knew <strong>${knownCount}</strong> of them.</div>
+          <button class="ej-restart" id="ej-restart-btn">Study again</button>
+        </div>
+      `;
+      document.getElementById('ej-restart-btn').onclick = restart;
+      app.querySelectorAll('.ej-chip').forEach(btn=>{
+        btn.onclick = () => toggleLesson(parseInt(btn.dataset.lesson));
+      });
+      return;
+    }
+
+    if(deck.length === 0){
+      app.innerHTML = `
+        <div class="ej-header">
+          <div class="ej-title"><span class="jp">初級</span>Elementary Japanese</div>
+        </div>
+        <div class="ej-filters">${chipsHtml}</div>
+        <div class="ej-done">Select at least one lesson to begin.</div>
+      `;
+      app.querySelectorAll('.ej-chip').forEach(btn=>{
+        btn.onclick = () => toggleLesson(parseInt(btn.dataset.lesson));
+      });
+      return;
+    }
+
+    const card = deck[idx];
+    const kanjiLine = card.kanji ? `<div class="ej-kanji">${card.kanji}</div>` : '';
+    const verbTag = card.verb ? `<span class="ej-verb-tag">${card.verb}</span>` : '';
+    const lessonImg = LESSON_IMG[card.l];
+    const lessonImgHtml = lessonImg ? `<img class="ej-lesson-img" src="${lessonImg}" alt="Lesson ${card.l} illustration">` : `<div class="ej-lesson-img"></div>`;
+    const audioSrc = LESSON_AUDIO[card.l];
+
+    app.innerHTML = `
+      <div class="ej-header">
+        <div class="ej-title"><span class="jp">初級</span>Elementary Japanese</div>
+        <div class="ej-sub">Listening Materials Vol. I</div>
+      </div>
+      <div class="ej-filters">${chipsHtml}</div>
+      <div class="ej-lesson-panel">
+        ${lessonImgHtml}
+        <div class="ej-lesson-audio">
+          <div class="ej-lesson-audio-label">🔊 Lesson ${card.l} vocabulary (CD audio)</div>
+          <audio id="ej-audio" controls preload="none" src="${audioSrc}"></audio>
+        </div>
+      </div>
+      <div class="ej-stats">
+        <span>${idx+1} / ${sessionTotal}</span>
+        <div class="ej-progress-bar"><div class="ej-progress-fill" style="width:${progressPct}%"></div></div>
+        <span>${remaining} left</span>
+      </div>
+      <div class="ej-card-wrap">
+        <div class="ej-card ${flipped ? 'flipped':''}" id="ej-card">
+          <div class="ej-face front">
+            <span class="ej-lesson-tag">L${card.l}</span>
+            ${verbTag}
+            <div class="ej-kana">${card.kana}</div>
+            ${kanjiLine}
+            <div class="ej-hint">tap to reveal meaning</div>
+          </div>
+          <div class="ej-face back">
+            <span class="ej-lesson-tag">L${card.l}</span>
+            ${verbTag}
+            <div class="ej-meaning">${card.en}</div>
+            <div class="ej-romaji">${card.romaji}</div>
+            <div class="ej-hint">tap to flip back</div>
+          </div>
+        </div>
+      </div>
+      <div class="ej-actions">
+        <button class="ej-btn ej-btn-again" id="ej-again">Still learning</button>
+        <button class="ej-btn ej-btn-know" id="ej-know">I know it ✓</button>
+      </div>
+      <div class="ej-bottom-row">
+        <span style="font-size:11px;color:var(--ink-soft)">${deck.length} cards in this set</span>
+        <button class="ej-btn-shuffle" id="ej-shuffle">🔀 Shuffle remaining</button>
+      </div>
+    `;
+
+    document.getElementById('ej-card').onclick = flipCard;
+    document.getElementById('ej-again').onclick = (e) => { e.stopPropagation(); nextCard(false); };
+    document.getElementById('ej-know').onclick = (e) => { e.stopPropagation(); nextCard(true); };
+    document.getElementById('ej-shuffle').onclick = (e) => { e.stopPropagation(); reshuffle(); };
+    document.getElementById('ej-audio').onclick = (e) => e.stopPropagation();
+    app.querySelectorAll('.ej-chip').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); toggleLesson(parseInt(btn.dataset.lesson)); };
+    });
+  }
+
+  buildDeck();
+  render();
+})();
+</script>
