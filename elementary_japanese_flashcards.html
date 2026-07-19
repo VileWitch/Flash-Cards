@@ -76,39 +76,6 @@ html, body {
 }
 .ej-chip:hover { transform: translateY(-1px); }
 
-.ej-lesson-panel {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #fffdf8;
-  border: 1.5px solid var(--washi-line);
-  border-radius: 14px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-}
-.ej-lesson-img {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
-  border-radius: 8px;
-  background: var(--washi);
-  flex-shrink: 0;
-}
-.ej-lesson-audio {
-  flex: 1;
-  min-width: 0;
-}
-.ej-lesson-audio-label {
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-bottom: 3px;
-  font-weight: 600;
-}
-.ej-lesson-audio audio {
-  width: 100%;
-  height: 32px;
-}
-
 .ej-stats {
   display: flex;
   justify-content: space-between;
@@ -216,6 +183,29 @@ html, body {
   position: absolute;
   bottom: 12px;
   opacity: 0.75;
+}
+.ej-speak {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--moss);
+  background: #fff;
+  color: var(--moss);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, color .12s ease;
+}
+.ej-speak:hover { transform: scale(1.07); }
+.ej-speak:active { transform: scale(0.94); }
+.ej-speak.playing {
+  background: var(--moss);
+  color: var(--washi);
 }
 
 .ej-actions {
@@ -1139,16 +1129,6 @@ const VOCAB = [
 {l:14, kana:'ディズニーランド', kanji:'', romaji:'dizuniirando', en:'Disneyland', verb:null},
 {l:14, kana:'なつめ', kanji:'夏目', romaji:'natsume', en:'Natsume', verb:null},];
 
-const LESSON_AUDIO = {};
-const LESSON_IMG = {};
-for (let i = 1; i <= 14; i++) {
-  LESSON_AUDIO[i] = `Vocab${i}.mp3`;
-}
-for (let i = 1; i <= 14; i++) {
-  if (i === 13) continue; // no illustration available for lesson 13
-  LESSON_IMG[i] = `lesson${i}.png`;
-}
-
 (function(){
   let activeLessons = new Set(Array.from({length:14}, (_,i)=>i+1));
   let deck = [];
@@ -1165,6 +1145,30 @@ for (let i = 1; i <= 14; i++) {
       [a[i],a[j]]=[a[j],a[i]];
     }
     return a;
+  }
+
+  let jpVoice = null;
+  function loadVoices(){
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    jpVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+  }
+  if('speechSynthesis' in window){
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function speakJapanese(text, btn){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'ja-JP';
+    if(jpVoice) utter.voice = jpVoice;
+    utter.rate = 0.8;
+    if(btn){
+      btn.classList.add('playing');
+      utter.onend = () => btn.classList.remove('playing');
+      utter.onerror = () => btn.classList.remove('playing');
+    }
+    window.speechSynthesis.speak(utter);
   }
 
   function buildDeck(){
@@ -1255,9 +1259,6 @@ for (let i = 1; i <= 14; i++) {
     const card = deck[idx];
     const kanjiLine = card.kanji ? `<div class="ej-kanji">${card.kanji}</div>` : '';
     const verbTag = card.verb ? `<span class="ej-verb-tag">${card.verb}</span>` : '';
-    const lessonImg = LESSON_IMG[card.l];
-    const lessonImgHtml = lessonImg ? `<img class="ej-lesson-img" src="${lessonImg}" alt="Lesson ${card.l} illustration">` : `<div class="ej-lesson-img"></div>`;
-    const audioSrc = LESSON_AUDIO[card.l];
 
     app.innerHTML = `
       <div class="ej-header">
@@ -1265,13 +1266,6 @@ for (let i = 1; i <= 14; i++) {
         <div class="ej-sub">Listening Materials Vol. I</div>
       </div>
       <div class="ej-filters">${chipsHtml}</div>
-      <div class="ej-lesson-panel">
-        ${lessonImgHtml}
-        <div class="ej-lesson-audio">
-          <div class="ej-lesson-audio-label">🔊 Lesson ${card.l} vocabulary (CD audio)</div>
-          <audio id="ej-audio" controls preload="none" src="${audioSrc}"></audio>
-        </div>
-      </div>
       <div class="ej-stats">
         <span>${idx+1} / ${sessionTotal}</span>
         <div class="ej-progress-bar"><div class="ej-progress-fill" style="width:${progressPct}%"></div></div>
@@ -1285,6 +1279,7 @@ for (let i = 1; i <= 14; i++) {
             <div class="ej-kana">${card.kana}</div>
             ${kanjiLine}
             <div class="ej-hint">tap to reveal meaning</div>
+            <button class="ej-speak" data-speak="${card.kana.replace(/"/g,'&quot;')}" title="Play pronunciation">🔊</button>
           </div>
           <div class="ej-face back">
             <span class="ej-lesson-tag">L${card.l}</span>
@@ -1292,6 +1287,7 @@ for (let i = 1; i <= 14; i++) {
             <div class="ej-meaning">${card.en}</div>
             <div class="ej-romaji">${card.romaji}</div>
             <div class="ej-hint">tap to flip back</div>
+            <button class="ej-speak" data-speak="${card.kana.replace(/"/g,'&quot;')}" title="Play pronunciation">🔊</button>
           </div>
         </div>
       </div>
@@ -1309,7 +1305,9 @@ for (let i = 1; i <= 14; i++) {
     document.getElementById('ej-again').onclick = (e) => { e.stopPropagation(); nextCard(false); };
     document.getElementById('ej-know').onclick = (e) => { e.stopPropagation(); nextCard(true); };
     document.getElementById('ej-shuffle').onclick = (e) => { e.stopPropagation(); reshuffle(); };
-    document.getElementById('ej-audio').onclick = (e) => e.stopPropagation();
+    app.querySelectorAll('.ej-speak').forEach(btn=>{
+      btn.onclick = (e) => { e.stopPropagation(); speakJapanese(btn.dataset.speak, btn); };
+    });
     app.querySelectorAll('.ej-chip').forEach(btn=>{
       btn.onclick = (e) => { e.stopPropagation(); toggleLesson(parseInt(btn.dataset.lesson)); };
     });
