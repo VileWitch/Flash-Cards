@@ -1,0 +1,637 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f6f1e4;
+}
+.wp-root {
+  --ai: #24406b;
+  --ai-deep: #16294a;
+  --washi: #f6f1e4;
+  --washi-line: #e3d9c0;
+  --hanko: #a83c34;
+  --gold: #c79a3d;
+  --ink: #2a2620;
+  --ink-soft: #6b6455;
+  --pen: #1a1a1a;
+  font-family: 'Noto Sans JP', 'Zen Maru Gothic', sans-serif;
+  color: var(--ink);
+  background: var(--washi);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(36,64,107,0.05), transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(168,60,52,0.06), transparent 45%);
+  border-radius: 18px;
+  padding: 28px;
+  width: 100%;
+  max-width: 820px;
+  margin: 24px auto;
+  box-sizing: border-box;
+  font-size: 1.05em;
+}
+.wp-root * { box-sizing: border-box; }
+
+.wp-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--washi-line);
+  padding-bottom: 10px;
+}
+.wp-title {
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ai-deep);
+  letter-spacing: 0.02em;
+}
+.wp-title .jp { color: var(--hanko); margin-right: 8px; }
+.wp-sub { font-size: 12px; color: var(--ink-soft); }
+
+.wp-filters { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.wp-chip {
+  border: 1.5px solid var(--ai);
+  color: var(--ai);
+  background: transparent;
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+}
+.wp-chip.active { background: var(--ai); color: var(--washi); }
+.wp-chip:hover { transform: translateY(-1px); }
+
+.wp-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+  gap: 5px;
+  margin-bottom: 16px;
+  max-height: 110px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #fffdf8;
+  border: 1.5px solid var(--washi-line);
+  border-radius: 10px;
+}
+.wp-select-btn {
+  border: 1.5px solid var(--washi-line);
+  background: #fff;
+  border-radius: 8px;
+  padding: 5px 0;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform .1s ease;
+}
+.wp-select-btn:hover { transform: translateY(-1px); border-color: var(--ai); }
+.wp-select-btn.active { background: var(--ai); color: var(--washi); border-color: var(--ai); }
+
+.wp-ref-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fffdf8;
+  border: 1.5px solid var(--washi-line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wp-ref-char {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--ai-deep);
+  line-height: 1;
+}
+.wp-ref-info { flex: 1; }
+.wp-ref-romaji {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--hanko);
+}
+.wp-ref-row-tag { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+.wp-speak {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ai);
+  background: #fff;
+  color: var(--ai);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.wp-speak.playing { background: var(--ai); color: var(--washi); }
+.wp-nav-btn {
+  border: 1.5px solid var(--hanko);
+  color: var(--hanko);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.wp-nav-btn:hover { background: var(--hanko); color: #fff; }
+
+.wp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.wp-tool-group { display: flex; align-items: center; gap: 6px; }
+.wp-tool-label { font-size: 11px; color: var(--ink-soft); font-weight: 600; }
+.wp-swatch {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.wp-swatch.active { border-color: var(--gold); box-shadow: 0 0 0 2px #fff inset; }
+.wp-size-btn {
+  border: 1.5px solid var(--washi-line);
+  background: #fff;
+  border-radius: 8px;
+  width: 32px; height: 32px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.wp-size-btn.active { border-color: var(--ai); background: var(--ai); }
+.wp-size-dot { border-radius: 50%; background: var(--ink); }
+.wp-size-btn.active .wp-size-dot { background: #fff; }
+.wp-action-btn {
+  margin-left: auto;
+  border: 1.5px solid var(--ink-soft);
+  color: var(--ink-soft);
+  background: #fff;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.wp-action-btn:hover { border-color: var(--hanko); color: var(--hanko); }
+.wp-action-btn.wp-clear:hover { border-color: var(--hanko); color: var(--hanko); }
+.wp-action-btn.wp-eraser { margin-left: 6px; }
+.wp-action-btn.wp-eraser.active { background: var(--hanko); border-color: var(--hanko); color: #fff; }
+.wp-sheet.erasing .wp-box canvas { cursor: cell; }
+
+.wp-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+.wp-box {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #fffdf8;
+  border: 1.5px solid var(--washi-line);
+  border-radius: 6px;
+  overflow: hidden;
+  touch-action: none;
+}
+.wp-box::before, .wp-box::after {
+  content: "";
+  position: absolute;
+  background: repeating-linear-gradient(to right, #cfc4a3 0, #cfc4a3 4px, transparent 4px, transparent 8px);
+  opacity: 0.6;
+}
+.wp-box::before { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-0.5px); }
+.wp-box::after {
+  top: 0; bottom: 0; left: 50%; width: 1px;
+  background: repeating-linear-gradient(to bottom, #cfc4a3 0, #cfc4a3 4px, transparent 4px, transparent 8px);
+  transform: translateX(-0.5px);
+}
+.wp-box.guide-1 { border-color: var(--hanko); border-width: 2px; }
+.wp-guide-char {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 42px;
+  font-weight: 500;
+  color: var(--ai-deep);
+  pointer-events: none;
+  user-select: none;
+}
+.wp-box canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+.wp-footnote {
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+</style>
+
+<div id="wp-app" class="wp-root"></div>
+
+<script>
+const WP_HIRAGANA = [
+{g:"basic", row:"a-row", char:"あ", romaji:"a"},
+{g:"basic", row:"a-row", char:"い", romaji:"i"},
+{g:"basic", row:"a-row", char:"う", romaji:"u"},
+{g:"basic", row:"a-row", char:"え", romaji:"e"},
+{g:"basic", row:"a-row", char:"お", romaji:"o"},
+{g:"basic", row:"ka-row", char:"か", romaji:"ka"},
+{g:"basic", row:"ka-row", char:"き", romaji:"ki"},
+{g:"basic", row:"ka-row", char:"く", romaji:"ku"},
+{g:"basic", row:"ka-row", char:"け", romaji:"ke"},
+{g:"basic", row:"ka-row", char:"こ", romaji:"ko"},
+{g:"basic", row:"sa-row", char:"さ", romaji:"sa"},
+{g:"basic", row:"sa-row", char:"し", romaji:"shi"},
+{g:"basic", row:"sa-row", char:"す", romaji:"su"},
+{g:"basic", row:"sa-row", char:"せ", romaji:"se"},
+{g:"basic", row:"sa-row", char:"そ", romaji:"so"},
+{g:"basic", row:"ta-row", char:"た", romaji:"ta"},
+{g:"basic", row:"ta-row", char:"ち", romaji:"chi"},
+{g:"basic", row:"ta-row", char:"つ", romaji:"tsu"},
+{g:"basic", row:"ta-row", char:"て", romaji:"te"},
+{g:"basic", row:"ta-row", char:"と", romaji:"to"},
+{g:"basic", row:"na-row", char:"な", romaji:"na"},
+{g:"basic", row:"na-row", char:"に", romaji:"ni"},
+{g:"basic", row:"na-row", char:"ぬ", romaji:"nu"},
+{g:"basic", row:"na-row", char:"ね", romaji:"ne"},
+{g:"basic", row:"na-row", char:"の", romaji:"no"},
+{g:"basic", row:"ha-row", char:"は", romaji:"ha"},
+{g:"basic", row:"ha-row", char:"ひ", romaji:"hi"},
+{g:"basic", row:"ha-row", char:"ふ", romaji:"fu"},
+{g:"basic", row:"ha-row", char:"へ", romaji:"he"},
+{g:"basic", row:"ha-row", char:"ほ", romaji:"ho"},
+{g:"basic", row:"ma-row", char:"ま", romaji:"ma"},
+{g:"basic", row:"ma-row", char:"み", romaji:"mi"},
+{g:"basic", row:"ma-row", char:"む", romaji:"mu"},
+{g:"basic", row:"ma-row", char:"め", romaji:"me"},
+{g:"basic", row:"ma-row", char:"も", romaji:"mo"},
+{g:"basic", row:"ya-row", char:"や", romaji:"ya"},
+{g:"basic", row:"ya-row", char:"ゆ", romaji:"yu"},
+{g:"basic", row:"ya-row", char:"よ", romaji:"yo"},
+{g:"basic", row:"ra-row", char:"ら", romaji:"ra"},
+{g:"basic", row:"ra-row", char:"り", romaji:"ri"},
+{g:"basic", row:"ra-row", char:"る", romaji:"ru"},
+{g:"basic", row:"ra-row", char:"れ", romaji:"re"},
+{g:"basic", row:"ra-row", char:"ろ", romaji:"ro"},
+{g:"basic", row:"wa-row", char:"わ", romaji:"wa"},
+{g:"basic", row:"wa-row", char:"を", romaji:"wo"},
+{g:"basic", row:"n", char:"ん", romaji:"n"},
+
+{g:"voiced", row:"ga-row", char:"が", romaji:"ga"},
+{g:"voiced", row:"ga-row", char:"ぎ", romaji:"gi"},
+{g:"voiced", row:"ga-row", char:"ぐ", romaji:"gu"},
+{g:"voiced", row:"ga-row", char:"げ", romaji:"ge"},
+{g:"voiced", row:"ga-row", char:"ご", romaji:"go"},
+{g:"voiced", row:"za-row", char:"ざ", romaji:"za"},
+{g:"voiced", row:"za-row", char:"じ", romaji:"ji"},
+{g:"voiced", row:"za-row", char:"ず", romaji:"zu"},
+{g:"voiced", row:"za-row", char:"ぜ", romaji:"ze"},
+{g:"voiced", row:"za-row", char:"ぞ", romaji:"zo"},
+{g:"voiced", row:"da-row", char:"だ", romaji:"da"},
+{g:"voiced", row:"da-row", char:"ぢ", romaji:"ji (di)"},
+{g:"voiced", row:"da-row", char:"づ", romaji:"zu (du)"},
+{g:"voiced", row:"da-row", char:"で", romaji:"de"},
+{g:"voiced", row:"da-row", char:"ど", romaji:"do"},
+{g:"voiced", row:"ba-row", char:"ば", romaji:"ba"},
+{g:"voiced", row:"ba-row", char:"び", romaji:"bi"},
+{g:"voiced", row:"ba-row", char:"ぶ", romaji:"bu"},
+{g:"voiced", row:"ba-row", char:"べ", romaji:"be"},
+{g:"voiced", row:"ba-row", char:"ぼ", romaji:"bo"},
+{g:"voiced", row:"pa-row", char:"ぱ", romaji:"pa"},
+{g:"voiced", row:"pa-row", char:"ぴ", romaji:"pi"},
+{g:"voiced", row:"pa-row", char:"ぷ", romaji:"pu"},
+{g:"voiced", row:"pa-row", char:"ぺ", romaji:"pe"},
+{g:"voiced", row:"pa-row", char:"ぽ", romaji:"po"},
+
+{g:"combo", row:"ky-", char:"きゃ", romaji:"kya"},
+{g:"combo", row:"ky-", char:"きゅ", romaji:"kyu"},
+{g:"combo", row:"ky-", char:"きょ", romaji:"kyo"},
+{g:"combo", row:"sh-", char:"しゃ", romaji:"sha"},
+{g:"combo", row:"sh-", char:"しゅ", romaji:"shu"},
+{g:"combo", row:"sh-", char:"しょ", romaji:"sho"},
+{g:"combo", row:"ch-", char:"ちゃ", romaji:"cha"},
+{g:"combo", row:"ch-", char:"ちゅ", romaji:"chu"},
+{g:"combo", row:"ch-", char:"ちょ", romaji:"cho"},
+{g:"combo", row:"ny-", char:"にゃ", romaji:"nya"},
+{g:"combo", row:"ny-", char:"にゅ", romaji:"nyu"},
+{g:"combo", row:"ny-", char:"にょ", romaji:"nyo"},
+{g:"combo", row:"hy-", char:"ひゃ", romaji:"hya"},
+{g:"combo", row:"hy-", char:"ひゅ", romaji:"hyu"},
+{g:"combo", row:"hy-", char:"ひょ", romaji:"hyo"},
+{g:"combo", row:"my-", char:"みゃ", romaji:"mya"},
+{g:"combo", row:"my-", char:"みゅ", romaji:"myu"},
+{g:"combo", row:"my-", char:"みょ", romaji:"myo"},
+{g:"combo", row:"ry-", char:"りゃ", romaji:"rya"},
+{g:"combo", row:"ry-", char:"りゅ", romaji:"ryu"},
+{g:"combo", row:"ry-", char:"りょ", romaji:"ryo"},
+{g:"combo", row:"gy-", char:"ぎゃ", romaji:"gya"},
+{g:"combo", row:"gy-", char:"ぎゅ", romaji:"gyu"},
+{g:"combo", row:"gy-", char:"ぎょ", romaji:"gyo"},
+{g:"combo", row:"j-", char:"じゃ", romaji:"ja"},
+{g:"combo", row:"j-", char:"じゅ", romaji:"ju"},
+{g:"combo", row:"j-", char:"じょ", romaji:"jo"},
+{g:"combo", row:"by-", char:"びゃ", romaji:"bya"},
+{g:"combo", row:"by-", char:"びゅ", romaji:"byu"},
+{g:"combo", row:"by-", char:"びょ", romaji:"byo"},
+{g:"combo", row:"py-", char:"ぴゃ", romaji:"pya"},
+{g:"combo", row:"py-", char:"ぴゅ", romaji:"pyu"},
+{g:"combo", row:"py-", char:"ぴょ", romaji:"pyo"},
+];
+
+const WP_GROUP_LABELS = { basic: "Basic (46)", voiced: "Voiced / Dakuten (25)", combo: "Combos / Yōon (33)" };
+const WP_BOX_COUNT = 24;
+const WP_GUIDE_COUNT = 3;
+const WP_PEN_COLORS = ["#1a1a1a", "#24406b", "#a83c34"];
+const WP_PEN_SIZES = [2.5, 4.5, 7];
+
+(function(){
+  let activeGroups = new Set(["basic"]);
+  let deck = [];
+  let idx = 0;
+  let penColor = WP_PEN_COLORS[0];
+  let penSize = WP_PEN_SIZES[1];
+  let tool = 'draw'; // 'draw' or 'erase'
+  const ERASE_SIZE = 22;
+  let undoStack = []; // {canvas}
+
+  function buildDeck(){
+    deck = WP_HIRAGANA.filter(v => activeGroups.has(v.g));
+    idx = 0;
+  }
+
+  function toggleGroup(g){
+    if(activeGroups.has(g)){
+      if(activeGroups.size > 1) activeGroups.delete(g);
+    } else {
+      activeGroups.add(g);
+    }
+    buildDeck();
+    render();
+  }
+
+  let jpVoice = null;
+  function loadVoices(){
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    jpVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+  }
+  if('speechSynthesis' in window){
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function speakJapanese(text, btn){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'ja-JP';
+    if(jpVoice) utter.voice = jpVoice;
+    utter.rate = 0.75;
+    if(btn){
+      btn.classList.add('playing');
+      utter.onend = () => btn.classList.remove('playing');
+      utter.onerror = () => btn.classList.remove('playing');
+    }
+    window.speechSynthesis.speak(utter);
+  }
+
+  function setChar(i){
+    if(i < 0) i = deck.length - 1;
+    if(i >= deck.length) i = 0;
+    idx = i;
+    render();
+  }
+
+  function clearAll(){
+    document.querySelectorAll('.wp-box canvas').forEach(c => {
+      c._strokes = [];
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, c.width, c.height);
+    });
+    undoStack = [];
+  }
+
+  function undo(){
+    const entry = undoStack.pop();
+    if(!entry) return;
+    const c = entry.canvas;
+    c._strokes.pop();
+    redrawCanvas(c);
+  }
+
+  function redrawCanvas(c){
+    const ctx = c.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    ctx.clearRect(0, 0, c.width, c.height);
+    (c._strokes || []).forEach(stroke => {
+      ctx.globalCompositeOperation = stroke.erase ? 'destination-out' : 'source-over';
+      ctx.strokeStyle = stroke.color;
+      ctx.lineWidth = stroke.size * dpr;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      stroke.points.forEach((p, i) => {
+        const x = p.x * dpr, y = p.y * dpr;
+        if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    });
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  function setupCanvas(canvas, box){
+    canvas._strokes = [];
+    let drawing = false;
+    let currentStroke = null;
+
+    function resize(){
+      const dpr = window.devicePixelRatio || 1;
+      const rect = box.getBoundingClientRect();
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      redrawCanvas(canvas);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function getPos(e){
+      const rect = canvas.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      drawing = true;
+      canvas.setPointerCapture(e.pointerId);
+      const pos = getPos(e);
+      const erasing = tool === 'erase';
+      const size = erasing ? ERASE_SIZE : penSize;
+      currentStroke = { color: penColor, size, erase: erasing, points: [pos] };
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      ctx.globalCompositeOperation = erasing ? 'destination-out' : 'source-over';
+      ctx.strokeStyle = penColor;
+      ctx.lineWidth = size * dpr;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(pos.x * dpr, pos.y * dpr);
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if(!drawing) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      currentStroke.points.push(pos);
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      ctx.lineTo(pos.x * dpr, pos.y * dpr);
+      ctx.stroke();
+    });
+
+    function endStroke(e){
+      if(!drawing) return;
+      drawing = false;
+      if(currentStroke && currentStroke.points.length > 1){
+        canvas._strokes.push(currentStroke);
+        undoStack.push({ canvas });
+      }
+      currentStroke = null;
+    }
+    canvas.addEventListener('pointerup', endStroke);
+    canvas.addEventListener('pointercancel', endStroke);
+    canvas.addEventListener('pointerleave', (e) => { if(e.buttons === 0) endStroke(e); });
+  }
+
+  function render(){
+    const app = document.getElementById('wp-app');
+
+    const chipsHtml = Object.keys(WP_GROUP_LABELS).map(g => `
+      <button class="wp-chip ${activeGroups.has(g) ? 'active':''}" data-group="${g}">${WP_GROUP_LABELS[g]}</button>
+    `).join('');
+
+    if(deck.length === 0){
+      app.innerHTML = `
+        <div class="wp-header"><div class="wp-title"><span class="jp">かきかた</span>Writing Practice</div></div>
+        <div class="wp-filters">${chipsHtml}</div>
+        <div style="text-align:center;padding:40px 0;color:var(--ink-soft)">Select at least one set to begin.</div>
+      `;
+      wireFilterButtons();
+      return;
+    }
+
+    const card = deck[idx];
+
+    const selectHtml = deck.map((c, i) => `
+      <button class="wp-select-btn ${i === idx ? 'active':''}" data-idx="${i}">${c.char}</button>
+    `).join('');
+
+    let boxesHtml = '';
+    for(let i = 0; i < WP_BOX_COUNT; i++){
+      const isGuide = i < WP_GUIDE_COUNT;
+      const opacity = [0.42, 0.26, 0.14][i] || 0;
+      boxesHtml += `
+        <div class="wp-box ${i === 0 ? 'guide-1' : ''}">
+          ${isGuide ? `<div class="wp-guide-char" style="opacity:${opacity}">${card.char}</div>` : ''}
+          <canvas></canvas>
+        </div>
+      `;
+    }
+
+    const colorSwatches = WP_PEN_COLORS.map(c => `
+      <div class="wp-swatch ${c === penColor ? 'active':''}" data-color="${c}" style="background:${c}"></div>
+    `).join('');
+    const sizeButtons = WP_PEN_SIZES.map((s, i) => `
+      <button class="wp-size-btn ${s === penSize ? 'active':''}" data-size="${s}">
+        <span class="wp-size-dot" style="width:${4+i*3}px;height:${4+i*3}px"></span>
+      </button>
+    `).join('');
+
+    app.innerHTML = `
+      <div class="wp-header">
+        <div class="wp-title"><span class="jp">かきかた</span>Writing Practice</div>
+        <div class="wp-sub">${idx+1} / ${deck.length}</div>
+      </div>
+      <div class="wp-filters">${chipsHtml}</div>
+      <div class="wp-select-grid">${selectHtml}</div>
+      <div class="wp-ref-row">
+        <button class="wp-nav-btn" id="wp-prev">◀</button>
+        <div class="wp-ref-char">${card.char}</div>
+        <div class="wp-ref-info">
+          <div class="wp-ref-romaji">${card.romaji}</div>
+          <div class="wp-ref-row-tag">${card.row}</div>
+        </div>
+        <button class="wp-speak" data-speak="${card.char}" title="Play pronunciation">🔊</button>
+        <button class="wp-nav-btn" id="wp-next">▶</button>
+      </div>
+      <div class="wp-toolbar">
+        <div class="wp-tool-group">
+          <span class="wp-tool-label">PEN</span>
+          ${colorSwatches}
+        </div>
+        <div class="wp-tool-group">
+          ${sizeButtons}
+        </div>
+        <button class="wp-action-btn" id="wp-undo">↺ Undo</button>
+        <button class="wp-action-btn wp-clear" id="wp-clear">Clear sheet</button>
+        <button class="wp-action-btn wp-eraser ${tool === 'erase' ? 'active' : ''}" id="wp-eraser">🧹 Eraser</button>
+      </div>
+      <div class="wp-sheet ${tool === 'erase' ? 'erasing' : ''}" id="wp-sheet">${boxesHtml}</div>
+      <div class="wp-footnote">Trace the faded character in the first boxes, then keep writing freehand. Works with mouse, touch, or stylus.</div>
+    `;
+
+    document.getElementById('wp-prev').onclick = () => setChar(idx - 1);
+    document.getElementById('wp-next').onclick = () => setChar(idx + 1);
+    document.getElementById('wp-undo').onclick = undo;
+    document.getElementById('wp-clear').onclick = clearAll;
+    document.getElementById('wp-eraser').onclick = () => { tool = tool === 'erase' ? 'draw' : 'erase'; render(); };
+    app.querySelector('.wp-speak').onclick = (e) => speakJapanese(e.currentTarget.dataset.speak, e.currentTarget);
+
+    app.querySelectorAll('.wp-swatch').forEach(sw => {
+      sw.onclick = () => { penColor = sw.dataset.color; tool = 'draw'; render(); };
+    });
+    app.querySelectorAll('.wp-size-btn').forEach(btn => {
+      btn.onclick = () => { penSize = parseFloat(btn.dataset.size); tool = 'draw'; render(); };
+    });
+
+    app.querySelectorAll('.wp-select-btn').forEach(btn => {
+      btn.onclick = () => setChar(parseInt(btn.dataset.idx, 10));
+    });
+
+    wireFilterButtons();
+
+    document.querySelectorAll('#wp-sheet .wp-box').forEach(box => {
+      const canvas = box.querySelector('canvas');
+      setupCanvas(canvas, box);
+    });
+  }
+
+  function wireFilterButtons(){
+    document.querySelectorAll('.wp-chip').forEach(btn => {
+      btn.onclick = () => toggleGroup(btn.dataset.group);
+    });
+  }
+
+  buildDeck();
+  render();
+})();
+</script>
