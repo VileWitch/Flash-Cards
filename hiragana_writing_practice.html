@@ -205,6 +205,10 @@ html, body {
   border-radius: 6px;
   overflow: hidden;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
 }
 .wp-box::before, .wp-box::after {
   content: "";
@@ -231,6 +235,7 @@ html, body {
   color: var(--ai-deep);
   pointer-events: none;
   user-select: none;
+  -webkit-user-select: none;
 }
 .wp-box canvas {
   position: absolute;
@@ -238,6 +243,9 @@ html, body {
   width: 100%;
   height: 100%;
   cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .wp-footnote {
   margin-top: 14px;
@@ -472,6 +480,10 @@ const WP_PEN_SIZES = [2.5, 4.5, 7];
     }
     resize();
     window.addEventListener('resize', resize);
+
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    canvas.addEventListener('dragstart', (e) => e.preventDefault());
+    canvas.addEventListener('selectstart', (e) => e.preventDefault());
 
     function getPos(e){
       const rect = canvas.getBoundingClientRect();
