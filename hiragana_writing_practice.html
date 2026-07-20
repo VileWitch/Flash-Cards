@@ -195,7 +195,11 @@ html, body {
 .wp-sheet {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-  gap: 8px;
+  gap: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .wp-box {
   position: relative;
@@ -468,6 +472,7 @@ const WP_PEN_SIZES = [2.5, 4.5, 7];
 
   function setupCanvas(canvas, box){
     canvas._strokes = [];
+    canvas.style.touchAction = 'none';
     let drawing = false;
     let currentStroke = null;
 
@@ -484,6 +489,8 @@ const WP_PEN_SIZES = [2.5, 4.5, 7];
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     canvas.addEventListener('dragstart', (e) => e.preventDefault());
     canvas.addEventListener('selectstart', (e) => e.preventDefault());
+    canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+    canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
     function getPos(e){
       const rect = canvas.getBoundingClientRect();
